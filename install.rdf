@@ -5,12 +5,12 @@
 	
     <Description about="urn:mozilla:install-manifest">
 	  <em:id>tito@asynchremote</em:id>
-	  <em:name>asynchremote</em:name>
-	  <em:version>0</em:version>
-	  <em:description>.</em:description>
+	  <em:name>Asynch Remotes</em:name>
+	  <em:version>0.110507.0</em:version>
+	  <em:description>Allows connect, browse, upload and download files and folder from many remotes at same time and all without blocking the application.</em:description>
 	  <em:creator>Roberto Bouzout (tito)</em:creator>
 	  <em:iconURL>chrome://asynchremote/content/icons/toolbar/disconnected.png</em:iconURL>
-	  <em:homepageURL>http://localhost/</em:homepageURL>
+	  <em:homepageURL></em:homepageURL>
 	  
 	  <em:targetApplication>
 		<Description>
