@@ -1,0 +1,49 @@
+BUGS
+  
+  to upload or download files this extension use the koFileEx object, instead of reusing the current connection from koRemoteConnectionService. There is a writeFile method but I don't know how to use it. Any hint?
+
+  looks like there is no chance to use 8bits into folders or files names?? when creating a folder with filezilla called "Русский" the folder gets created, when trying with koRemoteConnectionService I get a folder created with name: "???????"
+  	
+  the tree refresh is incomplete.
+  
+  probably others.
+  
+TODO
+
+  
+  drag and drop!
+  
+	from places to remote
+	from remote to remote
+	from remote to places
+  
+  UI
+  
+	locate file/folder in remote from local places
+	locate file/folder in places from remote places
+	"go up button" should be a menu-button listing all parent directories
+  
+  tree
+	
+	  on doble click on file: open the file (download and open)
+	  click + a delay + a click: start rename file setting the treechildren to editable
+	  
+	  key events:
+		  
+		F2 rename file
+		RETURN open file
+		<- go back history
+		
+	  check for "views"(specify files and directories to include or exclude)
+	  
+  servers
+	
+	  a textbox to allow "cmd remote" commmands
+  
+  chmod:
+  
+	show old permissions for each selected file when requesting a chmod change command
+	chmod dialog should contain nice checkbox about permissino,group,owner,public,read,write,execute etc
+	
+  escribir todos los prompts personalizados con ícono y título
+  en los dialogos de sobre escribir el icono para remote diferente a local

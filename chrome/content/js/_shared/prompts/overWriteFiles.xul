@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+<dialog
+  title="Remote Places"
+  xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+  xmlns:html="http://www.w3.org/1999/xhtml"
+  buttons="accept,cancel"
+  onload="
+	document
+	  .getElementsByTagName('description')[0]
+	  .appendChild(document.createTextNode(window.arguments[0].label));
+	sizeToContent();
+	for(var i=0;i&lt;document.getElementsByTagName('button').length;i++)
+	{
+	  if(document.getElementsByTagName('button')[i].hasAttribute('yestoall'))
+		document.getElementsByTagName('button')[i].focus();
+	}
+  "
+  ondialogcancel="
+	var r = window.arguments[0];
+	r.value = document.getElementsByTagName('vbox')[0].getAttribute('value');
+	r.dontAskAgain = document.getElementById('ask').checked;
+	return r;
+	"
+  onunload="
+	var r = window.arguments[0];
+	r.value = document.getElementsByTagName('vbox')[0].getAttribute('value');
+	r.dontAskAgain = document.getElementById('ask').checked;
+	return r;"
+  ondialogaccept="
+	var r = window.arguments[0];
+	r.value = document.getElementsByTagName('vbox')[0].getAttribute('value');
+	r.dontAskAgain = document.getElementById('ask').checked;
+	return r;
+	"
+  onclose="
+	var r = window.arguments[0];
+	r.value = document.getElementsByTagName('vbox')[0].getAttribute('value');
+	r.dontAskAgain = document.getElementById('ask').checked;
+	return r;
+	"
+>
+  <html:head>
+	<html:link rel="icon" href="chrome://asynchremote/content/icons/toolbar/disconnected.png" style="display:none;"/>
+  </html:head>
+  <hbox flex="1" maxwidth="650">
+	<vbox value="Cancel">
+	  <description wrap="true" style="white-space: pre-wrap;"/>
+	  <hbox style="margin-top:10px;margin-bottom:3px;">
+		<button label="Yes" oncommand="this.parentNode.parentNode.setAttribute('value', 'Yes');close()"/>
+		<button yestoall="true" label="Yes to all" oncommand="this.parentNode.parentNode.setAttribute('value', 'Yes to all');close()" default="true" dlgtype="accept" />
+		<button label="No" oncommand="this.parentNode.parentNode.setAttribute('value', 'No');close()"/>
+		<button label="No to all" oncommand="this.parentNode.parentNode.setAttribute('value', 'No to all');close()"/>
+		<spacer flex="1"/>
+		<button style="margin-left:20px;" label="Cancel" oncommand="this.parentNode.parentNode.setAttribute('value', 'Cancel');close()" dlgtype="cancel"/>
+	  </hbox>
+	  <checkbox label="Remember my selection for this file/folder and don't ask me again" id="ask" value="true"/>
+	</vbox>
+  </hbox>
+</dialog>

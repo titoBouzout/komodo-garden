@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<overlay xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+  
+  <!--container-->
+  <window id="komodo_main">
+	
+	<!--panel-->
+	<panel id="asynchremote-toolbar-panel" class="asynchremote-toolbar-panel" resizable="true">
+	  <vbox>
+		<browser
+		  autocompleteenabled="false"
+		  autoscroll="false"
+		  disablehistory="true"
+		  width="780"
+		  src="about:blank"
+		  height="250"
+		  style="padding:5px;background-color:white;"/>
+		<hbox style="padding-top:3px;">
+		  <description style="margin: 6px ! important;" value="Show the following messages:"/>
+		  <checkbox label="Progress" id="asynchremote-toolbar-panel-show-progress" oncommand="asynchRemote.placesRemotePanelSetOptions()"/>
+		  <checkbox label="Warnings" id="asynchremote-toolbar-panel-show-warning" oncommand="asynchRemote.placesRemotePanelSetOptions()"/>	
+		  <checkbox label="Errors" id="asynchremote-toolbar-panel-show-error" oncommand="asynchRemote.placesRemotePanelSetOptions()"/>
+		  <checkbox label="Sucess" id="asynchremote-toolbar-panel-show-sucess" oncommand="asynchRemote.placesRemotePanelSetOptions()"/>
+		  <textbox id="asynchremote-toolbar-panel-search" emptytext="Search…" placeholder="Search…" flex="1" 
+				type="search" timeout="230"
+				oncommand="asynchRemote.actionFromRemote('log-update')"
+				onkeydown="if(event.keyCode == 27){ if(this.value=='')this.parentNode.parentNode.parentNode.hidePopup();else this.value='';
+				} else if(event.keyCode == 13){asynchRemote.actionFromRemote('log-update')}"
+				style="padding:0px;padding-left:2px;padding-right:2px;margin:0px;"
+		  />
+		  <button label="Clear log" oncommand="asynchRemote.placesRemotePanelClearLog()"/>
+		  <button label="Save log to file…" oncommand="asynchRemote.actionFromRemote('log-save');"/>
+		</hbox>
+	  </vbox>
+	</panel>
+  </window>
+</overlay>

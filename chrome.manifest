@@ -1,0 +1,23 @@
+content asynchremote chrome/content/
+
+overlay chrome://komodo/content/komodo.xul chrome://asynchremote/content/xul/_includes.xul
+
+overlay chrome://komodo/content/komodo.xul chrome://asynchremote/content/xul/toolbar.xul
+
+overlay chrome://komodo/content/komodo.xul chrome://asynchremote/content/xul/remote.xul
+
+overlay chrome://komodo/content/komodo.xul chrome://asynchremote/content/xul/remote.tree.xul
+overlay chrome://komodo/content/komodo.xul chrome://asynchremote/content/xul/remote.tree.toolbar.xul
+overlay chrome://komodo/content/komodo.xul chrome://asynchremote/content/xul/remote.tree.toolbar.panel.xul
+overlay chrome://komodo/content/komodo.xul chrome://asynchremote/content/xul/remote.tree.context.xul
+
+overlay chrome://komodo/content/komodo.xul chrome://asynchremote/content/xul/local.tree.toolbar.xul
+overlay chrome://komodo/content/komodo.xul chrome://asynchremote/content/xul/local.tree.context.xul
+
+style chrome://komodo/content/komodo.xul chrome://asynchremote/content/css/tree.icons.css
+style chrome://komodo/content/komodo.xul chrome://asynchremote/content/css/tree.context.css
+style chrome://komodo/content/komodo.xul chrome://asynchremote/content/css/tree.toolbar.css
+
+component {177d2640-75d0-11e0-a1f0-0800200c9a66} components/service.js
+contract @universe.particle.tito/service;1 {177d2640-75d0-11e0-a1f0-0800200c9a66}
+category profile-after-change @universe.particle.tito/service;1 @universe.particle.tito/service;1

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<overlay xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+
+	<!-- container -->
+	<hbox id="asynchremote-trees">
+	  
+	  <!-- remote tree template -->
+	  <tree
+		id="asynchremote-tree"
+		flex="1"
+		seltype="multiple"
+		hidecolumnpicker="true"
+		hidehscroll="true"
+		collapsed="false"
+		class="asynchremote-tree"
+		context="asynchremote-context"
+		server=""
+		onselect="this.view.selectionChanged()"
+		onfocus="this.asynchTree.focused = true;"
+		onblur="this.asynchTree.focused = false;"
+		ondragstart="return this.asynchTree.treeOnDragStart(event);"
+		ondragover="return this.asynchTree.treeOnDragOver(event);"
+		ondragenter="return this.asynchTree.treeOnDragEnter(event);"
+		onclick="this.asynchTree.treeOnClick(event);"
+		ondblclick="this.asynchTree.treeOnDblClick(event);"
+		ondrop="return this.asynchTree.treeOnDrop(event);"
+	  >
+		<treecols>
+		  <treecol primary="true" hideheader="true" flex="1"/>
+		</treecols>
+		<treechildren
+		  flex="1"
+		  ondragstart="return this.asynchTree.childrenOnDragStart(event, this);"
+		  ondragover="return this.asynchTree.childrenOnDragOver(event, this);"
+		  ondragenter="return this.asynchTree.childrenOnDragEnter(event, this);"
+		  onclick="this.asynchTree.childrenOnClick(event, this);"
+		  ondblclick="this.asynchTree.childrenOnDblClick(event, this);"
+		  ondrop="return this.asynchTree.childrenOnDrop(event, this);"
+		/>
+	  </tree>
+	  
+	</hbox>
+
+</overlay>

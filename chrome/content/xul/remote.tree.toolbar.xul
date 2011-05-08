@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<overlay xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+
+	<!-- container -->
+	<hbox id="asynchremote-toolbar">
+	  
+	  <!-- remote tree toolbarbuttons -->
+	 
+		  <toolbarbutton
+			id="asynchremote-toolbarbutton-back"
+			buttonstyle="pictures"
+			type="button"
+			persist="buttonstyle"
+			orient="horizontal"
+			class="history-back-icon"
+			tooltiptext="Previous directory in history"
+			action="history-back"
+			oncommand="asynchRemote.actionFromRemote(this.getAttribute('action'))"
+		  />
+		  <toolbarbutton
+			id="asynchremote-toolbarbutton-forward"
+			buttonstyle="pictures"
+			type="button"
+			persist="buttonstyle"
+			orient="horizontal"
+			class="history-forward-icon"
+			tooltiptext="Next directory in history"
+			action="history-forward"
+			oncommand="asynchRemote.actionFromRemote(this.getAttribute('action'))"
+		  />
+		  <toolbarbutton
+			id="asynchremote-toolbarbutton-go-up"
+			buttonstyle="pictures"
+			type="button"
+			persist="buttonstyle"
+			orient="horizontal"
+			class="asynchremote-go-up"
+			tooltiptext="Go up one directory"
+			action="go-up"
+			oncommand="asynchRemote.actionFromRemote(this.getAttribute('action'))"
+		  />
+		  <toolbarbutton
+			buttonstyle="pictures"
+			type="button"
+			persist="buttonstyle"
+			orient="horizontal"
+			class="asynchremote-upload"
+			tooltiptext="Upload selected Items"
+			action="upload-from-remote-toolbarbutton"
+			oncommand="asynchRemote.actionFromRemote(this.getAttribute('action'))"
+		  />
+		  <toolbarbutton
+			buttonstyle="pictures"
+			type="button"
+			persist="buttonstyle"
+			orient="horizontal"
+			class="asynchremote-download"
+			tooltiptext="Download selected Items"
+			action="download-from-remote-toolbarbutton"
+			oncommand="asynchRemote.actionFromRemote(this.getAttribute('action'))"
+		  />
+
+		  <toolbarbutton
+			type="menu"
+			orient="horizontal"
+			crop="right"
+			flex="1"
+			pack="start"
+			class="asynchremote-connection asynchremote-nav normal"
+			id="asynchremote-nav"
+			tooltiptext=""
+			context="asynchremote-context"
+		  >
+			<menupopup
+				  id="asynchremote-process-list-popup"
+				  onpopupshowing="asynchRemote.placesRemoteToolbarProcessListToolbarbuttonPopupShowing()"
+			>
+			  <menuitem
+				  label="Close this connection graceful (will wait for running processes and pause any remaining)"
+				  class="menuitem-iconic asynchremote-shutdown"
+				  locked="true"
+				  action="close"
+				  oncommand="asynchRemote.actionFromRemote(this.getAttribute('action'))"/>
+			</menupopup>
+		  </toolbarbutton>
+		  <toolbarbutton
+			buttonstyle="pictures"
+			type="button"
+			persist="buttonstyle"
+			orient="horizontal"
+			class="asynchremote-refresh"
+			tooltiptext="Refresh Hard"
+			action="refresh-all"
+			oncommand="asynchRemote.actionFromRemote(this.getAttribute('action'))"
+		  />
+		  <toolbarbutton
+			buttonstyle="pictures"
+			type="button"
+			persist="buttonstyle"
+			orient="horizontal"
+			class="asynchremote-log log-toolbarbutton-xbl"
+			id="asynchremote-log"
+			tooltiptext="Show connection log"
+			action="log-open"
+			oncommand="asynchRemote.actionFromRemote(this.getAttribute('action'))"
+		  />
+		  <toolbarbutton
+			buttonstyle="pictures"
+			type="button"
+			persist="buttonstyle"
+			orient="horizontal"
+			class="asynchremote-collapse"
+			tooltiptext="Collapse Panel"
+			action="collapse"
+			oncommand="asynchRemote.actionFromRemote(this.getAttribute('action'))"
+		  />
+		  <toolbarbutton
+			buttonstyle="pictures"
+			type="menu"
+			persist="buttonstyle"
+			orient="horizontal"
+			class="asynchremote-tool project-tools-icon"
+			tooltiptext="Remote-related functions"
+			action="collapse"
+			oncommand="asynchRemote.actionFromRemote(event.originalTarget.getAttribute('action'))"
+			onpopupshowing="asynchRemote.placesRemoteToolbarToolsToolbarbuttonPopupShowing()"
+		  >
+			<menupopup>
+			  <menuitem id="asynchremote-tools-toolbarbutton-go-up" action="go-up" label="Move Up One Directory"/>
+			  <menuseparator/>
+			  <menuitem type="checkbox" disabled="true" label="Default View"/>
+			  <menuitem type="checkbox" disabled="true" label="Currrent Project View"/>
+			  <menuitem type="checkbox" disabled="true" checked="true" label="View All"/>
+			  <menuseparator/>
+			  <menuitem oncommand="ko.commands.doCommandAsync('cmd_placeView_customView', event)" label="Manage Views…"/>
+			  <menuseparator/>
+			  <menuitem action="clean-cache-modified" label="Clean last modified cache"/>
+			  <menuitem action="clean-cache-connection" label="Clean connection cache"/>
+			  <menuseparator/>
+			  <menuitem action="clean-cache-overwrite" label="Forget overwrite settings"/>
+			  <menuseparator/>
+			  <menuitem action="pref-set-upload-and-rename" id="asynchremote-tools-toolbarbutton-upload-and-rename" type="checkbox" checked="false" label="Upload files as '.kup' and then rename the file"/>
+			  <menuseparator/>
+			  <menuitem oncommand="ko.windowManager.getMainWindow().prefs_doGlobalPrefs('serversItem');" label="Edit Remote Accounts…"/>
+			  <menuseparator/>
+			  <menuitem disabled="true" action="" type="checkbox" label="Set as full sidebar"/>
+			  <menuitem disabled="true" action="" type="checkbox" checked="true" label="Split with local and remote"/>
+			  <menuitem disabled="true" action="" type="checkbox" label="Side by side remote and local"/>
+			  <menuseparator/>
+			  <menuitem action="contribute" label="Support extension author" class="menuitem-iconic" image="chrome://asynchremote/content/icons/toolbar/balance.png"/>
+
+			</menupopup>
+		  </toolbarbutton>
+		</hbox>
+
+</overlay>

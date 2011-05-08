@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE bindings [
+
+]>
+
+<bindings xmlns="http://www.mozilla.org/xbl"
+          xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+          xmlns:xbl="http://www.mozilla.org/xbl">
+	
+	<binding
+		id="log-toolbarbutton-xbl"
+		extends="chrome://global/content/bindings/toolbarbutton.xml#toolbarbutton"
+	>
+	  
+	  <content>
+
+
+
+		 
+			<xul:image class="toolbarbutton-icon" xbl:inherits="validate,src=image,label"/>
+			<xul:label class="toolbarbutton-text" crop="right" flex="1" xbl:inherits="value=label,accesskey,crop"/>
+			<xul:label anonid="queue" hidden="true" style="
+font-size: 9px ! important;
+z-index: 11110;
+position: absolute;
+margin-left: -17px;
+margin-top: -9px;
+background-color: green;
+color: white;
+-moz-border-radius:4px;
+padding-right: 2px;
+padding-left: 2px;
+text-align:center;
+			" value="0" xbl:inherits="accesskey,crop,dragover-top"/>
+		  <xul:label anonid="errors" hidden="true" style="
+font-size: 9px ! important;
+background-color: green;
+color: white;
+z-index: 11110;
+position:absolute;
+margin-left:-7px;
+margin-bottom:-7px;
+background-color:red;
+color:white;
+-moz-border-radius:4px;
+padding-right: 2px;
+padding-left: 2px;
+text-align:center;
+			" value="0" xbl:inherits="accesskey,crop,dragover-top"/>
+		 
+
+
+	  </content>
+	
+	</binding>
+	
+</bindings>

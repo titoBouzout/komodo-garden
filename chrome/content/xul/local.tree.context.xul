@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<overlay xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+ 
+	<!-- container -->		  
+	<menupopup id="places-files-popup">
+		
+		<!-- local tree context menu -->
+		<menuseparator
+		  id="asynchremote-context-local-download-upload-separator"
+		  insertafter="placesContextMenu_separatorDelete"
+		  hidden="true"/>
+		
+		<menuitem
+		  id="asynchremote-context-local-locate"
+		  label="Locate in Remote"
+		  class="menuitem-iconic asynchremote-locate"
+		  insertafter="placesContextMenu_separatorDelete"
+		  action="locate-remote"
+		  hidden="true"
+		  disabled="true"
+		  oncommand="asynchRemote.actionFromLocal(this.getAttribute('action'))"
+        />
+		<menuitem
+		  id="asynchremote-context-local-download-to-folder"
+		  label="Download to…"
+		  class="menuitem-iconic asynchremote-download-to-folder"
+		  action="download-to-folder"
+		  insertafter="placesContextMenu_separatorDelete"
+		  hidden="true"
+		  oncommand="asynchRemote.actionFromLocal(this.getAttribute('action'))"
+        />
+		<menuitem
+		  id="asynchremote-context-local-download"
+		  label="Download"
+		  class="menuitem-iconic asynchremote-download"
+		  action="download"
+		  insertafter="placesContextMenu_separatorDelete"
+		  hidden="true"
+		  oncommand="asynchRemote.actionFromLocal(this.getAttribute('action'))"
+        />
+
+		<menuitem
+		  id="asynchremote-context-local-upload"
+		  label="Upload"
+		  class="menuitem-iconic asynchremote-upload"
+		  action="upload"
+		  insertafter="placesContextMenu_separatorDelete"
+		  hidden="true"
+		  oncommand="asynchRemote.actionFromLocal(this.getAttribute('action'))"
+        />
+
+	  </menupopup>
+  
+</overlay>

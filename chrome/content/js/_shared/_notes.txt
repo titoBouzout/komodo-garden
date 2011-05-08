@@ -1,0 +1,4 @@
+this folder contains objects(developed specially for this extension)
+and these are included and shared via the XPCOM of this extension
+
+here there is no window, document or alert

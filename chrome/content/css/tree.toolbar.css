@@ -1,0 +1,81 @@
+/*toolbar nav button */
+  
+  .asynchremote-nav{
+	-moz-box-align: start !important;
+  }
+  .asynchremote-nav > label {
+	text-align:left !important;
+	margin-left:4px !important;
+  }
+  .asynchremote-nav > dropmarker
+  {
+	display:none !important;
+  }
+
+/* toolbar log button */
+
+  .log-toolbarbutton-xbl
+  {
+    -moz-binding:url('chrome://asynchremote/content/xml/log-toolbarbutton.xml#log-toolbarbutton-xbl');
+  }
+  
+/* toolbar */
+
+  .asynchremote-go-up {
+	list-style-image : url("chrome://asynchremote/content/icons/toolbar/go-up.png");
+  }
+  .asynchremote-go-up[disabled] {
+	list-style-image : url("chrome://asynchremote/content/icons/toolbar/go-up-disabled.png");
+  }
+  
+  .asynchremote-refresh {
+	list-style-image : url("chrome://asynchremote/content/icons/toolbar/refresh.png");
+  }
+  
+  .asynchremote-log{
+	list-style-image : url("chrome://asynchremote/content/icons/toolbar/log.png");
+  }
+  .asynchremote-collapse{
+	list-style-image : url("chrome://asynchremote/content/icons/toolbar/collapse.png");
+  }
+  
+  .asynchremote-connections{
+	list-style-image : url("chrome://asynchremote/content/icons/toolbar/connections.png");
+  }
+  .asynchremote-shutdown{
+	list-style-image : url("chrome://asynchremote/content/icons/toolbar/shutdown.png");
+  }
+  .asynchremote-connection
+  {
+	list-style-image : url("chrome://asynchremote/content/icons/toolbar/disconnected.png");
+  }
+  .asynchremote-connection[connected]
+  {
+	list-style-image : url("chrome://asynchremote/content/icons/toolbar/connected.png");
+  }
+  .asynchremote-connection[connecting]
+  {
+	list-style-image : url("chrome://asynchremote/content/icons/toolbar/disconnected-connecting.png");
+  }
+  .asynchremote-connection[connected][connecting]
+  {
+	list-style-image : url("chrome://asynchremote/content/icons/toolbar/connected-connecting.png");
+  }
+
+/* processes */
+
+  .asynchremote-processes{
+	list-style-image : url("chrome://asynchremote/content/icons/toolbar/processes/pause.png");
+  }
+  .asynchremote-processes[running="true"]{
+	list-style-image : url("chrome://asynchremote/content/icons/toolbar/processes/pause.png");
+  }
+  .asynchremote-processes[paused="true"]{
+	list-style-image : url("chrome://asynchremote/content/icons/toolbar/processes/play.png");
+  }
+  .asynchremote-processes[aborted="true"]{
+	list-style-image : url("chrome://asynchremote/content/icons/toolbar/processes/aborted.png");
+  }
+  .asynchremote-processes[completed="true"]{
+	list-style-image : url("chrome://asynchremote/content/icons/toolbar/processes/repeat.png");
+  }

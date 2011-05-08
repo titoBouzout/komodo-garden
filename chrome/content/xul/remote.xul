@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<overlay xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+
+  <!-- container -->
+  <hbox id="placesViewbox_places">
+	
+	<!-- remote container -->
+	<splitter id="asynchremote-box-splitter" collapsed="true"/>
+	<vbox id="asynchremote-box" flex="1" collapsed="true" persist="width height">
+	  	
+		<!-- remote toolbar -->
+		<hbox id="asynchremote-toolbar"/>
+		<!-- remote trees -->
+		<hbox id="asynchremote-trees" flex="1"/>
+		
+	</vbox>
+	
+  </hbox>
+
+</overlay>
