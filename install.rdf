@@ -10,8 +10,7 @@
 	  <em:description>Allows connect, browse, upload and download files and folder from many remotes at same time and all without blocking the application.</em:description>
 	  <em:creator>Roberto Bouzout (tito)</em:creator>
 	  <em:iconURL>chrome://asynchremote/content/icons/toolbar/disconnected.png</em:iconURL>
-	  <em:homepageURL></em:homepageURL>
-	  
+	  <em:homepageURL>https://github.com/titoBouzout/komodo-asynch-remotes</em:homepageURL>
 	  <em:targetApplication>
 		<Description>
 			<!-- Komodo Edit's uuid -->
