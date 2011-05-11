@@ -1,4 +1,0 @@
-this folder contains general objects that can be used by many extensions.
-These objects are included and shared via the XPCOM of this extension
-
-here there is no window, document or alert
