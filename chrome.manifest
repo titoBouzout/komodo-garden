@@ -1,5 +1,7 @@
 content asynchremote chrome/content/
 
+resource asynchremote chrome/content/js/
+
 overlay chrome://komodo/content/komodo.xul chrome://asynchremote/content/xul/_includes.xul
 
 overlay chrome://komodo/content/komodo.xul chrome://asynchremote/content/xul/toolbar.xul

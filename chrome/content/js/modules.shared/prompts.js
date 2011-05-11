@@ -1,4 +1,4 @@
-  INCLUDE('_lib/string.js');
+  this.include('string.js');
   
   this.overWritePrompt = function(aString, window)
   {
@@ -8,7 +8,7 @@
 	window.getAttention();
 	
 	var win = window.openDialog(
-					   'chrome://'+CHROME_NAME+'/content/js/_shared/prompts/overWriteFiles.xul',
+					   'chrome://'+this.getExtensionChromeName()+'/content/js/modules.shared/prompts/overWriteFiles.xul',
 					   '',
 					   'chrome,centerscreen,modal',
 					   r);

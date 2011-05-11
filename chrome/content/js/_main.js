@@ -38,12 +38,14 @@ function AsynchRemote()
 	this.connections = [];
 	this.trees = [];
 
-	//global object from xpcom
-	this.s = Components
-			  .classes["@particle.universe.tito/service;1"]
-			  .getService()
-			  .wrappedJSObject;
-			  
+	//global singleton object
+	Components.utils.import('resource://asynchremote/modules/_init.js', this);
+	this.s.extensionID = '';
+	this.s.extensionName = 'Asynch Remote';
+	this.s.extensionChromeName = 'asynchremote';
+	//this.s.init('', 'Asynch Remote', 'asynchremote');
+	
+	//alert(this.s.toSource());
 	this.s.include('file.js','history.js','string.js','thread.js','serialize.js','sharedMemory.js','DOM.js','prompt.js','process.js','search.js');
 	this.s.includeShared('prompts.js', 'variete.js');
 	
