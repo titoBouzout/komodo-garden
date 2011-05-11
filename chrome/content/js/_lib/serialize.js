@@ -1,5 +1,5 @@
 
-  INCLUDE('_lib/file');
+  INCLUDE('_lib/file.js');
   
   this.serializedSessionGet = function(aID, aDefault, aParser)
   {

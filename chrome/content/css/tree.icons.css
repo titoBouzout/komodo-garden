@@ -144,7 +144,7 @@
 .asynchremote-tree treechildren::-moz-tree-image(asynchremote_file, conf),
 .asynchremote-tree treechildren::-moz-tree-image(asynchremote_file, dat)
 {
-  list-style-image:url(chrome://asynchremote/content/icons/tree/files/ini.png);
+  list-style-image:url(chrome://asynchremote/content/icons/tree/files/conf.png);
 }
 
 .asynchremote-tree treechildren::-moz-tree-image(asynchremote_file, txt){

@@ -1,4 +1,4 @@
-  INCLUDE('_lib/string');
+  INCLUDE('_lib/string.js');
   
   const mPrompt = Components
 					.classes["@mozilla.org/embedcomp/prompt-service;1"]

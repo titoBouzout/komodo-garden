@@ -1,4 +1,4 @@
-  INCLUDE('_lib/string');
+  INCLUDE('_lib/string.js');
   
   this.overWritePrompt = function(aString, window)
   {

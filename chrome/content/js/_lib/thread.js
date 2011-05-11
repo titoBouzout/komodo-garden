@@ -60,7 +60,7 @@
 					);
   }
   
-  //executes aCallback into the selected thread and wait for return
+  //shutdowns the thread
   this.threadShutdown = function(aThread)
   {
 	aThread.shutdown();

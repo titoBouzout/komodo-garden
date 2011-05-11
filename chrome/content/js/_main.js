@@ -44,8 +44,8 @@ function AsynchRemote()
 			  .getService()
 			  .wrappedJSObject;
 			  
-	this.s.include('file','history','string','thread','serialize','sharedMemory','DOM','prompt','process','search');
-	this.s.includeShared('prompts', 'variete');
+	this.s.include('file.js','history.js','string.js','thread.js','serialize.js','sharedMemory.js','DOM.js','prompt.js','process.js','search.js');
+	this.s.includeShared('prompts.js', 'variete.js');
 	
 	this.ko = new AsynchRemoteKomodo();
 	

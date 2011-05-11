@@ -4,9 +4,6 @@ const EXTENSION_NAME = 'Remote Places';
 const CHROME_NAME = 'asynchremote';
 const VERSION = '0';
 
-
-
-
 const CI = Components.interfaces;
 const CC = Components.classes;
 const CU = Components.utils;
@@ -40,7 +37,7 @@ function INCLUDE(name) {
   else if (!(name in _INCLUDED)) {
     try {
       _INCLUDED[name] = true;
-	  LOADER.loadSubScript('chrome://'+CHROME_NAME+'/content/js/'+ name + '.js', singleton);
+	  LOADER.loadSubScript('chrome://'+CHROME_NAME+'/content/js/'+ name , singleton);
     } catch(e) {
       singleton.log('INCLUDE:' + name + ':\n' + e + '\n' + (e.stack || ''));
     }
@@ -61,8 +58,8 @@ function LAZY_INCLUDE(name) {
 }
 
 const SERVICE_CONSTRUCTOR = function() {
-  INCLUDE('_lib/_init');
+  INCLUDE('_lib/_init.js');
   return singleton;
 }
 
-INCLUDE('_lib/XPCOM');
+INCLUDE('_lib/XPCOM.js');
