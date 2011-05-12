@@ -1,3 +1,3 @@
 rm asynchremote.xpi
-zip -r asynchremote.xpi *
+zip  -x \*.git\* -r asynchremote.xpi *
 komodo asynchremote.xpi
