@@ -1407,7 +1407,8 @@ AsynchRemoteConnection.prototype = {
 	var AsynchRemoteConnection = this;
 	asynchRemote.s.runThread(function(){
 	  
-	  if(AsynchRemoteConnection.connection && AsynchRemoteConnection.connection.close)
+	  
+	  if(AsynchRemoteConnection.connected && AsynchRemoteConnection.connection && AsynchRemoteConnection.connection.close)
 		AsynchRemoteConnection.connection.close();
 	  
 	  AsynchRemoteConnection.connecting = 0;
@@ -1417,23 +1418,11 @@ AsynchRemoteConnection.prototype = {
 	  
 	  AsynchRemoteConnection.log('status', 'Connection closed', 0);
 	  
-	  AsynchRemoteConnection.notifyProgress()
+	  AsynchRemoteConnection.notifyProgress();
 	  
 	  AsynchRemoteConnection.closing = false;
 	  
 	}, this.thread);
-  },
-  //close the connection, clean the process list and shutdown the thread.
-  //called when the application is closed or the window is unloaded.
-  shutdown:function()
-  {
-	//queue the disconnect operation
-	var AsynchRemoteConnection = this;
-	asynchRemote.s.runThread(function(){
-		this.close();
-		this.processes = [];
-	}, this.thread);
-	//asynchRemote.s.threadShutdown(this.thread); this makes the application crash
   },
   //notifyProgress of connections and processes
   notifyProgress:function()

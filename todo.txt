@@ -8,6 +8,9 @@ BUGS
   
   probably others.
   
+  should dispatch events or update ui on all the windows
+  vars should be shared across windows(globals)
+  
 TODO
 
   

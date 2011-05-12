@@ -30,12 +30,12 @@
 		</treecols>
 		<treechildren
 		  flex="1"
-		  ondragstart="return this.asynchTree.childrenOnDragStart(event, this);"
-		  ondragover="return this.asynchTree.childrenOnDragOver(event, this);"
-		  ondragenter="return this.asynchTree.childrenOnDragEnter(event, this);"
-		  onclick="this.asynchTree.childrenOnClick(event, this);"
-		  ondblclick="this.asynchTree.childrenOnDblClick(event, this);"
-		  ondrop="return this.asynchTree.childrenOnDrop(event, this);"
+		  ondragstart="return this.parentNode.asynchTree.childrenOnDragStart(event, this);"
+		  ondragover="return this.parentNode.asynchTree.childrenOnDragOver(event, this);"
+		  ondragenter="return this.parentNode.asynchTree.childrenOnDragEnter(event, this);"
+		  onclick="this.parentNode.asynchTree.childrenOnClick(event, this);"
+		  ondblclick="this.parentNode.asynchTree.childrenOnDblClick(event, this);"
+		  ondrop="return this.parentNode.asynchTree.childrenOnDrop(event, this);"
 		/>
 	  </tree>
 	  

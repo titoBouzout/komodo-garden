@@ -39,15 +39,12 @@ function AsynchRemote()
 	this.trees = [];
 
 	//global singleton object
-	Components.utils.import('resource://asynchremote/modules/_init.js', this);
+	Components.utils.import('resource://universe.particle.tito/_init.js', this);
 	this.s.extensionID = '';
 	this.s.extensionName = 'Asynch Remote';
 	this.s.extensionChromeName = 'asynchremote';
-	//this.s.init('', 'Asynch Remote', 'asynchremote');
-	
-	//alert(this.s.toSource());
-	this.s.include('file.js','history.js','string.js','thread.js','serialize.js','sharedMemory.js','DOM.js','prompt.js','process.js','search.js');
-	this.s.includeShared('prompts.js', 'variete.js');
+	this.s.include('file','history','string','thread','serialize','sharedMemory','DOM','prompt','process','search');
+	this.s.includeShared('prompt', 'variete');
 	
 	this.ko = new AsynchRemoteKomodo();
 	
@@ -1158,25 +1155,8 @@ function AsynchRemote()
   }
   this.uninitExtension = function()
   {
-	if(!this.quitingApplication)
-	{
-	  var servers = this.mRCService.getServerInfoList({});
-	  var server;
-	  for(var id in servers)
-	  {
-		server = servers[id].alias;
-		if(!this.connections[server]){}
-		else
-		{
-		  this.connections[server].shutdown();
-		}
-	  }
-	}
-	else
-	{
-	  //I alerted the user that there is processes running..
-	  //the user request kill all
-	}
+	//I alerted the user that there is processes running..
+	//the user request kill all
   }
   
 /*
