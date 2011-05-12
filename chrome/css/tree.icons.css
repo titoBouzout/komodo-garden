@@ -2,21 +2,20 @@
   margin:0px;
 }
 
-
 .asynchremote-tree treechildren::-moz-tree-image {
   margin-right:4px;
 }
 .asynchremote-tree treechildren::-moz-tree-image(asynchremote_folder_open) {
-  list-style-image:url(chrome://asynchremote/content/icons/tree/folder-open.png);
+  list-style-image:url(chrome://up.tito.icons.files/content/tree/folder-open.png);
 }
 .asynchremote-tree treechildren::-moz-tree-image(asynchremote_folder_closed) {
-  list-style-image:url(chrome://asynchremote/content/icons/tree/folder-closed.png);
+  list-style-image:url(chrome://up.tito.icons.files/content/tree/folder-closed.png);
 }
 .asynchremote-tree treechildren::-moz-tree-image(asynchremote_file) {
-  list-style-image:url(chrome://asynchremote/content/icons/tree/file-icon.png);
+  list-style-image:url(chrome://up.tito.icons.files/content/tree/file-icon.png);
 }
 .asynchremote-tree treechildren::-moz-tree-image(asynchremote_busy) {
-  list-style-image:url(chrome://asynchremote/content/icons/tree/folder-closed-loading.png);
+  list-style-image:url(chrome://up.tito.icons.files/content/tree/folder-closed-loading.png);
 }
 
 .asynchremote-tree treechildren::-moz-tree-image(asynchremote_file, apng),
@@ -25,26 +24,26 @@
 .asynchremote-tree treechildren::-moz-tree-image(asynchremote_file, gif),
 .asynchremote-tree treechildren::-moz-tree-image(asynchremote_file, jpeg), 
 .asynchremote-tree treechildren::-moz-tree-image(asynchremote_file, bmp) {
-  list-style-image:url(chrome://asynchremote/content/icons/tree/files/image.png);
+  list-style-image:url(chrome://up.tito.icons.files/content/image.png);
 }
 
 .asynchremote-tree treechildren::-moz-tree-image(asynchremote_file, psd) {
-  list-style-image:url(chrome://asynchremote/content/icons/tree/files/psd.png);
+  list-style-image:url(chrome://up.tito.icons.files/content/psd.png);
 }
 
 .asynchremote-tree treechildren::-moz-tree-image(asynchremote_file, js) {
-  list-style-image:url(chrome://asynchremote/content/icons/tree/files/js.png);
+  list-style-image:url(chrome://up.tito.icons.files/content/js.png);
 }
 
 .asynchremote-tree treechildren::-moz-tree-image(asynchremote_file, xpi) {
-  list-style-image:url(chrome://asynchremote/content/icons/tree/files/xpi.png);
+  list-style-image:url(chrome://up.tito.icons.files/content/xpi.png);
 }
 
 .asynchremote-tree treechildren::-moz-tree-image(asynchremote_file, xml),
 .asynchremote-tree treechildren::-moz-tree-image(asynchremote_file, rdf),
 .asynchremote-tree treechildren::-moz-tree-image(asynchremote_file, dtd),
 .asynchremote-tree treechildren::-moz-tree-image(asynchremote_file, xul) {
-  list-style-image:url(chrome://asynchremote/content/icons/tree/files/xml.png);
+  list-style-image:url(chrome://up.tito.icons.files/content/xml.png);
 }
 
 .asynchremote-tree treechildren::-moz-tree-image(asynchremote_file, htm),
@@ -52,25 +51,25 @@
 .asynchremote-tree treechildren::-moz-tree-image(asynchremote_file, md),
 .asynchremote-tree treechildren::-moz-tree-image(asynchremote_file, xhtml)
 {
-  list-style-image:url(chrome://asynchremote/content/icons/tree/files/html.png);
+  list-style-image:url(chrome://up.tito.icons.files/content/html.png);
 }
 
 .asynchremote-tree treechildren::-moz-tree-image(asynchremote_file, css) {
-  list-style-image:url(chrome://asynchremote/content/icons/tree/files/css.png);
+  list-style-image:url(chrome://up.tito.icons.files/content/css.png);
 }
 
 .asynchremote-tree treechildren::-moz-tree-image(asynchremote_file, sql),
 .asynchremote-tree treechildren::-moz-tree-image(asynchremote_file, sqlite)
 {
-  list-style-image:url(chrome://asynchremote/content/icons/tree/files/sql.png);
+  list-style-image:url(chrome://up.tito.icons.files/content/sql.png);
 }
 
 .asynchremote-tree treechildren::-moz-tree-image(asynchremote_file, ai) {
-  list-style-image:url(chrome://asynchremote/content/icons/tree/files/ai.png);
+  list-style-image:url(chrome://up.tito.icons.files/content/ai.png);
 }
 
 .asynchremote-tree treechildren::-moz-tree-image(asynchremote_file, cdr) {
-  list-style-image:url(chrome://asynchremote/content/icons/tree/files/cdr.png);
+  list-style-image:url(chrome://up.tito.icons.files/content/cdr.png);
 }
 
 .asynchremote-tree treechildren::-moz-tree-image(asynchremote_file, mov),
@@ -80,7 +79,7 @@
 .asynchremote-tree treechildren::-moz-tree-image(asynchremote_file, flv),
 .asynchremote-tree treechildren::-moz-tree-image(asynchremote_file, wmv)
 {
-  list-style-image:url(chrome://asynchremote/content/icons/tree/files/film.png);
+  list-style-image:url(chrome://up.tito.icons.files/content/film.png);
 }
 
 .asynchremote-tree treechildren::-moz-tree-image(asynchremote_file, mp3),
@@ -93,7 +92,7 @@
 .asynchremote-tree treechildren::-moz-tree-image(asynchremote_file, asx),
 .asynchremote-tree treechildren::-moz-tree-image(asynchremote_file, pcm)
 {
-  list-style-image:url(chrome://asynchremote/content/icons/tree/files/music.png);
+  list-style-image:url(chrome://up.tito.icons.files/content/music.png);
 }
 
 .asynchremote-tree treechildren::-moz-tree-image(asynchremote_file, php),
@@ -101,23 +100,23 @@
 .asynchremote-tree treechildren::-moz-tree-image(asynchremote_file, php4),
 .asynchremote-tree treechildren::-moz-tree-image(asynchremote_file, php5)
 {
-  list-style-image:url(chrome://asynchremote/content/icons/tree/files/php.png);
+  list-style-image:url(chrome://up.tito.icons.files/content/php.png);
 }
 
 .asynchremote-tree treechildren::-moz-tree-image(asynchremote_file, pdf){
-  list-style-image:url(chrome://asynchremote/content/icons/tree/files/pdf.png);
+  list-style-image:url(chrome://up.tito.icons.files/content/pdf.png);
 }
 
 .asynchremote-tree treechildren::-moz-tree-image(asynchremote_file, as){
-  list-style-image:url(chrome://asynchremote/content/icons/tree/files/as.png);
+  list-style-image:url(chrome://up.tito.icons.files/content/as.png);
 }
 
 .asynchremote-tree treechildren::-moz-tree-image(asynchremote_file, fla){
-  list-style-image:url(chrome://asynchremote/content/icons/tree/files/fla.png);
+  list-style-image:url(chrome://up.tito.icons.files/content/fla.png);
 }
 
 .asynchremote-tree treechildren::-moz-tree-image(asynchremote_file, swf){
-  list-style-image:url(chrome://asynchremote/content/icons/tree/files/swf.png);
+  list-style-image:url(chrome://up.tito.icons.files/content/swf.png);
 }
 
 .asynchremote-tree treechildren::-moz-tree-image(asynchremote_file, xls),
@@ -125,7 +124,7 @@
 .asynchremote-tree treechildren::-moz-tree-image(asynchremote_file, rtf),
 .asynchremote-tree treechildren::-moz-tree-image(asynchremote_file, ppt)
 {
-  list-style-image:url(chrome://asynchremote/content/icons/tree/files/office.png);
+  list-style-image:url(chrome://up.tito.icons.files/content/office.png);
 }
 
 .asynchremote-tree treechildren::-moz-tree-image(asynchremote_file, zip),
@@ -133,93 +132,93 @@
 .asynchremote-tree treechildren::-moz-tree-image(asynchremote_file, rar),
 .asynchremote-tree treechildren::-moz-tree-image(asynchremote_file, gz)
 {
-  list-style-image:url(chrome://asynchremote/content/icons/tree/files/compressed.png);
+  list-style-image:url(chrome://up.tito.icons.files/content/compressed.png);
 }
 
 .asynchremote-tree treechildren::-moz-tree-image(asynchremote_file, exe){
-  list-style-image:url(chrome://asynchremote/content/icons/tree/files/exe.png);
+  list-style-image:url(chrome://up.tito.icons.files/content/exe.png);
 }
 
 .asynchremote-tree treechildren::-moz-tree-image(asynchremote_file, ini),
 .asynchremote-tree treechildren::-moz-tree-image(asynchremote_file, conf),
 .asynchremote-tree treechildren::-moz-tree-image(asynchremote_file, dat)
 {
-  list-style-image:url(chrome://asynchremote/content/icons/tree/files/conf.png);
+  list-style-image:url(chrome://up.tito.icons.files/content/conf.png);
 }
 
 .asynchremote-tree treechildren::-moz-tree-image(asynchremote_file, txt){
-  list-style-image:url(chrome://asynchremote/content/icons/tree/files/txt.png);
+  list-style-image:url(chrome://up.tito.icons.files/content/txt.png);
 }
 
 .asynchremote-tree treechildren::-moz-tree-image(asynchremote_file, sh),
 .asynchremote-tree treechildren::-moz-tree-image(asynchremote_file, bat)
 {
-  list-style-image:url(chrome://asynchremote/content/icons/tree/files/sh.png);
+  list-style-image:url(chrome://up.tito.icons.files/content/sh.png);
 }
 
 .asynchremote-tree treechildren::-moz-tree-image(asynchremote_file, py),
 .asynchremote-tree treechildren::-moz-tree-image(asynchremote_file, pl){
-  list-style-image:url(chrome://asynchremote/content/icons/tree/files/p.png);
+  list-style-image:url(chrome://up.tito.icons.files/content/p.png);
 }
 
 .asynchremote-tree treechildren::-moz-tree-image(asynchremote_file, rb){
-  list-style-image:url(chrome://asynchremote/content/icons/tree/files/rb.png);
+  list-style-image:url(chrome://up.tito.icons.files/content/rb.png);
 }
 
 .asynchremote-tree treechildren::-moz-tree-image(asynchremote_file, htaccess){
-  list-style-image:url(chrome://asynchremote/content/icons/tree/files/htaccess.png);
+  list-style-image:url(chrome://up.tito.icons.files/content/htaccess.png);
 }
 
 .asynchremote-tree treechildren::-moz-tree-image(asynchremote_file, diff){
-  list-style-image:url(chrome://asynchremote/content/icons/tree/files/diff.png);
+  list-style-image:url(chrome://up.tito.icons.files/content/diff.png);
 }
 
 .asynchremote-tree treechildren::-moz-tree-image(asynchremote_file, komodotool),
 .asynchremote-tree treechildren::-moz-tree-image(asynchremote_file, kpz),
 .asynchremote-tree treechildren::-moz-tree-image(asynchremote_file, komodoproject)
 {
-  list-style-image:url(chrome://asynchremote/content/icons/tree/files/komodo16.png);
+  list-style-image:url(chrome://up.tito.icons.files/content/komodo16.png);
 }
 
 .asynchremote-tree treechildren::-moz-tree-image(asynchremote_file, json){
-  list-style-image:url(chrome://asynchremote/content/icons/tree/files/json.png);
+  list-style-image:url(chrome://up.tito.icons.files/content/json.png);
 }
 
 .asynchremote-tree treechildren::-moz-tree-image(asynchremote_file, rss){
-  list-style-image:url(chrome://asynchremote/content/icons/tree/files/rss.png);
+  list-style-image:url(chrome://up.tito.icons.files/content/rss.png);
 }
 
 .asynchremote-tree treechildren::-moz-tree-image(asynchremote_file, bak){
-  list-style-image:url(chrome://asynchremote/content/icons/tree/files/bak.png);
+  list-style-image:url(chrome://up.tito.icons.files/content/bak.png);
 }
 .asynchremote-tree treechildren::-moz-tree-image(asynchremote_file, tmp){
-  list-style-image:url(chrome://asynchremote/content/icons/tree/files/tmp.png);
+  list-style-image:url(chrome://up.tito.icons.files/content/tmp.png);
 }
 
 .asynchremote-tree treechildren::-moz-tree-image(asynchremote_file, properties){
-  list-style-image:url(chrome://asynchremote/content/icons/tree/files/properties.png);
+  list-style-image:url(chrome://up.tito.icons.files/content/properties.png);
 }
 
 .asynchremote-tree treechildren::-moz-tree-image(asynchremote_file, fifo){
-  list-style-image:url(chrome://asynchremote/content/icons/tree/files/fifo.png);
+  list-style-image:url(chrome://up.tito.icons.files/content/fifo.png);
 }
 
 .asynchremote-tree treechildren::-moz-tree-image(asynchremote_file, ico){
-  list-style-image:url(chrome://asynchremote/content/icons/tree/files/ico.png);
+  list-style-image:url(chrome://up.tito.icons.files/content/ico.png);
 }
 
 .asynchremote-tree treechildren::-moz-tree-image(asynchremote_file, jar){
-  list-style-image:url(chrome://asynchremote/content/icons/tree/files/jar.png);
+  list-style-image:url(chrome://up.tito.icons.files/content/jar.png);
 }
 
 .asynchremote-tree treechildren::-moz-tree-image(asynchremote_file, gitignore){
-  list-style-image:url(chrome://asynchremote/content/icons/tree/files/gitignore.png);
+  list-style-image:url(chrome://up.tito.icons.files/content/gitignore.png);
 }
 
 .asynchremote-tree treechildren::-moz-tree-image(asynchremote_file, manifest){
-  list-style-image:url(chrome://asynchremote/content/icons/tree/files/manifest.png);
+  list-style-image:url(chrome://up.tito.icons.files/content/manifest.png);
 }
 
 .asynchremote-tree treechildren::-moz-tree-image(asynchremote_file, log){
-  list-style-image:url(chrome://asynchremote/content/icons/tree/files/log.png);
+  list-style-image:url(chrome://up.tito.icons.files/content/log.png);
 }

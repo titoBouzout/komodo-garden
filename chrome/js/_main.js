@@ -39,7 +39,7 @@ function AsynchRemote()
 	this.trees = [];
 
 	//global singleton object
-	Components.utils.import('resource://universe.particle.tito/_init.js', this);
+	Components.utils.import('resource://up.tito/_init.js', this);
 	this.s.extensionID = '';
 	this.s.extensionName = 'Asynch Remote';
 	this.s.extensionChromeName = 'asynchremote';

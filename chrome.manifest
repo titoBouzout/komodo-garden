@@ -1,7 +1,9 @@
-content asynchremote chrome/content/
+content asynchremote chrome/
 
-resource universe.particle.tito chrome/content/js/API/
-resource asynchremote chrome/content/js/shared/
+content up.tito.icons.files chrome/icons/files/
+
+resource up.tito chrome/js/API/
+resource asynchremote chrome/js/shared/
 
 overlay chrome://komodo/content/komodo.xul chrome://asynchremote/content/xul/_includes.xul
 
