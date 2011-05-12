@@ -10,6 +10,7 @@ BUGS
   
   should dispatch events or update ui on all the windows
   vars should be shared across windows(globals)
+  move the tree view to the main API building an extensible generic tree view
   
 TODO
 
