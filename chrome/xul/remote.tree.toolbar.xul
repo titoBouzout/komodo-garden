@@ -106,16 +106,6 @@
 		  />
 		  <toolbarbutton
 			buttonstyle="pictures"
-			type="button"
-			persist="buttonstyle"
-			orient="horizontal"
-			class="asynchremote-collapse"
-			tooltiptext="Collapse Panel"
-			action="collapse"
-			oncommand="asynchRemote.actionFromRemote(this.getAttribute('action'))"
-		  />
-		  <toolbarbutton
-			buttonstyle="pictures"
 			type="menu"
 			persist="buttonstyle"
 			orient="horizontal"
@@ -151,6 +141,16 @@
 
 			</menupopup>
 		  </toolbarbutton>
+		  <toolbarbutton
+			buttonstyle="pictures"
+			type="button"
+			persist="buttonstyle"
+			orient="horizontal"
+			class="asynchremote-collapse"
+			tooltiptext="Collapse Panel"
+			action="collapse"
+			oncommand="asynchRemote.actionFromRemote(this.getAttribute('action'))"
+		  />
 		</hbox>
 
 </overlay>
