@@ -39,37 +39,27 @@ function AsynchRemote()
 	this.trees = [];
 
 	//global singleton object
-	Components.utils.import('resource://up.tito/_init.js', this);
-	this.s.extensionID = '';
+	Components.utils.import('resource://up.tito.asynchremote/_init.js', this);
+	this.s.extensionID = 'tito@asynchremote';
 	this.s.extensionName = 'Asynch Remote';
 	this.s.extensionChromeName = 'asynchremote';
-	this.s.include('file','history','string','thread','serialize','sharedMemory','DOM','prompt','process','search');
+	this.s.include('observer','preference','file','history','string','thread','serialize','sharedMemory','DOM','prompt','process','search','search','places','window','listener','application','tab','document');
 	this.s.includeShared('prompt', 'variete');
-	
-	this.ko = new AsynchRemoteKomodo();
+	this.windowID = this.s.getWindowID();
+	//end global singleton object
 	
 	//listeners
-	this.element('places-files-popup')
-		  .addEventListener('popupshowing',
-							function(event)
-							{
-							  asynchRemote.placesLocalContextPopupShowing(event);
-							}, false);
-	
-	document
-	  .addEventListener('current_view_changed',
-							function(event)
-							{
-							  asynchRemote.onTabChange(event.originalTarget);
-							}, false);
-  
+	this.s.addListener(
+						{'id':this.windowID,'window':window},
+						'onLocationChange',
+						function(aTab){ asynchRemote.onLocationChange(aTab);}
+						);
 	this.s.addObserver('quit-application-requested',
 						function(aSubject)
 						{
 						  asynchRemote.onApplicationClose(aSubject);
 						});
   }
-  
   
   //look for the tree and switch to that tree, create the tree if no exists
   this.switchToServer = function(anElement)
@@ -123,7 +113,7 @@ function AsynchRemote()
 	this.focusedServer = server;
 	
 	this.placesRemoteToolbarUpdate(server);
-	this.onTabChange(this.ko.tabGetFocused());
+	this.onLocationChange(this.s.tabGetFocused(window));
   }
   
 /*
@@ -169,7 +159,6 @@ function AsynchRemote()
   */
   this.placesLocalContextPopupShowing = function(event)
   {
-	this.ko.placesLocalPopupShown(event);
 	var server = this.focusedServer;
 	if(!this.connections[server])
 	{
@@ -187,7 +176,7 @@ function AsynchRemote()
 	  this.element('asynchremote-context-local-download-to-folder').setAttribute('hidden', false);
 	  this.element('asynchremote-context-local-locate').setAttribute('hidden', false);
 	  
-	  if(this.ko.placesLocalGetSelectedPaths().length > 1)
+	  if(this.s.placesLocalGetSelectedPaths(window).length > 1)
 	  {
 		this.element('asynchremote-context-local-upload').setAttribute('multiple', true);
 		this.element('asynchremote-context-local-download').setAttribute('multiple', true);
@@ -457,13 +446,13 @@ function AsynchRemote()
 	  return false;
 	
 	//selection
-  	var selectedItems = this.ko.placesLocalGetSelectedPaths(aboutFocusedTab);
+  	var selectedItems = this.s.placesLocalGetSelectedPaths(window, aboutFocusedTab);
 	
 	var selectedPath = selectedItems[0];//the very first path on the selection
 	
 	//vars
 	var currentRemotePath = this.connections[server].cache.currentPath
-	var currentLocalPath 	= this.ko.placesLocalCurrentPath();
+	var currentLocalPath 	= this.s.placesLocalCurrentPath(window);
 	var tree = this.trees[server];
 	
 	switch(action)
@@ -478,7 +467,7 @@ function AsynchRemote()
 														 currentLocalPath,
 														 selectedItems[id])
 			
-			if(this.s.fileIsFolder(selectedItems[id]))
+			if(this.s.pathIsFolder(selectedItems[id]))
 			{
 			  aProcess = this.connections[server]
 					.downloadDirectory(
@@ -513,7 +502,7 @@ function AsynchRemote()
 														   currentLocalPath,
 														   selectedItems[id])
 
-			  if(this.s.fileIsFolder(selectedItems[id]))
+			  if(this.s.pathIsFolder(selectedItems[id]))
 			  {
 				aProcess = this.connections[server]
 					  .downloadDirectory(
@@ -546,7 +535,7 @@ function AsynchRemote()
 														 currentLocalPath,
 														 selectedItems[id])
 
-			if(this.s.fileIsFolder(selectedItems[id]))
+			if(this.s.pathIsFolder(selectedItems[id]))
 			{
 			   aProcess = this.connections[server].uploadDirectory(
 											file,
@@ -604,7 +593,7 @@ function AsynchRemote()
 	}
 	
 	var currentRemotePath 	= this.connections[server].cache.currentPath
-	var currentLocalPath 	= this.ko.placesLocalCurrentPath();
+	var currentLocalPath 	= this.s.placesLocalCurrentPath(window);
 	var tree = this.trees[server];
 	
 	switch(action)
@@ -940,7 +929,7 @@ function AsynchRemote()
 			//if the local places has no focus and the remote places has  focus
 			 ((!ko.places.viewMgr || !ko.places.viewMgr.focused) && this.trees[server].focused) ||
 			 //if there is selected files on remote, and there is NO selected files on local
-			 (this.ko.placesLocalGetSelectedPaths().length === 0 && this.trees[server].selectionSelectedItems.length > 0)
+			 (this.s.placesLocalGetSelectedPaths(window).length === 0 && this.trees[server].selectionSelectedItems.length > 0)
 			 
 		  )
 		  {
@@ -950,7 +939,7 @@ function AsynchRemote()
 				  //if the remote pane has NO focus and the places pane has focus
 				  (!this.trees[server].focused && ko.places.viewMgr && ko.places.viewMgr.focused) ||
 				  //if there is selected files on local pane, and there is NO selected files on remote
-				  (this.trees[server].selectionSelectedItems.length === 0 && this.ko.placesLocalGetSelectedPaths().length > 0)
+				  (this.trees[server].selectionSelectedItems.length === 0 && this.s.placesLocalGetSelectedPaths(window).length > 0)
 				  )
 		  {
 			this.actionFromLocal('upload');
@@ -967,7 +956,7 @@ function AsynchRemote()
 			//if the local places has no focus and the remote places has  focus
 			 ((!ko.places.viewMgr || !ko.places.viewMgr.focused) && this.trees[server].focused) ||
 			 //if there is selected files on remote, and there is NO selected files on local
-			 (this.ko.placesLocalGetSelectedPaths().length === 0 && this.trees[server].selectionSelectedItems.length > 0)
+			 (this.s.placesLocalGetSelectedPaths(window).length === 0 && this.trees[server].selectionSelectedItems.length > 0)
 			 
 		  )
 		  {
@@ -977,7 +966,7 @@ function AsynchRemote()
 				  //if the remote pane has NO focus and the places pane has focus
 				  (!this.trees[server].focused && ko.places.viewMgr && ko.places.viewMgr.focused) ||
 				  //if there is selected files on local pane, and there is NO selected files on remote
-				  (this.trees[server].selectionSelectedItems.length === 0 && this.ko.placesLocalGetSelectedPaths().length > 0)
+				  (this.trees[server].selectionSelectedItems.length === 0 && this.s.placesLocalGetSelectedPaths(window).length > 0)
 				  )
 		  {
 			this.actionFromLocal('download');
@@ -1011,7 +1000,7 @@ function AsynchRemote()
 		{
 		  this.element('asynchremote-box').setAttribute('collapsed', 'true');
 		  this.element('asynchremote-box-splitter').setAttribute('collapsed', 'true');
-		  this.onTabChange(this.ko.tabGetFocused());
+		  this.onLocationChange(this.s.tabGetFocused(window));
 		  break;
 		}
 	  case 'close':
@@ -1083,10 +1072,10 @@ function AsynchRemote()
 	this.placesRemoteToolbarUpdate(server);
   }
 
-  this.onTabChange = function(aTab)
+  this.onLocationChange = function(aTab)
   {
-	var focusedPath = this.ko.documentGetLocation(this.ko.documentGetFromTab(aTab));
-	var currentLocalPath 	= this.ko.placesLocalCurrentPath();
+	var focusedPath = this.s.documentGetLocation(this.s.documentGetFromTab(aTab));
+	var currentLocalPath 	= this.s.placesLocalCurrentPath(window);
 	var server = this.focusedServer;
 	if(
 	   focusedPath.indexOf(currentLocalPath) !== 0 ||
@@ -1174,7 +1163,7 @@ function AsynchRemote()
 	if(typeof(aString) ==  'undefined')
 	  aString = '';
 	  
-	this.s.log(aName+':'+aString);
+	this.s.dump(aName+':'+aString);
   }
 
   return this;
