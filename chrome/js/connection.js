@@ -863,7 +863,7 @@ AsynchRemoteConnection.prototype = {
 			  //run in a thread and then back to main thread because we need to wait for the file to download
 			  asynchRemote.s.runThread(function(){
 									if(asynchRemote.s.fileExists(aDestination))
-									  asynchRemote.s.runMain(function(){ko.open.multipleURIs([aDestination]);});
+									  asynchRemote.s.runMain(function(){asynchRemote.s.openURL(window, aDestination, true);});
 									}, this.thread);
 			  
 			  this.cacheDirectoryItemAdd(aFile);
