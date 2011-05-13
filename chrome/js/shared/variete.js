@@ -17,9 +17,9 @@
 	var aURI = '';
 	  aURI += aConnection.protocol.toLowerCase() + '://';
 	if(aConnection.username)
-	  aURI += this.encodeURIComponent(aConnection.username);
+	  aURI += this.encodeUTF8(aConnection.username);
 	if(aConnection.username && aConnection.password)
-	  aURI += ':' + this.encodeURIComponent(aConnection.password);
+	  aURI += ':' + this.encodeUTF8(aConnection.password);
 	if(aConnection.username)
 	  aURI += '@';
 	aURI += aConnection.server;
