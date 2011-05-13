@@ -2,8 +2,7 @@ content asynchremote chrome/
 
 content up.tito.icons.files chrome/icons/files/
 
-resource up.tito chrome/js/API/
-resource asynchremote chrome/js/shared/
+resource up.tito.asynchremote chrome/js/API/
 
 overlay chrome://komodo/content/komodo.xul chrome://asynchremote/content/xul/_includes.xul
 
