@@ -935,33 +935,39 @@ AsynchRemoteConnection.prototype = {
 			if(aProcess.overWriteRemote)
 			{
 			  //reading file
-			  var aContent = asynchRemote.s.koFileLocalRead(aSource);
+			  //var aContent = asynchRemote.s.koFileLocalRead(aSource);
 			  
 			  var uploadAndRename = asynchRemote.s.pref('upload.and.rename');
 			  if(uploadAndRename)
 				var extension = '.kup';
 			  else
 				var extension = '';
-
+			  
+			  var aData = asynchRemote.s.fileReadBinaryReturnByteArray(aSource);
 			  try//needs to clean the upload timestamp if this process failed
 			  {
 				//asynchRemote.s.runThreadAndWait(function(){
 				
 				  try{
 					//writing file
-					asynchRemote.s.koFileRemoteWrite(asynchRemote.s.getServerURIForPath(aFile, connection)+extension, aContent);
+					
+					connection.writeFile(aFile+extension, aData, aData.length);
+						//asynchRemote.s.koFileRemoteWrite(asynchRemote.s.getServerURIForPath(aFile, connection)+extension, aContent);
 				  }catch(e){
 					//directory may no exists
 					this._tryCreatingDirectories('/', aFile, connection);
 			  
 					  try{
-						asynchRemote.s.koFileRemoteWrite(asynchRemote.s.getServerURIForPath(aFile, connection)+extension, aContent);
+						
+						connection.writeFile(aFile+extension, aData, aData.length);
+						//asynchRemote.s.koFileRemoteWrite(asynchRemote.s.getServerURIForPath(aFile, connection)+extension, aContent);
 					  }catch(e){
 						//may the .kup file exists on remote becuase of a kill on an upload or something.
 						if(extension == '.kup')
 						{
 						  try{connection.removeFile(aFile+extension);}catch(e){}
-						  asynchRemote.s.koFileRemoteWrite(asynchRemote.s.getServerURIForPath(aFile, connection)+extension, aContent);
+						  
+						connection.writeFile(aFile+extension, aData, aData.length);						  //asynchRemote.s.koFileRemoteWrite(asynchRemote.s.getServerURIForPath(aFile, connection)+extension, aContent);
 						}
 					  }
 				  }
