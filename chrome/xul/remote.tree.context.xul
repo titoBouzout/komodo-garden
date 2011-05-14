@@ -10,31 +10,6 @@
 		onpopupshowing="return asynchRemote.placesRemoteContextPopupShowing(this, event)"
 		oncommand="asynchRemote.actionFromRemote(event.originalTarget.getAttribute('action'))"
 	  >
-		
-		<menuitem
-		  id="asynchremote-context-folder-rebase"
-		  label="Make This Folder Root"
-		  class="menuitem-iconic asynchremote-rebase"
-		  testDisableIf="root multiple"
-		  action="rebase"
-        />
-		<menuseparator/>
-		
-		<menuitem
-		  id="asynchremote-context-open"
-		  label="Open"
-		  class="menuitem-iconic asynchremote-open"
-		  action="open"
-		  testDisableIf="root"
-        />
-		<menuitem
-		  id="asynchremote-context-refresh"
-		  label="Refresh"
-		  class="menuitem-iconic asynchremote-refresh"
-		  action="refresh-selected"
-        />
-		<menuseparator/>
-		
 		<menuitem
 		  id="asynchremote-context-new-file"
 		  label="New File…"
@@ -72,6 +47,29 @@
 		
 		<menuseparator/>
 		
+		<menuitem
+		  id="asynchremote-context-open"
+		  label="Open"
+		  class="menuitem-iconic asynchremote-open"
+		  action="open"
+		  testDisableIf="root"
+        />
+		<menuitem
+		  id="asynchremote-context-refresh"
+		  label="Refresh"
+		  class="menuitem-iconic asynchremote-refresh"
+		  action="refresh-selected"
+        />
+		<menuseparator/>
+
+		<menuitem
+		  id="asynchremote-context-folder-rebase"
+		  label="Make This Folder Root"
+		  class="menuitem-iconic asynchremote-rebase"
+		  testDisableIf="root multiple"
+		  action="rebase"
+        />
+		<menuseparator/>
 		<menuitem
 		  id="asynchremote-context-locate"
 		  label="Locate in Local"
