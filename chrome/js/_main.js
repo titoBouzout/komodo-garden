@@ -59,6 +59,12 @@ function AsynchRemote()
 						{
 						  asynchRemote.onApplicationClose(aSubject);
 						});
+	this.element('places-files-popup')
+		  .addEventListener('popupshowing',
+							function(event)
+							{
+							  asynchRemote.placesLocalContextPopupShowing(event);
+							}, false);
   }
   
   //look for the tree and switch to that tree, create the tree if no exists
