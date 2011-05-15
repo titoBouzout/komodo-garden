@@ -8,7 +8,7 @@
 	window.getAttention();
 	
 	var win = window.openDialog(
-					   'chrome://asynchremote/content/js/shared/prompts/overWriteFiles.xul',
+					   'chrome://asynchremote/content/js/shared/prompt/overWriteFiles.xul',
 					   '',
 					   'chrome,centerscreen,modal',
 					   r);
