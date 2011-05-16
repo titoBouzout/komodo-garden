@@ -167,7 +167,9 @@ treeOperationsQueue:function(aFunction)
   }
 },
 toggleOpenState:function(row, rowObject) {
-
+  
+  this.event.renameClick = new Date()+1000;//when dblclking two times quicly the childrenOnClick fires, when need to cheat the time in order to prevent that
+  
   if(this.updating != 0)//queue
   {
 	if(!rowObject)
@@ -480,6 +482,8 @@ editCurrentRow:function()
 },
 childrenOnClick:function(event)
 {
+  if(event.button == 2)
+	return true;
   var diff = new Date() - this.event.renameClick;
   if(diff > 200 && diff < 700 && this.event.renameItem == this.getEventRow(event))
   {
@@ -495,20 +499,21 @@ childrenOnClick:function(event)
 },
 childrenOnDblClick:function(event)
 {
+  this.event.renameClick = new Date()+1000;//when dblclking two times quicly the childrenOnClick fires, when need to cheat the time in order to prevent that 
+  if(event.button == 2)
+	return true;
+
   try{clearTimeout(this.event.renameTimeout);/*yeah!*/}catch(e){}
-  var rows = this.selectionGetSelectedItems()
-  for(var id in rows)
-  {
-	if(rows[id])
+  var row = this.getEventRow(event)
+
+	if(row)
 	{
-	  if(rows[id].isDirectory){}
+	  if(row.isDirectory){}
 	  else
 	  {
 		asynchRemote.actionFromRemote('open');
-		break;
 	  }
 	}
-  }
   return true;
 },
 childrenOnDragStart:function(event){ asynchRemote.s.dump('childrenOnDragStart'); return false},
