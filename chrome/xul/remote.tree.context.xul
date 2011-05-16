@@ -79,7 +79,7 @@
 		  id="asynchremote-context-folder-rebase"
 		  label="Make This Folder Root"
 		  class="menuitem-iconic asynchremote-rebase"
-		  testDisableIf="root multiple"
+		  testDisableIf="root multiple parentIsRoot"
 		  action="rebase"
         />
 		<menuseparator/>
