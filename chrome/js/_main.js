@@ -657,9 +657,13 @@ function AsynchRemote()
 				selectedPath.pop();
 				selectedPath = selectedPath.join('/');
 		  }
-		  tree.history.change(currentRemotePath);
-		  this.placesRemoteChangeTreeBase(server, selectedPath);
-		  
+		  if(selectedPath == '')
+			selectedPath = '/';
+		  if(currentRemotePath != selectedPath)
+		  {
+			tree.history.change(currentRemotePath);
+			this.placesRemoteChangeTreeBase(server, selectedPath);
+		  }
 		  break;
 		}
   	  case 'go-up':
@@ -668,10 +672,11 @@ function AsynchRemote()
 			  parentPath.pop();
 			  parentPath = parentPath.join('/');
 		  
+		  if(parentPath == '')
+			parentPath = '/';
+			
 		  if(parentPath != currentRemotePath )
 		  {
-			if(parentPath == '')
-			  parentPath = '';
 			tree.history.change(currentRemotePath);
 			this.placesRemoteChangeTreeBase(server, parentPath);
 		  }
