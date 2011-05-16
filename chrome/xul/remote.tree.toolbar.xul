@@ -98,7 +98,7 @@
 			type="button"
 			persist="buttonstyle"
 			orient="horizontal"
-			class="asynchremote-log log-toolbarbutton-xbl"
+			class="asynchremote-log asynchremote-log-toolbarbutton-xbl"
 			id="asynchremote-log"
 			tooltiptext="Show connection log"
 			action="log-open"

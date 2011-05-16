@@ -2,20 +2,28 @@
 <overlay xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
   
   <!--container-->
-  <window id="komodo_main">
+  <popupset id="extensionPopupSet">
 	
 	<!--panel-->
-	<panel id="asynchremote-toolbar-panel" class="asynchremote-toolbar-panel" resizable="true">
+	<panel
+		   id="asynchremote-toolbar-panel"
+		   class="asynchremote-toolbar-panel"
+		   resizable="true"
+		   onpopuphidding="this.setAttribute('xscrollTop', this.firstChild.firstChild.getIndexOfFirstVisibleRow())"
+		   xscrollTop="0"
+		   >
 	  <vbox>
-		<browser
-		  autocompleteenabled="false"
-		  autoscroll="false"
-		  disablehistory="true"
-		  width="780"
-		  src="about:blank"
-		  height="250"
-		  style="padding:5px;background-color:white;"/>
-		<hbox style="padding-top:3px;">
+		<richlistbox
+					 width="780" 
+					 id="asynchremote-toolbar-panel-log"
+					 flex="1"
+					 seltype="multiple"
+					 context="asynchremote-toolbar-panel-log-context"
+					 rows="12"
+					 minheight="150"
+					 maxheight="250"
+		/>
+		<hbox style="padding-top:1px;">
 		  <description style="margin: 6px ! important;" value="Show the following messages:"/>
 		  <checkbox label="Progress" id="asynchremote-toolbar-panel-show-progress" oncommand="asynchRemote.placesRemotePanelSetOptions()"/>
 		  <checkbox label="Warnings" id="asynchremote-toolbar-panel-show-warning" oncommand="asynchRemote.placesRemotePanelSetOptions()"/>	
@@ -33,5 +41,10 @@
 		</hbox>
 	  </vbox>
 	</panel>
-  </window>
+	<menupopup id="asynchremote-toolbar-panel-log-context">
+	  <menuitem label="Copy selected" oncommand="asynchRemote.actionFromRemote('log-copy-selected')"/>
+	</menupopup>
+  </popupset>
+
+  
 </overlay>

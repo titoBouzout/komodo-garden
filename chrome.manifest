@@ -21,3 +21,4 @@ overlay chrome://komodo/content/komodo.xul chrome://asynchremote/content/xul/loc
 style chrome://komodo/content/komodo.xul chrome://asynchremote/content/css/tree.icons.css
 style chrome://komodo/content/komodo.xul chrome://asynchremote/content/css/tree.context.css
 style chrome://komodo/content/komodo.xul chrome://asynchremote/content/css/tree.toolbar.css
+style chrome://komodo/content/komodo.xul chrome://asynchremote/content/css/tree.toolbar.log.css

@@ -9,7 +9,7 @@
           xmlns:xbl="http://www.mozilla.org/xbl">
 	
 	<binding
-		id="log-toolbarbutton-xbl"
+		id="asynchremote-log-toolbarbutton-xbl"
 		extends="chrome://global/content/bindings/toolbarbutton.xml#toolbarbutton"
 	>
 	  

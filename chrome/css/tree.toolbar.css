@@ -11,13 +11,6 @@
   {
 	display:none !important;
   }
-
-/* toolbar log button */
-
-  .log-toolbarbutton-xbl
-  {
-    -moz-binding:url('chrome://asynchremote/content/xml/log-toolbarbutton.xml#log-toolbarbutton-xbl');
-  }
   
 /* toolbar */
 
