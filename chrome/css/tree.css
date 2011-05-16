@@ -1,4 +1,8 @@
 
+.asynchremote-tree {
+  margin:0px;
+}
+/*
 .asynchremote-tree > stack > textbox
 {
   background-color:white;
@@ -11,4 +15,6 @@
   -moz-border-top-colors:transparent !important;
   padding-bottom:3px !important;
   border-bottom:2px;
-}
+  -moz-padding-end:0px;
+  -moz-margin-end:0px;
+}*/
