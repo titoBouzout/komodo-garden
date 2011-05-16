@@ -9,8 +9,6 @@
 		   id="asynchremote-toolbar-panel"
 		   class="asynchremote-toolbar-panel"
 		   resizable="true"
-		   onpopuphidding="this.setAttribute('xscrollTop', this.firstChild.firstChild.getIndexOfFirstVisibleRow())"
-		   xscrollTop="0"
 		   >
 	  <vbox>
 		<richlistbox
