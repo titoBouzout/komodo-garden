@@ -90,7 +90,7 @@
 			orient="horizontal"
 			class="asynchremote-refresh"
 			tooltiptext="Refresh Hard"
-			action="refresh-all"
+			action="refresh-all-hard"
 			oncommand="asynchRemote.actionFromRemote(this.getAttribute('action'))"
 		  />
 		  <toolbarbutton

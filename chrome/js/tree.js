@@ -571,7 +571,7 @@ treeOnKeyPress:function(event)
 		}
 	  case 116://F5 refresh
 		{
-		  asynchRemote.actionFromRemote('refresh-all');
+		  asynchRemote.actionFromRemote('refresh-all-hard');
 		  break;
 		}
 		event.stopPropagation();

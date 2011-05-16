@@ -1212,7 +1212,15 @@ function AsynchRemote()
 		  this.s.openURI('https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=H738SJGDU3NJ8');
 		  break;
 		}
-	  case 'refresh-all':
+	  /* refresh the tree without cleaning the cache*/
+	  case 'refresh-all-soft':
+		{
+		  this.connections[server].cache.currentPath = '';
+		  this.placesRemoteChangeTreeBase(server, currentRemotePath);
+		  break;
+		}
+	  /* refresh the tree cleaning the cache of directories*/
+	  case 'refresh-all-hard':
 		{
 		  this.s.serializedSessionRemove(server);
 		  this.connections[server].cleanCacheConnection();
@@ -1220,6 +1228,7 @@ function AsynchRemote()
 		  this.placesRemoteChangeTreeBase(server, currentRemotePath);
 		  break;
 		}
+	  /*mmmm*/
 	  case 'refresh-selected':
 		{
 		  for(var id in selectedItems)
@@ -1229,22 +1238,6 @@ function AsynchRemote()
 			  this.connections[server].cacheDirectoryItemAdd(selectedItems[id].getFilepath);
 			}
 		  }
-		  break;
-		}
-	  case 'refresh-all-soft':
-		{
-		  //this.dump('refresh')
-		  //this.s.serializedSessionRemove(server);
-		  //this.connections[server].cleanCacheConnection();
-		  this.connections[server].cache.currentPath = '';
-		  this.placesRemoteChangeTreeBase(server, currentRemotePath);
-		  break;
-		}
-	  case 'refresh':
-		{
-		  this.connections[server].reset();
-		  tree.resetHard();
-
 		  break;
 		}
 	}
