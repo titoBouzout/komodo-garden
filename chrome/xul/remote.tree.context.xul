@@ -48,6 +48,13 @@
 		<menuseparator/>
 		
 		<menuitem
+		  id="asynchremote-context-edit"
+		  label="Edit"
+		  class="menuitem-iconic asynchremote-edit"
+		  action="edit"
+		  testDisableIf="root onlyFolders"
+        />
+		<menuitem
 		  id="asynchremote-context-open"
 		  label="Open"
 		  class="menuitem-iconic asynchremote-open"
@@ -76,6 +83,13 @@
 		  class="menuitem-iconic asynchremote-locate"
 		  testDisableIf="multiple root file folder"
 		  action="locate-places"
+        />
+		<menuitem
+		  id="asynchremote-context-diff"
+		  label="Show Diff With Local"
+		  class="menuitem-iconic asynchremote-diff"
+		  action="diff"
+		  testDisableIf="root onlyFolders"
         />
 		<menuseparator/>
 		
