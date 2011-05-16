@@ -11,7 +11,7 @@
 					   'chrome://asynchremote/content/js/shared/prompt/overWriteFiles.xul',
 					   '',
 					   'chrome,centerscreen,modal',
-					   r);
+					   r).focus();
 	if(!r || !r.value)
 	  var value = {'value':'Cancel','dontAskAgain':false}
 	else

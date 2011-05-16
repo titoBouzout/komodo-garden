@@ -15,27 +15,38 @@
 		class="asynchremote-tree"
 		context="asynchremote-context"
 		server=""
+		persist="width height"
+		height="250"
+		
 		onselect="this.asynchTree.selectionChanged()"
+		 
 		onfocus="this.asynchTree.focused = true;"
 		onblur="this.asynchTree.focused = false;"
+		
 		ondragstart="return this.asynchTree.treeOnDragStart(event);"
 		ondragover="return this.asynchTree.treeOnDragOver(event);"
 		ondragenter="return this.asynchTree.treeOnDragEnter(event);"
-		onclick="this.asynchTree.treeOnClick(event);"
-		ondblclick="this.asynchTree.treeOnDblClick(event);"
 		ondrop="return this.asynchTree.treeOnDrop(event);"
+		ondragdrop="return this.asynchTree.treeOnDragDrop(event, this);"
+		ondragexit="return this.asynchTree.treeOnDragExit(event, this);"
+		
+		onkeypress="this.asynchTree.treeOnKeyPress(event);"
 	  >
 		<treecols>
 		  <treecol primary="true" hideheader="true" flex="1"/>
 		</treecols>
 		<treechildren
 		  flex="1"
-		  ondragstart="return this.parentNode.asynchTree.childrenOnDragStart(event, this);"
-		  ondragover="return this.parentNode.asynchTree.childrenOnDragOver(event, this);"
-		  ondragenter="return this.parentNode.asynchTree.childrenOnDragEnter(event, this);"
-		  onclick="this.parentNode.asynchTree.childrenOnClick(event, this);"
-		  ondblclick="this.parentNode.asynchTree.childrenOnDblClick(event, this);"
-		  ondrop="return this.parentNode.asynchTree.childrenOnDrop(event, this);"
+		  
+		  ondragstart="return this.parentNode.asynchTree.childrenOnDragStart(event);"
+		  ondragover="return this.parentNode.asynchTree.childrenOnDragOver(event);"
+		  ondragenter="return this.parentNode.asynchTree.childrenOnDragEnter(event);"
+		  ondrop="return this.parentNode.asynchTree.childrenOnDrop(event);"
+		  ondragdrop="return this.parentNode.asynchTree.childrenOnDragDrop(event);"
+		  ondragexit="return this.parentNode.asynchTree.childrenOnDragExit(event);"
+		  
+		  onclick="return this.parentNode.asynchTree.childrenOnClick(event);"
+		  ondblclick="return this.parentNode.asynchTree.childrenOnDblClick(event);"
 		/>
 	  </tree>
 	  

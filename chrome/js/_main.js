@@ -108,6 +108,7 @@ function AsynchRemote()
 	  this.trees[server] = new AsynchRemoteTree(server);
 	  tree.treeBoxObject.view = this.trees[server];
 	  tree.asynchTree = this.trees[server];
+	  tree.asynchTree.treeElementID = 'asynchremote-tree-'+server;
 	  //connection
 	  this.connections[server] = new AsynchRemoteConnection(server);
 	  if(!this.s.serializedSessionExists(server))
@@ -475,7 +476,7 @@ function AsynchRemote()
 	this.actionFromRemote('log-update-if-opened');
   }
   //the action when clicking a menuitem from "places local context menu"
-  this.actionFromLocal = function(action, aboutFocusedTab)
+  this.actionFromLocal = function(action, aboutFocusedTab, aData)
   {
 	var server = this.focusedServer;
 	if(!server || !action || server == '' || action == '')
@@ -610,7 +611,7 @@ function AsynchRemote()
 	this.placesRemoteToolbarUpdate(server);
   }
   //the action when clicking a menuitem from "places remote context menu"
-  this.actionFromRemote = function(action)
+  this.actionFromRemote = function(action, aData)
   {
 	var server = this.focusedServer;
 	if(!server || !action || server == '' || action == '')
@@ -667,8 +668,10 @@ function AsynchRemote()
 			  parentPath.pop();
 			  parentPath = parentPath.join('/');
 		  
-		  if(parentPath != currentRemotePath)
+		  if(parentPath != currentRemotePath )
 		  {
+			if(parentPath == '')
+			  parentPath = '';
 			tree.history.change(currentRemotePath);
 			this.placesRemoteChangeTreeBase(server, parentPath);
 		  }
@@ -872,6 +875,8 @@ function AsynchRemote()
 		}
 	  case 'rename':
 		{
+		  this.trees[server].editCurrentRow();
+		  /*
 		  if(selectedPath != '' && selectedPath != '/')//avoid move the root directory
 		  {
 			var parentPath = selectedPath.split('/');
@@ -882,6 +887,22 @@ function AsynchRemote()
 			  var newName = this.s.prompt('Enter new name…', aPath);
 			  if(newName != '' && parentPath+'/'+newName != selectedPath)
 				this.connections[server].rename(selectedPath, parentPath+'/'+newName);
+			}
+		  }*/
+		  break;
+		}
+	  case 'renameFromTree':
+		{
+		  if(aData.oldName != '' && aData.oldName != '/')//avoid move the root directory
+		  {
+			var parentPath = aData.oldName.split('/');
+			var aPath = parentPath.pop();
+			parentPath = parentPath.join('/');
+			if(aPath && aPath != '')
+			{
+			  var newName = aData.newName;
+			  if(newName != '' && parentPath+'/'+newName != aData.oldName)
+				this.connections[server].rename(aData.oldName, parentPath+'/'+newName);
 			}
 		  }
 		  break;

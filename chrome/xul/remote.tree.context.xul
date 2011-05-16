@@ -103,7 +103,7 @@
 		  id="asynchremote-context-rename"
 		  label="Rename…"
 		  class="menuitem-iconic asynchremote-rename"
-		  testDisableIf="multiple"
+		  testDisableIf="multiple root"
 		  action="rename"
         />
 		<menuitem

@@ -12,10 +12,14 @@ function AsynchRemoteTree(server)
   this.selectionGoingToChange = 0;//holds if it is appropiated to save the selection
   this.selectionSelectedItems = [];//save selected items for reselection when they are unselected
   this.focused = false;
+  this.event = {};
+  this.event.renameClick = new Date();
+  this.event.renameItem = false;
+  this.event.renameTimeout = 0;
+  this.event.renameEditing = false;
 }
 
 AsynchRemoteTree.prototype = {
-
 
 tree:null,
 selection:null,
@@ -23,15 +27,27 @@ setCellValue:function(row, col,value){},
 canDrop:function(index, orientation, dataTransfer){ return false;},
 drop:function(row, orientation, dataTransfer){},
 get rowCount(){return this._rows.length;},
+get treeElement(){ return asynchRemote.element(this.treeElementID);},
+startEditing:function(row, col){
+  this.event.renameEditing = true;
+  this.treeElement.startEditing(row, col);
+   this.event.renameEditing = false;
+  },
 setTree:function(tree){this.tree = tree;},
 getCellText : function(row, col){return this._rows[row].getFilename;},
-setCellText : function(row, col, value){ /*alert(value)*/},
+setCellText : function(row, col, value)
+{
+  var aData = {}
+	  aData.oldName = this._rows[row].getFilepath;
+	  aData.newName = value;
+  asynchRemote.actionFromRemote('renameFromTree', aData);
+},
 isContainer:function(row){return this._rows[row].isDirectory;},
 isContainerOpen:function(row){return this._rows[row].isContainerOpen;},
 isContainerEmpty:function(row){return this._rows[row].isContainerEmpty;},
 isSeparator:function(row){return false;},
 isSorted:function(){return true;},
-isEditable:function(row, col){return false;},
+isEditable:function(row, col){return true;},
 isSelectable:function(row, col){ return true;},
 getParentIndex: function(row){return -1;},
 getLevel:function(row){return this._rows[row].getLevel;},
@@ -48,18 +64,27 @@ selectionChanged:function()
 	  this.selectionSelectedItems = [];
 	  try
 	  {
-		var rangeCount = this.selection.getRangeCount();
-		for (var i = 0; i < rangeCount; i++)
-		{
-		   var start = {};
-		   var end = {};
-		   this.selection.getRangeAt(i, start, end);
-		   for(var c = start.value; c <= end.value; c++)
-			  this.selectionSelectedItems[this.selectionSelectedItems.length] = this._rows[c];
-		}
+		this.selectionSelectedItems = this.selectionGetSelectedItems();
+		
 	  } catch(e){ asynchRemote.dump('selectionChanged', e, true); }
 	this.selectionGoingToChange--;
   }
+},
+selectionGetSelectedItems:function()
+{
+  this.selectionGoingToChange++;
+	var selected = [];
+	var rangeCount = this.selection.getRangeCount();
+	for (var i = 0; i < rangeCount; i++)
+	{
+	   var start = {};
+	   var end = {};
+	   this.selection.getRangeAt(i, start, end);
+	   for(var c = start.value; c <= end.value; c++)
+		  selected[selected.length] = this._rows[c];
+	}
+  this.selectionGoingToChange--;
+  return selected;
 },
 selectionReselect:function()
 {
@@ -182,12 +207,6 @@ toggleOpenState:function(row, rowObject) {
 	this.updating--;
 	this.treeOperationsQueue();
   }
-  /*else if(rowObject.isLoading)
-  {
-	this.updating--;
-	this.treeOperationsQueue();
-	return;
-  }*/
   else
   {
 	rowObject.isLoading = true;
@@ -425,17 +444,135 @@ invalidateRowByPath:function(aPath)
   this.treeOperationsQueue();
 },
 
-childrenOnDragStart:function(event, aElement){ return false},
-childrenOnDragOver:function(event, aElement){ return false},
-childrenOnDragEnter:function(event,aElement){ return false},
-childrenOnClick:function(event, aElement){ },
-childrenOnDblClick:function(event, aElement){ },
-childrenOnDrop:function(event, aElement){ return false},
 
-treeOnDragStart:function(event){ return false},
-treeOnDragOver:function(event){ return false},
-treeOnDragEnter:function(event){ return false},
-treeOnClick:function(event){ },
-treeOnDblClick:function(event){ },
-treeOnDrop:function(event){ return false}
+
+getEventRow:function(event)
+{
+  var row = this.getEventRowID(event);
+  if(row === false)
+	return false;
+  else
+	return this._rows[row];
+},
+getEventRowID:function(event)
+{
+  var row = {};
+  this.selectionGoingToChange++;
+  this.tree.getCellAt(event.pageX, event.pageY, row, {},{});
+  this.selectionGoingToChange--;
+  this.selectionReselect();
+  return row.value;
+},
+getEventColumn:function(event)
+{
+  var row = {};
+  var column = {};
+  this.selectionGoingToChange++;
+  this.tree.getCellAt(event.pageX, event.pageY, row, column, {});
+  this.selectionGoingToChange--;
+  this.selectionReselect();
+  return column;
+},
+editCurrentRow:function()
+{
+  if(this.selectionSelectedItems.length === 1)
+	this.startEditing(this.selection.currentIndex, this.tree.columns.getColumnAt(0));
+},
+childrenOnClick:function(event)
+{
+  var diff = new Date() - this.event.renameClick;
+  if(diff > 200 && diff < 700 && this.event.renameItem == this.getEventRow(event))
+  {
+	var tree = this;
+	this.event.renameTimeout = setTimeout(function(){tree.editCurrentRow();}, 180)
+  }
+  else
+  {
+	this.event.renameClick = new Date();
+	this.event.renameItem = this.getEventRow(event);
+  }
+  return true;
+},
+childrenOnDblClick:function(event)
+{
+  try{clearTimeout(this.event.renameTimeout);/*yeah!*/}catch(e){}
+  var rows = this.selectionGetSelectedItems()
+  for(var id in rows)
+  {
+	if(rows[id])
+	{
+	  if(rows[id].isDirectory){}
+	  else
+	  {
+		asynchRemote.actionFromRemote('open');
+		break;
+	  }
+	}
+  }
+  return true;
+},
+childrenOnDragStart:function(event){ asynchRemote.s.dump('childrenOnDragStart'); return false},
+childrenOnDragOver:function(event){  asynchRemote.s.dump('childrenOnDragOver'); return false},
+childrenOnDragEnter:function(event){ asynchRemote.s.dump('childrenOnDragEnter');  return false},
+childrenOnDrop:function(event){asynchRemote.s.dump('childrenOnDrop');  return false},
+childrenOnDragDrop:function(event){asynchRemote.s.dump('childrenOnDragDrop');  return false},
+childrenOnDragExit:function(event){asynchRemote.s.dump('childrenOnDragExit');  return false},
+
+
+treeOnDragStart:function(event){ asynchRemote.s.dump('treeOnDragStart'); return false},
+treeOnDragOver:function(event){ asynchRemote.s.dump('treeOnDragOver'); return false},
+treeOnDragEnter:function(event){ asynchRemote.s.dump('treeOnDragEnter'); return false},
+treeOnDrop:function(event){ asynchRemote.s.dump('treeOnDrop'); return false},
+treeOnDragDrop:function(event){ asynchRemote.s.dump('treeOnDragDrop'); return false},
+treeOnDragExit:function(event){ asynchRemote.s.dump('treeOnDragExit'); return false},
+treeOnKeyPress:function(event)
+{
+  if(event.originalTarget.tagName == 'html:input'){}
+  else
+  {
+	switch(event.keyCode)
+	{
+	  case 8://back
+		{
+		  if(!this.history.canGoBack())
+			asynchRemote.actionFromRemote('go-up');
+		  else
+			asynchRemote.actionFromRemote('history-back');
+		   break;
+		}
+	  case 13://open
+		{
+		  this.childrenOnDblClick(event);
+		  break;
+		}
+	  case 46://delete
+		{
+		  asynchRemote.actionFromRemote('delete');
+		  break
+		}
+	  case 27://escape ( this should focus previous folder )...for now go-up!
+		{
+		  asynchRemote.actionFromRemote('go-up');
+		  break;
+		}
+	  case 0://space bar ( focus next folder )
+		{
+		  break;
+		}
+	  case 113://F2 rename
+		{
+		  this.editCurrentRow();
+		  break;
+		}
+	  case 116://F5 refresh
+		{
+		  asynchRemote.actionFromRemote('refresh-all');
+		  break;
+		}
+		event.stopPropagation();
+		event.preventDefault();
+	}
+	return true;
+  }
+}
 };

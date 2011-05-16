@@ -1,19 +1,22 @@
-BUGS
-  
-  to upload or download files this extension use the koFileEx object, instead of reusing the current connection from koRemoteConnectionService. There is a writeFile method but I don't know how to use it. Any hint?
 
-  looks like there is no chance to use 8bits into folders or files names?? when creating a folder with filezilla called "Русский" the folder gets created, when trying with koRemoteConnectionService I get a folder created with name: "???????"
-  	
-  the tree refresh is incomplete.
+the tree refresh is incomplete.
+
+escribir todos los prompts personalizados con ícono y título
+en los dialogos de sobre escribir el icono para remote diferente a local
+
+olvidar la seleccion cuando se remueven o mueven elementos del tree
+
+BUGS
+
+0) the tree refresh is not done yet
+
+1) looks like there is no chance to use 8bits into folders or files names?? when creating a folder with filezilla called "Русский" the folder gets created, when trying with koRemoteConnectionService I get a folder created with name: "???????". I want to give the option to use utf8.
   
-  probably others.
-  
-  should dispatch events or update ui on all the windows
-  vars should be shared across windows(globals)
-  move the tree view to the main API building an extensible generic tree view
+2) overwrite prompts are crazy, no file is overwriten if "no", "cancel" or "no to all" is selected, but functions "yes to all" or "no to all" ask many times the same thing..
+
+3) there is no queue of files yet.. wait what!?
   
 TODO
-
   
   drag and drop!
   
@@ -28,15 +31,6 @@ TODO
 	"go up button" should be a menu-button listing all parent directories
   
   tree
-	
-	  on doble click on file: open the file (download and open)
-	  click + a delay + a click: start rename file setting the treechildren to editable
-	  
-	  key events:
-		  
-		F2 rename file
-		RETURN open file
-		<- go back history
 		
 	  check for "views"(specify files and directories to include or exclude)
 	  
@@ -48,6 +42,3 @@ TODO
   
 	show old permissions for each selected file when requesting a chmod change command
 	chmod dialog should contain nice checkbox about permissino,group,owner,public,read,write,execute etc
-	
-  escribir todos los prompts personalizados con ícono y título
-  en los dialogos de sobre escribir el icono para remote diferente a local

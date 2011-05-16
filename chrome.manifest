@@ -22,3 +22,4 @@ style chrome://komodo/content/komodo.xul chrome://asynchremote/content/css/tree.
 style chrome://komodo/content/komodo.xul chrome://asynchremote/content/css/tree.context.css
 style chrome://komodo/content/komodo.xul chrome://asynchremote/content/css/tree.toolbar.css
 style chrome://komodo/content/komodo.xul chrome://asynchremote/content/css/tree.toolbar.log.css
+style chrome://komodo/content/komodo.xul chrome://asynchremote/content/css/tree.css
