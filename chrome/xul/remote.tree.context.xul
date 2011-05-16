@@ -44,6 +44,12 @@
 		  class="menuitem-iconic asynchremote-download-to-folder"
 		  action="download-to-folder"
         />
+		<!-- menuitem
+		  id="asynchremote-download-this-to-folder"
+		  label="Download this to…"
+		  class="menuitem-iconic asynchremote-download-this-to-folder"
+		  action="download-this-to-folder"
+        /-->
 		
 		<menuseparator/>
 		
