@@ -14,9 +14,33 @@ BUGS
   
 2) overwrite prompts are crazy, no file is overwriten if "no", "cancel" or "no to all" is selected, but functions "yes to all" or "no to all" ask many times the same thing..
 
+2.1) the overwrite function looks for the files in the server instead of comparing the modifiedtime and size
+
 3) there is no queue of files yet.. wait what!?
   
 TODO
+  
+  sync ( replicate local on remote or remote on local )
+  
+  select recent ( on wich you can input a time amount on how many is recent )
+  
+  cut, paste, duplicate
+  
+  lock, unlock folders and files from operations
+  
+  compare unified diff on entire folders or selected files
+  
+  open with
+  
+  explore
+  
+  give option to enable or disable horizontal scrolling
+  
+  show a mark on modified not uploaded local files
+  
+  a textbox to filter the tree content
+  
+  virtual folders
   
   drag and drop!
   
@@ -24,11 +48,9 @@ TODO
 	from remote to remote
 	from remote to places
   
-  UI
-  
-	locate file/folder in remote from local places
-	locate file/folder in places from remote places
-	"go up button" should be a menu-button listing all parent directories
+  locate file/folder in remote from local places
+  locate file/folder in places from remote places
+  "go up button" should be a menu-button listing all parent directories
   
   tree
 		
