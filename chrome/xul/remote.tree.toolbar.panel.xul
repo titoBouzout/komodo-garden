@@ -18,10 +18,10 @@
 					 seltype="multiple"
 					 context="asynchremote-toolbar-panel-log-context"
 					 rows="12"
-					 minheight="150"
-					 maxheight="250"
+					 minheight="250"
+					 maxheight="350"
 		/>
-		<hbox style="padding-top:1px;">
+		<hbox style="padding-top:1px;padding-bottom:2px;">
 		  <description style="margin: 6px ! important;" value="Show the following messages:"/>
 		  <checkbox label="Progress" id="asynchremote-toolbar-panel-show-progress" oncommand="asynchRemote.placesRemotePanelSetOptions()"/>
 		  <checkbox label="Warnings" id="asynchremote-toolbar-panel-show-warning" oncommand="asynchRemote.placesRemotePanelSetOptions()"/>	
