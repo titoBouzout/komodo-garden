@@ -26,6 +26,18 @@
   .asynchremote-open[disabled] {
 	list-style-image : url("chrome://asynchremote/content/icons/context/open-disabled.png");
   }
+  .asynchremote-edit{
+	list-style-image : url("chrome://asynchremote/content/icons/context/edit.png");
+  }
+  .asynchremote-edit[disabled] {
+	list-style-image : url("chrome://asynchremote/content/icons/context/edit-disabled.png");
+  }
+  .asynchremote-diff{
+	list-style-image : url("chrome://asynchremote/content/icons/context/diff.png");
+  }
+  .asynchremote-diff[disabled] {
+	list-style-image : url("chrome://asynchremote/content/icons/context/diff-disabled.png");
+  }
   
   .asynchremote-upload{
 	list-style-image : url("chrome://asynchremote/content/icons/context/upload.png");
