@@ -128,8 +128,9 @@
 			  <menuitem action="clean-cache-connection" label="Clean connection cache"/>
 			  <menuseparator/>
 			  <menuitem action="clean-cache-overwrite" label="Forget overwrite settings"/>
+			  <menuitem id="asynchremote-tools-toolbarbutton-overwrite-no-ask" type="checkbox" checked="false" action="pref-tools-set" label="Overwrite without asking"/>
 			  <menuseparator/>
-			  <menuitem action="pref-set-upload-and-rename" id="asynchremote-tools-toolbarbutton-upload-and-rename" type="checkbox" checked="false" label="Upload files as '.kup' and then rename the file"/>
+			  <menuitem action="pref-tools-set" id="asynchremote-tools-toolbarbutton-upload-and-rename" type="checkbox" checked="false" label="Upload files as '.kup' and then rename the file"/>
 			  <menuseparator/>
 			  <menuitem oncommand="ko.windowManager.getMainWindow().prefs_doGlobalPrefs('serversItem');" label="Edit Remote Accounts…"/>
 			  <menuseparator/>
