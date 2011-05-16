@@ -17,6 +17,7 @@
 		server=""
 		persist="width height"
 		height="250"
+		treelines="true"
 		
 		onselect="this.asynchTree.selectionChanged()"
 		 
@@ -36,8 +37,8 @@
 		  <treecol primary="true" hideheader="true" flex="1"/>
 		</treecols>
 		<treechildren
+					  
 		  flex="1"
-		  
 		  ondragstart="return this.parentNode.asynchTree.childrenOnDragStart(event);"
 		  ondragover="return this.parentNode.asynchTree.childrenOnDragOver(event);"
 		  ondragenter="return this.parentNode.asynchTree.childrenOnDragEnter(event);"
