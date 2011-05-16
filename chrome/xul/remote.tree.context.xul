@@ -27,6 +27,27 @@
 		<menuseparator/>
 		
 		<menuitem
+		  id="asynchremote-context-edit"
+		  label="Edit"
+		  class="menuitem-iconic asynchremote-edit"
+		  action="edit"
+		  testDisableIf="root onlyFolders"
+        />
+		<menuitem
+		  id="asynchremote-context-open"
+		  label="Open"
+		  class="menuitem-iconic asynchremote-open"
+		  action="open"
+		  testDisableIf="root"
+        />
+		<menuitem
+		  id="asynchremote-context-refresh"
+		  label="Refresh"
+		  class="menuitem-iconic asynchremote-refresh"
+		  action="refresh-selected"
+        />
+		<menuseparator/>
+		<menuitem
 		  id="asynchremote-context-upload"
 		  label="Upload"
 		  class="menuitem-iconic asynchremote-upload"
@@ -51,28 +72,6 @@
 		  action="download-this-to-folder"
         /-->
 		
-		<menuseparator/>
-		
-		<menuitem
-		  id="asynchremote-context-edit"
-		  label="Edit"
-		  class="menuitem-iconic asynchremote-edit"
-		  action="edit"
-		  testDisableIf="root onlyFolders"
-        />
-		<menuitem
-		  id="asynchremote-context-open"
-		  label="Open"
-		  class="menuitem-iconic asynchremote-open"
-		  action="open"
-		  testDisableIf="root"
-        />
-		<menuitem
-		  id="asynchremote-context-refresh"
-		  label="Refresh"
-		  class="menuitem-iconic asynchremote-refresh"
-		  action="refresh-selected"
-        />
 		<menuseparator/>
 
 		<menuitem
