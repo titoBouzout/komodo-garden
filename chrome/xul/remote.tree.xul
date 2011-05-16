@@ -15,7 +15,7 @@
 		class="asynchremote-tree"
 		context="asynchremote-context"
 		server=""
-		onselect="this.view.selectionChanged()"
+		onselect="this.asynchTree.selectionChanged()"
 		onfocus="this.asynchTree.focused = true;"
 		onblur="this.asynchTree.focused = false;"
 		ondragstart="return this.asynchTree.treeOnDragStart(event);"
