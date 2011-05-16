@@ -11,7 +11,6 @@ function AsynchRemoteConnection(server)
   this.server = server;//the server alias wich we take as an id
   
   this.thread = asynchRemote.s.newThread();
-  this.uploadThread = asynchRemote.s.newThread();
   
   this.connected = false;//if we are connected this is true
   this.connecting = 0;//if there is some iteraction with the server this holds a number
@@ -31,7 +30,7 @@ function AsynchRemoteConnection(server)
   this.numMaxLostConnectionTrys = 6;//connection maybe lost many times in a row depending of servers.
   
   //holds logs of connections
-  this.logs = asynchRemote.s.sharedObjectGet(this.server+'.logs', [])//a shared object for all the windows
+  this.logs = []
   this.log('status', 'Loaded remote pane: "'+server+'"', 0);
   
   //holds the sizes and modified times of files to not upload the same file again
@@ -47,7 +46,7 @@ function AsynchRemoteConnection(server)
 AsynchRemoteConnection.prototype = {
   
   //returns the connection to the server ( connects if needed )
-  connect: function(aNumTry)
+  connect: function(aNumTry, aKeepAliveRequest)
   {
 	if(!this.connection)
 	{
@@ -60,6 +59,7 @@ AsynchRemoteConnection.prototype = {
 		this.connection = asynchRemote.mRCService.getConnectionUsingServerAlias(this.server);
 						  
 		this.keepAliveOrCloseConnectionInit();
+		
 	  }catch(e){
 		if(!aNumTry)
 		  aNumTry = 1;
@@ -96,6 +96,8 @@ AsynchRemoteConnection.prototype = {
 	{
 	  /*this.dump('already connected!');*/
 	}
+	if(!aKeepAliveRequest)
+	  this.lastIteration = new Date();
 	return this.connection;
   },
 
@@ -135,12 +137,11 @@ AsynchRemoteConnection.prototype = {
 	  }
 	  else if(this.connecting !== 0 && this.connected)//the connection is doing something
 	  {
-		this.lastIteration = new Date();
 		try{this.connect().changeDirectory('/');}catch(e){}
 	  }
 	  else if(this.connected)//the connection is idle, keep alive for two minutes
 	  {
-		try{this.connect().changeDirectory('/');}catch(e){}
+		try{this.connect(0, true).changeDirectory('/');}catch(e){}
 	  }
 	
 	this.notifyProgress();
@@ -157,7 +158,6 @@ AsynchRemoteConnection.prototype = {
 	}
 	else if(aProcess.canRun())
 	{
-	  this.lastIteration = new Date();
 	  this.connecting++;
 	  var aFunction = aProcess.run();
 	  try
@@ -260,7 +260,6 @@ AsynchRemoteConnection.prototype = {
 		}
 		else
 		{
-		  this.lastIteration = new Date();
 		  var entries = this.connect().list(('/'+aDirectory).replace(/^\/+/, '/'), 1).getChildren({});
 		  this.log('progress', 'Getting "'+aDirectory+'" list from host', 0);
 		  var child, rowsDirectories = [], rowsFiles = [], rows = [], rowsSorted = [], name, isDirectory;
@@ -387,7 +386,7 @@ AsynchRemoteConnection.prototype = {
 		  else
 			throw new Error(e);
 		}
-		//removing the item from cache
+		//removing the item from cache and tree
 		this.cacheDirectoryItemRemove(aFile);
 		this.log('sucess', 'removed file "'+aFile+'"', aProcess.id);
 	  }
@@ -672,14 +671,13 @@ AsynchRemoteConnection.prototype = {
 		  aDirectory = aDirectory.join('/');
 		  
 		  connection.createDirectory(aParentDirectory+'/'+aDirectory, parseInt('0'+''+'755'));
-		  
 		  this.cacheDirectoryItemAdd(aParentDirectory+'/'+aDirectory);
 		  this.log('sucess', 'created directory "'+aDirectory+'" in "'+aParentDirectory+'"', aProcess.id);
 		}
 		else
 		{
-		  this.cacheDirectoryItemAdd(aParentDirectory+'/'+aDirectory);
 		  connection.createDirectory(aParentDirectory+'/'+aDirectory, parseInt('0'+''+'755'));
+		  this.cacheDirectoryItemAdd(aParentDirectory+'/'+aDirectory);
 		  this.log('sucess', 'created directory "'+aDirectory+'" in "'+aParentDirectory+'"', aProcess.id);
 		}
 	  }
@@ -739,18 +737,137 @@ AsynchRemoteConnection.prototype = {
 	  this.log('progress', 'going to open file "'+aFile+'" …', aProcess.id);
 	  if(connection)
 	  {
-		//this.overWriteResolve(aProcess, null, null, aDestination, true);download already ask
+		//download already ask for overWrite
+		//this.overWriteResolve(aProcess, null, null, aDestination, true);
 		
 		this._downloadFile(aFile, aRemotePlacesPath, aLocalPlacesPath, aProcess, true);
 		//run in a thread and then back to main thread because we need to wait for the file to download
 		if(!aProcess.stopped())
 		{
-		  asynchRemote.s.runThread(function(){
-								if(asynchRemote.s.fileExists(aDestination))
-								  asynchRemote.s.runMain(function(){asynchRemote.s.launch(aDestination);});
-								}, this.thread);
+		  if(aProcess.overWriteLocal)
+		  {
+			asynchRemote.s.runThread(function(){
+								  if(asynchRemote.s.fileExists(aDestination))
+									asynchRemote.s.runMain(function(){asynchRemote.s.launch(aDestination);});
+								  }, this.thread);
+		  
+			this.log('sucess', 'opened file "'+aFile+'" ', aProcess.id);
+		  }
+		}
+		else if(!aInternalCall)
+		{
+		  aProcess.reQueue(aProcess.lastRunnuable);
+		}
+	  }
+	}
+	else if(!aInternalCall)
+	{
+	  aProcess.reQueue(aProcess.lastRunnuable);
+	}
+  },
+  compareWithLocal:function(aFile, aRemotePlacesPath, aLocalPlacesPath, aTemporalLocalPath, aProcess, aInternalCall)
+  {
+	var aDestination = asynchRemote.s.getLocalPathFromRemotePath(aRemotePlacesPath, aLocalPlacesPath, aFile);
+	if(!aProcess)
+	{
+	  aProcess = new asynchRemote.s.process('compare file "'+aFile+'" with local version', ++this.numProcesses);
+	  this.processes[this.processes.length] = aProcess;
+	}
+	var AsynchRemoteConnection = this;
+	aProcess.queue(function(){AsynchRemoteConnection._compareWithLocal(aFile, aRemotePlacesPath, aLocalPlacesPath, aTemporalLocalPath, aProcess, aInternalCall);}, aInternalCall);
+	asynchRemote.s.runThread(function(){
+										AsynchRemoteConnection.processController(aProcess);
+									  }, this.thread);
+	return aProcess;
+  },
+  _compareWithLocal:function(aFile, aRemotePlacesPath, aLocalPlacesPath, aTemporalLocalPath, aProcess, aInternalCall)
+  {
+	if(!aProcess.stopped())
+	{
+	  var aTemporalDestination = asynchRemote.s.getLocalPathFromRemotePath(aRemotePlacesPath, aTemporalLocalPath, aFile);
+	  var aLocalFileToCompare = asynchRemote.s.getLocalPathFromRemotePath(aRemotePlacesPath, aLocalPlacesPath, aFile);
+	  if(!asynchRemote.s.fileExists(aLocalFileToCompare))
+	  {
+		this.log('error', 'Can\'t compare the remote file "'+aFile+'" with the local version because the local version no exists.', aProcess.id);
+	  }
+	  else
+	  {
+		var connection = this.connect();
+		this.log('progress', 'going to download the remote file "'+aFile+'" to a temporal folder to compare with the local version …', aProcess.id);
+		if(connection)
+		{
+		  this._downloadFile(aFile, aRemotePlacesPath, aTemporalLocalPath, aProcess, true);
+		  //run in a thread and then back to main thread because we need to wait for the file to download
+		  if(!aProcess.stopped())
+		  {
+			var AsynchRemoteConnection = this;
+			asynchRemote.s.runThread(function(){
+								  if(asynchRemote.s.fileExists(aTemporalDestination))
+									asynchRemote.s.runMain(function(){
+									  if(
+										 asynchRemote.s.fileRead(aLocalFileToCompare) ==
+										 asynchRemote.s.fileRead(aTemporalDestination)
+										)
+										 AsynchRemoteConnection.log('sucess', 'The local and remote file "'+aFile+'" are identical', aProcess.id);
+										 else
+										  ko.fileutils.showDiffs(aLocalFileToCompare, aTemporalDestination);
+									  });
+								  }, this.thread);
+		  
+			this.log('sucess', 'checked differences of remote file "'+aFile+'" with the local version', aProcess.id);
+		  }
+		  else if(!aInternalCall)
+		  {
+			aProcess.reQueue(aProcess.lastRunnuable);
+		  }
+		}
+	  }
+	}
+	else if(!aInternalCall)
+	{
+	  aProcess.reQueue(aProcess.lastRunnuable);
+	}
+  },
+  editFile:function(aFile, aRemotePlacesPath, aLocalPlacesPath, aProcess, aInternalCall)
+  {
+	var aDestination = asynchRemote.s.getLocalPathFromRemotePath(aRemotePlacesPath, aLocalPlacesPath, aFile);
+	if(!aProcess)
+	{
+	  aProcess = new asynchRemote.s.process('edit "'+aFile+'" ', ++this.numProcesses);
+	  this.processes[this.processes.length] = aProcess;
+	}
+	var AsynchRemoteConnection = this;
+	aProcess.queue(function(){AsynchRemoteConnection._editFile(aFile, aRemotePlacesPath, aLocalPlacesPath, aProcess, aInternalCall);}, aInternalCall);
+	asynchRemote.s.runThread(function(){
+										AsynchRemoteConnection.processController(aProcess);
+									  }, this.thread);
+	return aProcess;
+  },
+  _editFile:function(aFile, aRemotePlacesPath, aLocalPlacesPath, aProcess, aInternalCall)
+  {
+	if(!aProcess.stopped())
+	{
+	  var aDestination = asynchRemote.s.getLocalPathFromRemotePath(aRemotePlacesPath, aLocalPlacesPath, aFile);
+	  var connection = this.connect();
+	  this.log('progress', 'going to edit "'+aFile+'" …', aProcess.id);
+	  if(connection)
+	  {
+		//download already ask for overWrite
+		//this.overWriteResolve(aProcess, null, null, aDestination, true);
 		
-		  this.log('sucess', 'opened file "'+aFile+'" ', aProcess.id);
+		this._downloadFile(aFile, aRemotePlacesPath, aLocalPlacesPath, aProcess, true);
+		//run in a thread and then back to main thread because we need to wait for the file to download
+		if(!aProcess.stopped())
+		{
+		  if(aProcess.overWriteLocal)
+		  {
+			asynchRemote.s.runThread(function(){
+								  if(asynchRemote.s.fileExists(aDestination))
+									asynchRemote.s.runMain(function(){asynchRemote.s.openURL(window, aDestination, true);});
+								  }, this.thread);
+		  
+			this.log('sucess', 'opened file "'+aFile+'" ', aProcess.id);
+		  }
 		}
 		else if(!aInternalCall)
 		{
@@ -793,16 +910,14 @@ AsynchRemoteConnection.prototype = {
 		if(aProcess.overWriteLocal)
 		{
 		  //reading file
-		   var aContent = asynchRemote.s.koFileRemoteRead(asynchRemote.s.getServerURIForPath(aFile, connection));
+		  var aContent = connection.readFile(aFile, {});
   
 		  //creating file or needed directories
 		  asynchRemote.s.fileCreate(aDestination);
 		  
 		  //writing file
-		  asynchRemote.s.koFileLocalWrite(aDestination, aContent);
-		  
-		  this.cacheDirectoryItemAdd(aFile);
-		  
+		  asynchRemote.s.fileWriteBinaryContentIsByteArray(aDestination, aContent);
+
 		  this.log('sucess', 'downloaded file "'+aFile+'" to "'+aDestination+'" ', aProcess.id);
 		}
 		else
@@ -840,14 +955,15 @@ AsynchRemoteConnection.prototype = {
 	  this.log('progress', 'going to create file "'+aFile+'" …', aProcess.id);
 	  if(connection)
 	  {
+
 		//check if the file exists on local
 		this.overWriteResolve(aProcess, null, null, aDestination, true);
-		
+
 		if(aProcess.overWriteLocal)
 		{
 		  //check if the file exists on remote
 		  this.overWriteResolve(aProcess, aFile, false, null, false);
-		  
+
 		  if(aProcess.overWriteRemote)
 		  {
 			//creating file or needed directories
@@ -856,7 +972,7 @@ AsynchRemoteConnection.prototype = {
 			asynchRemote.s.koFileLocalWrite(aDestination, '');
 			
 			//writing remote file
-			this._uploadFile(aFile, aRemotePlacesPath, aLocalPlacesPath, aProcess, aProcess.overWriteRemote, true);
+			//this._uploadFile(aFile, aRemotePlacesPath, aLocalPlacesPath, aProcess, aProcess.overWriteRemote, true);
 			if(!aProcess.stopped())
 			{
 			  //opening the file
@@ -866,7 +982,6 @@ AsynchRemoteConnection.prototype = {
 									  asynchRemote.s.runMain(function(){asynchRemote.s.openURL(window, aDestination, true);});
 									}, this.thread);
 			  
-			  this.cacheDirectoryItemAdd(aFile);
 			  this.log('sucess', 'created file "'+aFile+'" ', aProcess.id);
 			}
 			else if(!aInternalCall)
@@ -925,18 +1040,18 @@ AsynchRemoteConnection.prototype = {
 		{
 		  //skiping file if it was not changed
 		  var checkModified = asynchRemote.s.file(aSource);
-		  if(!this.uploads[aSource] || this.uploads[aSource] != checkModified.lastModifiedTime+'_'+checkModified.fileSize)
+		  if(checkModified.fileSize == 0)
+		  {
+			this.log('sucess', 'skiping upload of file "'+aSource+'" to "'+aFile+'" because file size is 0', aProcess.id);
+		  }
+		  else if(!this.uploads[aSource] || this.uploads[aSource] != checkModified.lastModifiedTime+'_'+checkModified.fileSize)
 		  {
 			this.uploads[aSource] = checkModified.lastModifiedTime+'_'+checkModified.fileSize;
-			
 			//check if the file exists on remote
 			this.overWriteResolve(aProcess, aFile, false, null, false, overWrite);
 			
 			if(aProcess.overWriteRemote)
 			{
-			  //reading file
-			  //var aContent = asynchRemote.s.koFileLocalRead(aSource);
-			  
 			  var uploadAndRename = asynchRemote.s.pref('upload.and.rename');
 			  if(uploadAndRename)
 				var extension = '.kup';
@@ -946,33 +1061,26 @@ AsynchRemoteConnection.prototype = {
 			  var aData = asynchRemote.s.fileReadBinaryReturnByteArray(aSource);
 			  try//needs to clean the upload timestamp if this process failed
 			  {
-				//asynchRemote.s.runThreadAndWait(function(){
-				
 				  try{
 					//writing file
 					
 					connection.writeFile(aFile+extension, aData, aData.length);
-						//asynchRemote.s.koFileRemoteWrite(asynchRemote.s.getServerURIForPath(aFile, connection)+extension, aContent);
 				  }catch(e){
 					//directory may no exists
 					this._tryCreatingDirectories('/', aFile, connection);
 			  
 					  try{
-						
 						connection.writeFile(aFile+extension, aData, aData.length);
-						//asynchRemote.s.koFileRemoteWrite(asynchRemote.s.getServerURIForPath(aFile, connection)+extension, aContent);
 					  }catch(e){
 						//may the .kup file exists on remote becuase of a kill on an upload or something.
 						if(extension == '.kup')
 						{
 						  try{connection.removeFile(aFile+extension);}catch(e){}
 						  
-						connection.writeFile(aFile+extension, aData, aData.length);						  //asynchRemote.s.koFileRemoteWrite(asynchRemote.s.getServerURIForPath(aFile, connection)+extension, aContent);
+						connection.writeFile(aFile+extension, aData, aData.length);
 						}
 					  }
 				  }
-				  
-				//}, this.uploadThread);
 				
 				  if(uploadAndRename)
 				  {
@@ -985,9 +1093,6 @@ AsynchRemoteConnection.prototype = {
 					  }catch(e){/*shh*/}
 					}
 				  }
-				  
-				 
-				
 			  }
 			  catch(e)//needs to clean the upload timestamp if this process failed
 			  {
@@ -1179,7 +1284,7 @@ AsynchRemoteConnection.prototype = {
 	  else
 	  {
 		aProcess.overWriteLocal = false;
-		if((!aProcess.p.l.overWrite || !aProcess.p.l.overWrite.YesToAll) && asynchRemote.s.fileExists(aLocal))
+		if(!asynchRemote.s.pref('overwrite.no.ask') && (!aProcess.p.l.overWrite || !aProcess.p.l.overWrite.YesToAll) && asynchRemote.s.fileExists(aLocal))
 		{
 		  if(aIsDirectory)
 			this.overWrite(aProcess.p.l, 'Directory "'+aLocal+'" exists.\n\nDo you want to overwrite the local directory?\n');
@@ -1206,33 +1311,37 @@ AsynchRemoteConnection.prototype = {
 		aProcess.overWriteRemote = aParentOverWrite;
 	  else */
 	  if(asynchRemote.s.sharedObjectExists('overWrite.'+this.server+'.'+aRemote))
+	  {
 		aProcess.overWriteRemote = asynchRemote.s.sharedObjectGet('overWrite.'+this.server+'.'+aRemote);
+	  }
 	  else
 	  {
 		aProcess.overWriteRemote = false;
-		if((!aProcess.p.r.overWrite || !aProcess.p.r.overWrite.YesToAll))
+		if(!asynchRemote.s.pref('overwrite.no.ask') && (!aProcess.p.r.overWrite || !aProcess.p.r.overWrite.YesToAll))
 		{
 		  var aDirectory = aRemote.split('/');
 			  aDirectory.pop();
 			  aDirectory = aDirectory.join('/');
 		  var fileExistsRemote = false;
 		  try{
-			var entries = this.connect().list(('/'+aDirectory).replace(/^\/+/, '/'), 0).getChildren({});
+			var entries = this.connect().list(('/'+aDirectory).replace(/^\/+/, '/'), 1).getChildren({});
 			for(var i=0;i<entries.length;i++)
 			{
 			  var getFilepath = entries[i].getFilepath();
-			  if(
-				 (getFilepath == aRemote && entries[i].isDirectory()) ||
-				 (getFilepath == aRemote && !aIsDirectory && !isDirectory) 
-				)
+			  if(getFilepath == aRemote)
 			  {
-				fileExistsRemote = true;
-				break;
+				var isDirectory = entries[i].isDirectory();
+				if((isDirectory && aIsDirectory) || (!isDirectory && !aIsDirectory))
+				{
+				  fileExistsRemote = true;
+				  break;
+				}
 			  }
 			}
 		  }
 		  catch(e) 
 		  {
+			asynchRemote.s.dump(e);
 			//remote directory no exist
 		  }
 		  if(fileExistsRemote)
@@ -1388,7 +1497,7 @@ AsynchRemoteConnection.prototype = {
 	this.logs[this.logs.length] = {
 									'aDate':(new Date().toLocaleTimeString()),
 									'aType':aType,
-									'aMsg':asynchRemote.s.htmlSpecialCharsEncode(aMsg),
+									'aMsg':aMsg,
 									'aProcessID':aProcessID
 								  };
 	//shorting the amount of log entries
@@ -1412,7 +1521,6 @@ AsynchRemoteConnection.prototype = {
 	//queue the disconnect operation
 	var AsynchRemoteConnection = this;
 	asynchRemote.s.runThread(function(){
-	  
 	  
 	  if(AsynchRemoteConnection.connected && AsynchRemoteConnection.connection && AsynchRemoteConnection.connection.close)
 		AsynchRemoteConnection.connection.close();
