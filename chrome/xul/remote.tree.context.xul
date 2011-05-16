@@ -86,7 +86,7 @@
         />
 		<menuitem
 		  id="asynchremote-context-diff"
-		  label="Show Diff With Local"
+		  label="Compare With Local"
 		  class="menuitem-iconic asynchremote-diff"
 		  action="diff"
 		  testDisableIf="root onlyFolders"
