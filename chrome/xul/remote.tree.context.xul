@@ -75,14 +75,6 @@
 		<menuseparator/>
 
 		<menuitem
-		  id="asynchremote-context-folder-rebase"
-		  label="Make This Folder Root"
-		  class="menuitem-iconic asynchremote-rebase"
-		  testDisableIf="root multiple parentIsRoot"
-		  action="rebase"
-        />
-		<menuseparator/>
-		<menuitem
 		  id="asynchremote-context-locate"
 		  label="Locate in Local"
 		  class="menuitem-iconic asynchremote-locate"
@@ -97,7 +89,14 @@
 		  testDisableIf="root onlyFolders"
         />
 		<menuseparator/>
-		
+		<menuitem
+		  id="asynchremote-context-folder-rebase"
+		  label="Make This Folder Root"
+		  class="menuitem-iconic asynchremote-rebase"
+		  testDisableIf="root multiple parentIsRoot"
+		  action="rebase"
+        />
+		<menuseparator/>
 		<menuitem
 		  id="asynchremote-context-rename"
 		  label="Rename…"
