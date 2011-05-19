@@ -14,13 +14,14 @@
 		<richlistbox
 					 width="780" 
 					 id="asynchremote-toolbar-panel-log"
-					 flex="1"
 					 seltype="multiple"
 					 context="asynchremote-toolbar-panel-log-context"
-					 rows="12"
-					 minheight="250"
-					 maxheight="350"
+					 rows="10"
+					 height="200"
+					 maxheight="200"
+					 onselect="try{this.nextSibling.value = this.selectedItems[0].firstChild.firstChild.nodeValue;}catch(e){}"
 		/>
+		<textbox flex="1" emptytext="Selected log entry…" placeholder="Selected log entry…"/>
 		<hbox style="padding-top:1px;padding-bottom:2px;">
 		  <description style="margin: 6px ! important;" value="Show the following messages:"/>
 		  <checkbox label="Progress" id="asynchremote-toolbar-panel-show-progress" oncommand="asynchRemote.placesRemotePanelSetOptions()"/>
@@ -41,6 +42,7 @@
 	</panel>
 	<menupopup id="asynchremote-toolbar-panel-log-context">
 	  <menuitem label="Copy selected" oncommand="asynchRemote.actionFromRemote('log-copy-selected')"/>
+	  <menuitem label="Copy entire log" oncommand="asynchRemote.actionFromRemote('log-copy-all')"/>
 	</menupopup>
   </popupset>
 
