@@ -72,16 +72,18 @@
 			context="asynchremote-context"
 		  >
 			<menupopup
-				  id="asynchremote-process-list-popup"
-				  onpopupshowing="asynchRemote.placesRemoteToolbarProcessListToolbarbuttonPopupShowing()"
+			  id="asynchremote-process-list-popup"
+			  onpopupshowing="asynchRemote.placesRemoteToolbarProcessListToolbarbuttonPopupShowing()"
 			>
 			  <menuitem
-				  label="Close this connection graceful (will wait for running processes and pause any remaining)"
-				  class="menuitem-iconic asynchremote-shutdown"
-				  locked="true"
-				  action="close"
-				  oncommand="asynchRemote.actionFromRemote(this.getAttribute('action'))"/>
+			  label="Close this connection graceful (will wait for running processes and pause any remaining)"
+			  class="menuitem-iconic asynchremote-shutdown"
+			  locked="true"
+			  action="close"
+			  oncommand="asynchRemote.actionFromRemote(this.getAttribute('action'))"/>
+			  <menuseparator locked="true"/>
 			</menupopup>
+			
 		  </toolbarbutton>
 		  <toolbarbutton
 			buttonstyle="pictures"
@@ -124,8 +126,10 @@
 			  <menuseparator/>
 			  <menuitem oncommand="ko.commands.doCommandAsync('cmd_placeView_customView', event)" label="Manage Views…"/>
 			  <menuseparator/>
-			  <menuitem action="clean-cache-modified" label="Clean last modified cache"/>
-			  <menuitem action="clean-cache-connection" label="Clean connection cache"/>
+			  <menuitem action="clean-cache-modified" label="Clean last modified cache of uploaded items"/>
+			  <menuitem action="pref-tools-set" id="asynchremote-tools-toolbarbutton-dont-cache-last-modified"  type="checkbox" checked="false" label="Don't cache last modified, upload it anyway"/>
+			  <menuseparator/>
+			  <menuitem action="clean-cache-connection" label="Clean connection items cache"/>
 			  <menuseparator/>
 			  <menuitem action="clean-cache-overwrite" label="Forget overwrite settings"/>
 			  <menuitem id="asynchremote-tools-toolbarbutton-overwrite-no-ask" type="checkbox" checked="false" action="pref-tools-set" label="Overwrite without asking"/>
@@ -135,8 +139,8 @@
 			  <menuitem oncommand="ko.windowManager.getMainWindow().prefs_doGlobalPrefs('serversItem');" label="Edit Remote Accounts…"/>
 			  <menuseparator/>
 			  <menuitem disabled="true" action="" type="checkbox" label="Set as full sidebar"/>
-			  <menuitem disabled="true" action="" type="checkbox" checked="true" label="Split with local and remote"/>
-			  <menuitem disabled="true" action="" type="checkbox" label="Side by side remote and local"/>
+			  <menuitem disabled="true" action="" type="checkbox" checked="true" label="Remote below local"/>
+			  <menuitem disabled="true" action="" type="checkbox" label="Side by side local and remote"/>
 			  <menuseparator/>
 			  <menuitem action="contribute" label="Support extension author" class="menuitem-iconic" image="chrome://asynchremote/content/icons/toolbar/balance.png"/>
 
