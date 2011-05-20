@@ -43,7 +43,7 @@ function AsynchRemote()
 	this.s.extensionID = 'tito@asynchremote';
 	this.s.extensionName = 'Asynch Remote';
 	this.s.extensionChromeName = 'asynchremote';
-	this.s.include('observer','preference','file','history','string','thread','serialize','sharedMemory','DOM','prompt','process','search','search','places','window','listener','application','tab','document','urls','clipboard');
+	this.s.include('observer','preference','file','history','string','thread','serialize','sharedMemory','DOM','prompt','process','search','search','places','window','listener','application','tab','document','urls','clipboard', 'notification');
 	this.s.includeShared('prompt', 'variete');
 	this.windowID = this.s.getWindowID();
 	//end global singleton object
@@ -134,14 +134,17 @@ function AsynchRemote()
 	this.s.removeChilds(menupopup);
 	this.servers = [];
 	var servers = this.mRCService.getServerInfoList({});
+	
 	var server;
 	for(var id in servers)
 	{
 	  server = servers[id].alias;
+	  
 	  //append the info
 	  this.servers[server] = servers[id];
 	  var menuitem = document.createElement('menuitem');
-		  menuitem.setAttribute('label', servers[id].alias);
+
+		  menuitem.setAttribute('label', servers[id].alias+' - '+servers[id].hostname+''+(servers[id].port > 0 ? ':'+servers[id].port : '')+servers[id].path);
 		  menuitem.setAttribute('server', servers[id].alias);
 		  menuitem.setAttribute('class', 'menuitem-iconic asynchremote-connection');
 		  
@@ -157,7 +160,8 @@ function AsynchRemote()
 		if(this.connections[server] && this.connections[server].connecting)
 		  menuitem.setAttribute('connecting', true);
 
-		menupopup.insertBefore(menuitem, menupopup.firstChild);
+		  menupopup.insertBefore(menuitem, menupopup.lastChild.previousSibling);
+
 	}
   }
   
@@ -216,7 +220,7 @@ function AsynchRemote()
 	else
 	{
 	  //get tree selection and properties
-	  var selectedItems = this.trees[server].selectionSelectedItems;
+	  var selectedItems = this.trees[server].selectionGetSelectedItems();
 
 	  if(selectedItems.length > 1)
 		multiple = true;
@@ -324,7 +328,9 @@ function AsynchRemote()
 			  menuitem.setAttribute('tooltiptext', 'Process paused, click to continue');
 			else if(process.aborted())
 			  menuitem.setAttribute('tooltiptext', 'Process aborted, click to continue');
-		  menupopup.appendChild(menuitem);
+		  try{
+		   menupopup.insertBefore(menuitem, menupopup.firstChild.nextSibling.nextSibling);
+		  }catch(e){menupopup.appendChild(menuitem)}
 	  }
 	}
   }
@@ -377,11 +383,16 @@ function AsynchRemote()
 	  this.element('asynchremote-tools-toolbarbutton-upload-and-rename').setAttribute('checked', 'true');
 	else
 	  this.element('asynchremote-tools-toolbarbutton-upload-and-rename').setAttribute('checked', 'false');
-	//overwrite no ask
-	if(this.s.pref('overwrite.no.ask'))
-	  this.element('asynchremote-tools-toolbarbutton-overwrite-no-ask').setAttribute('checked', 'true');
+	//upload.and.rename
+	if(this.s.pref('upload.and.rename'))
+	  this.element('asynchremote-tools-toolbarbutton-upload-and-rename').setAttribute('checked', 'true');
 	else
-	  this.element('asynchremote-tools-toolbarbutton-overwrite-no-ask').setAttribute('checked', 'false');
+	  this.element('asynchremote-tools-toolbarbutton-upload-and-rename').setAttribute('checked', 'false');
+	//overwrite no ask
+	if(this.s.pref('dont.cache.last.modified'))
+	  this.element('asynchremote-tools-toolbarbutton-dont-cache-last-modified').setAttribute('checked', 'true');
+	else
+	  this.element('asynchremote-tools-toolbarbutton-dont-cache-last-modified').setAttribute('checked', 'false');
   }
 
   /*rebase tree to folder*/
@@ -484,7 +495,6 @@ function AsynchRemote()
 	
 	//selection
   	var selectedItems = this.s.placesLocalGetSelectedPaths(window, aboutFocusedTab);
-	
 	var selectedPath = selectedItems[0];//the very first path on the selection
 	
 	//vars
@@ -569,9 +579,28 @@ function AsynchRemote()
 		  }
 		  break;
 		}
-	  case 'upload':
-		{
+	  case 'upload':  
+		{ 
 		  var aProcess = false;//group the processes into one process object
+		   
+		  if(aboutFocusedTab)
+		  {
+			if(this.s.documentGetFocused(window).isDirty)
+			{
+			  var saveBeforeUpload = this.s.pref('save.before.upload');
+			  var prompt;
+			  if(saveBeforeUpload || (prompt = this.s.confirmWithCheckbox('The document was not saved, do you want to save the document before uploading?', 'Save my preference')).value)
+			  {
+				if(prompt && prompt.check)
+				  this.s.pref('save.before.upload', true);
+				this.s.tabGetFocused(window).save();
+			  }
+			  else
+			  {
+				break;
+			  }
+			}
+		  }
 		  for(var id in selectedItems)
 		  {
 			var file = this.s.getRemotePathFromLocalPath(
@@ -635,12 +664,16 @@ function AsynchRemote()
 	else
 	{
 	  //get tree selection and properties
-	  var selectedItems = this.trees[server].selectionSelectedItems;
+	  var selectedItems = this.trees[server].selectionGetSelectedItems();
 	  var selectedPaths = [];
 	  for(var id in selectedItems)
 		selectedPaths[selectedPaths.length] = selectedItems[id].getFilepath;
-	  var selectedPath = selectedPaths[0];//the very first path on the selection
-	  var selectedItem = selectedItems[0];//the very first item on the selection
+	  var selectedItem = this.trees[server].selectionGetSelectedItem();
+	  if(!selectedItem){}
+	  else
+	  {
+		var selectedPath = selectedItem.getFilepath;//the very first path on the selection
+	  }
 	}
 	
 	var currentRemotePath 	= this.connections[server].cache.currentPath
@@ -700,24 +733,27 @@ function AsynchRemote()
 		}
 	  case 'log-open':
 		{
-		  this.element('asynchremote-toolbar-panel-show-progress')
-				  .checked = this.s.pref('log.show.progress');
-		  this.element('asynchremote-toolbar-panel-show-warning')
-				  .checked = this.s.pref('log.show.warning');
-		  this.element('asynchremote-toolbar-panel-show-error')
-				  .checked = this.s.pref('log.show.error');
-		  this.element('asynchremote-toolbar-panel-show-sucess')
-				  .checked = this.s.pref('log.show.sucess');
-
-		  this.actionFromRemote('log-update');
-		  
-		  this.element('asynchremote-toolbar-panel')
-				.openPopup(
-							this.element('asynchremote-log'),
-							'after_start'
-						  );
-		  this.connections[server].errorCount = 0;
-		  this.placesRemoteToolbarUpdate(server);
+		  if(this.element('asynchremote-toolbar-panel').state != 'open')
+		  {
+			this.element('asynchremote-toolbar-panel-show-progress')
+					.checked = this.s.pref('log.show.progress');
+			this.element('asynchremote-toolbar-panel-show-warning')
+					.checked = this.s.pref('log.show.warning');
+			this.element('asynchremote-toolbar-panel-show-error')
+					.checked = this.s.pref('log.show.error');
+			this.element('asynchremote-toolbar-panel-show-sucess')
+					.checked = this.s.pref('log.show.sucess');
+  
+			this.actionFromRemote('log-update');
+			
+			this.element('asynchremote-toolbar-panel')
+				  .openPopup(
+							  this.element('asynchremote-log'),
+							  'after_start'
+							);
+			this.connections[server].errorCount = 0;
+			this.placesRemoteToolbarUpdate(server);
+		  }
 		  break;
 		}
 	  case 'log-save':
@@ -778,7 +814,7 @@ function AsynchRemote()
 		  
 		  var searchString = this.element('asynchremote-toolbar-panel-search').value;
 		  var count = this.connections[server].logs.length;
-		  for(var i = count-1, a=0; i>a;i--)
+		  for(var i = count-1, a=0; i>=a;i--)
 		  {
 			var entry = this.connections[server].logs[i];
 			var aType = entry.aType;
@@ -833,6 +869,20 @@ function AsynchRemote()
 		  
 		  break;
 		}
+	  case 'log-copy-all':
+		{
+		  var log = this.element('asynchremote-toolbar-panel-log');
+		  var count = log.getRowCount();
+		  var text = '';
+		  for(var i=0;i<count;i++)
+		  {
+			text += log.getItemAtIndex(i).firstChild.firstChild.nodeValue;
+			text += this.s.__NL;
+		  }
+		  this.s.copyToClipboard(text);
+		  
+		  break;
+		}
 	  case 'log-update-if-opened':
 		{
 		  if(this.element('asynchremote-toolbar-panel').state == 'open')
@@ -841,7 +891,8 @@ function AsynchRemote()
 		}
 	  case 'delete':
 		{
-		  if(this.s.confirm('Are you sure you want to delete?\n\n\t'+selectedPaths.join('\n\t')+'\n'))
+		  
+		  if(selectedPaths.join('') != '' && this.s.confirm('Are you sure you want to delete?\n\n\t'+selectedPaths.join('\n\t')+'\n'))
 		  {
 			var aProcess = false;//group the processes into one process object
 			for(var id in selectedItems)
@@ -863,17 +914,21 @@ function AsynchRemote()
 			for(var id in selectedItems)
 			{
 			  if(selectedItems[id].isDirectory)
+			  {
 				aProcess = this.connections[server].chmodDirectory(
 																   selectedItems[id].getFilepath,
 																   newPermissions.value,
 																   newPermissions.check,
 																   aProcess
 																   );
+			  }
 			  else
+			  {
 				aProcess = this.connections[server].chmodFile(
 															  selectedItems[id].getFilepath,
 															  newPermissions.value,
 															  aProcess);
+			  }
 			}
 		  }
 		  break;
@@ -881,19 +936,6 @@ function AsynchRemote()
 	  case 'rename':
 		{
 		  this.trees[server].editCurrentRow();
-		  /*
-		  if(selectedPath != '' && selectedPath != '/')//avoid move the root directory
-		  {
-			var parentPath = selectedPath.split('/');
-			var aPath = parentPath.pop();
-			parentPath = parentPath.join('/');
-			if(aPath && aPath != '')
-			{
-			  var newName = this.s.prompt('Enter new name…', aPath);
-			  if(newName != '' && parentPath+'/'+newName != selectedPath)
-				this.connections[server].rename(selectedPath, parentPath+'/'+newName);
-			}
-		  }*/
 		  break;
 		}
 	  case 'renameFromTree':
@@ -907,7 +949,7 @@ function AsynchRemote()
 			{
 			  var newName = aData.newName;
 			  if(newName != '' && parentPath+'/'+newName != aData.oldName)
-				this.connections[server].rename(aData.oldName, parentPath+'/'+newName);
+				this.connections[server].rename(aData.oldName, parentPath+'/'+newName, aData.isDirectory);
 			}
 		  }
 		  break;
@@ -919,9 +961,9 @@ function AsynchRemote()
 			var newName = this.s.prompt('Move to…', selectedPath);
 			if(newName != '' && newName != selectedPath)
 			{
-			  if(!this.s.confirm('Are you sure you want to move "'+selectedPath+'" to "'+newName+'"?'))
+			  if(!this.s.confirm('Are you sure you want to move \n\t"'+selectedPath+'" \nto \n\t"'+newName+'"?'))
 				  break;
-			  this.connections[server].rename(selectedPath, newName);
+			  this.connections[server].rename(selectedPath, newName, selectedItem.isDirectory);
 			}
 		  }
 		  break;
@@ -960,6 +1002,64 @@ function AsynchRemote()
 											aProcess
 											);
 			}
+		  }
+		  break;
+		}
+	  case 'open-from-tree':
+		{
+		 // alert('open from tree');
+		  var aProcess = false;//group the processes into one process object
+		  
+		  var everyOneOpen = true;
+		  var everyOneClosed = true;
+		  for(var id in selectedItems)
+		  {
+			if(selectedItems[id].isDirectory)
+			{
+			  if(!selectedItems[id].isContainerOpen)
+				everyOneOpen = false;
+			  else
+				everyOneClosed = false;
+			}
+		  }
+		  
+		  var toggledSelected = false;
+		  for(var id in selectedItems)
+		  {
+			if(selectedItems[id].isDirectory)
+			{
+			  if(everyOneOpen)
+			  {
+				tree.toggleOpenState(-1, selectedItems[id]);
+				if(selectedItem == selectedItems[id])
+				  toggledSelected = true;
+			  }
+			  else if(!selectedItems[id].isContainerOpen)
+			  {
+				tree.toggleOpenState(-1, selectedItems[id]);
+				if(selectedItem == selectedItems[id])
+				  toggledSelected = true;
+			  }
+			}
+			else if(!selectedItems[id].isDirectory)
+			{
+			  aProcess = this.connections[server].openFile(
+											selectedItems[id].getFilepath,
+											currentRemotePath,
+											currentLocalPath,
+											aProcess
+											);
+			}
+		  }
+		  if(everyOneOpen || everyOneClosed)
+		  {
+			if(toggledSelected)
+			  tree.toggleOpenState(-1, selectedItem);
+		  }
+		  else if(!everyOneOpen && !everyOneClosed)
+		  {
+			if(!toggledSelected && selectedItem.isDirectory)
+			  tree.toggleOpenState(-1, selectedItem);
 		  }
 		  break;
 		}
@@ -1106,7 +1206,7 @@ function AsynchRemote()
 			//if the local places has no focus and the remote places has  focus
 			 ((!ko.places.viewMgr || !ko.places.viewMgr.focused) && this.trees[server].focused) ||
 			 //if there is selected files on remote, and there is NO selected files on local
-			 (this.s.placesLocalGetSelectedPaths(window).length === 0 && this.trees[server].selectionSelectedItems.length > 0)
+			 (this.s.placesLocalGetSelectedPaths(window).length === 0 && this.trees[server].selectionGetSelectedItems().length > 0)
 			 
 		  )
 		  {
@@ -1116,7 +1216,7 @@ function AsynchRemote()
 				  //if the remote pane has NO focus and the places pane has focus
 				  (!this.trees[server].focused && ko.places.viewMgr && ko.places.viewMgr.focused) ||
 				  //if there is selected files on local pane, and there is NO selected files on remote
-				  (this.trees[server].selectionSelectedItems.length === 0 && this.s.placesLocalGetSelectedPaths(window).length > 0)
+				  (this.trees[server].selectionGetSelectedItems().length === 0 && this.s.placesLocalGetSelectedPaths(window).length > 0)
 				  )
 		  {
 			this.actionFromLocal('upload');
@@ -1133,7 +1233,7 @@ function AsynchRemote()
 			//if the local places has no focus and the remote places has  focus
 			 ((!ko.places.viewMgr || !ko.places.viewMgr.focused) && this.trees[server].focused) ||
 			 //if there is selected files on remote, and there is NO selected files on local
-			 (this.s.placesLocalGetSelectedPaths(window).length === 0 && this.trees[server].selectionSelectedItems.length > 0)
+			 (this.s.placesLocalGetSelectedPaths(window).length === 0 && this.trees[server].selectionGetSelectedItems().length > 0)
 			 
 		  )
 		  {
@@ -1143,7 +1243,7 @@ function AsynchRemote()
 				  //if the remote pane has NO focus and the places pane has focus
 				  (!this.trees[server].focused && ko.places.viewMgr && ko.places.viewMgr.focused) ||
 				  //if there is selected files on local pane, and there is NO selected files on remote
-				  (this.trees[server].selectionSelectedItems.length === 0 && this.s.placesLocalGetSelectedPaths(window).length > 0)
+				  (this.trees[server].selectionGetSelectedItems().length === 0 && this.s.placesLocalGetSelectedPaths(window).length > 0)
 				  )
 		  {
 			this.actionFromLocal('download');
@@ -1190,11 +1290,6 @@ function AsynchRemote()
 		  this.connections[server].cleanCacheModified();
 		  break;
 		}
-	  case 'clean-cache-connection':
-		{
-		  this.connections[server].cleanCacheConnection();
-		  break;
-		}
 	  case 'clean-cache-overwrite':
 		{
 		  this.connections[server].cleanCacheOverWrite();
@@ -1204,6 +1299,7 @@ function AsynchRemote()
 		{
 		  this.s.pref('upload.and.rename', this.element('asynchremote-tools-toolbarbutton-upload-and-rename').getAttribute('checked') == 'true')
 		  this.s.pref('overwrite.no.ask', this.element('asynchremote-tools-toolbarbutton-overwrite-no-ask').getAttribute('checked') == 'true')
+		  this.s.pref('dont.cache.last.modified', this.element('asynchremote-tools-toolbarbutton-dont-cache-last-modified').getAttribute('checked') == 'true');
 		  
 		  break;
 		}
@@ -1231,13 +1327,7 @@ function AsynchRemote()
 	  /*mmmm*/
 	  case 'refresh-selected':
 		{
-		  for(var id in selectedItems)
-		  {
-			if(selectedItems[id].isDirectory)
-			{	
-			  this.connections[server].cacheDirectoryItemAdd(selectedItems[id].getFilepath);
-			}
-		  }
+		 
 		  break;
 		}
 	}
