@@ -497,7 +497,7 @@ insertRow:function(aRow)
 		if (this.getLevel(t) > thisLevel){}//not in a subfolder
 		else if (this.getLevel(t) < thisLevel)//break if we are in a sibling folder
 		  break;
-	  	else if (asynchRemote.s.sortLocale(this._rows[t].getFilename.toLowerCase(), aRow.getFilename.toLowerCase()) > 0)//found the position?
+		else if (aRow.isDirectory == this._rows[t].isDirectory && asynchRemote.s.sortLocale(this._rows[t].getFilename.toLowerCase(), aRow.getFilename.toLowerCase()) > 0)//found the position?
 		  break;
 		row++;
 	  }
