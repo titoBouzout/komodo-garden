@@ -30,7 +30,14 @@ get rowCount(){return this._rows.length;},
 get treeElement(){ return asynchRemote.element(this.treeElementID);},
 startEditing:function(row, col){
   this.event.renameEditing = true;
+  // hack hack hack avoids tree autoresizing when editing
+  this.treeElement.setAttribute('height', this.treeElement.getAttribute('height')+1);
+  this.treeElement.setAttribute('height', this.treeElement.getAttribute('height')-1);
+  //set the field to editing state
   this.treeElement.startEditing(row, col);
+  // hack hack hack avoids tree autoresizing when editing
+  this.treeElement.setAttribute('height', this.treeElement.getAttribute('height')+1);
+  this.treeElement.setAttribute('height', this.treeElement.getAttribute('height')-1);
    this.event.renameEditing = false;
   },
 setTree:function(tree){this.tree = tree;},
@@ -40,6 +47,7 @@ setCellText : function(row, col, value)
   var aData = {}
 	  aData.oldName = this._rows[row].getFilepath;
 	  aData.newName = value;
+	  aData.isDirectory = this._rows[row].isDirectory;
   asynchRemote.actionFromRemote('renameFromTree', aData);
 },
 isContainer:function(row){return this._rows[row].isDirectory;},
@@ -56,9 +64,9 @@ getImageSrc:function(row, col){ return ''},
 getProgressMode :function(row, col){ return 0},
 getCellValue :function(row, col){ return ''},
 cycleHeader:function(col){},
-selectionChanged:function()
+selectionChanged:function(forceRefresh)
 {
-  if(this.selectionGoingToChange == 0)
+  if(this.selectionGoingToChange == 0 || forceRefresh)
   {
 	this.selectionGoingToChange++;
 	  this.selectionSelectedItems = [];
@@ -75,21 +83,33 @@ selectionGetSelectedItems:function()
   this.selectionGoingToChange++;
 	var selected = [];
 	var rangeCount = this.selection.getRangeCount();
+	var currentIndex = -1;
 	for (var i = 0; i < rangeCount; i++)
 	{
 	   var start = {};
 	   var end = {};
 	   this.selection.getRangeAt(i, start, end);
 	   for(var c = start.value; c <= end.value; c++)
+	   {
+		  if(currentIndex === -1)
+			this.selection.currentIndex = c;
 		  selected[selected.length] = this._rows[c];
+	   }
 	}
   this.selectionGoingToChange--;
   return selected;
 },
-selectionReselect:function()
+selectionGetSelectedItem:function()
 {
   this.selectionGoingToChange++;
-	if(this.selectionGoingToChange == 1)
+	var selected = this._rows[this.selection.currentIndex];
+  this.selectionGoingToChange--;
+  return selected;
+},
+selectionReselect:function(forceRefresh)
+{
+  this.selectionGoingToChange++;
+	if(this.selectionGoingToChange == 1 || forceRefresh)
 	{
 	  try
 	  {
@@ -104,6 +124,15 @@ selectionReselect:function()
 	  } catch(e){ asynchRemote.dump('selectionReselect', e, true); }
 	}
   this.selectionGoingToChange--;
+},
+selectionClear:function()
+{
+  this.selectionSelectedItems = [];
+  this.selection.clearSelection();
+},
+selectionClearSoft:function()
+{
+  this.selection.clearSelection();
 },
 cycleCell:function(row, col){},
 performAction:function(action){},
@@ -188,6 +217,7 @@ toggleOpenState:function(row, rowObject) {
   //the row was closed/removed
   if(row == -1)
   {
+	//asynchRemote.dump('toggleOpenState:element was removed');
 	this.updating--;
 	this.treeOperationsQueue();
 	return;
@@ -195,6 +225,7 @@ toggleOpenState:function(row, rowObject) {
 
   if(rowObject.isContainerOpen)
   {
+	//asynchRemote.dump('toggleOpenState:container is open');
 	  rowObject.isContainerOpen = false;
 	  
 	  this.selectionGoingToChange++;
@@ -211,6 +242,8 @@ toggleOpenState:function(row, rowObject) {
   }
   else
   {
+	//asynchRemote.dump('toggleOpenState:container is closed');
+	
 	rowObject.isLoading = true;
 	rowObject.isBusy = true;
 	
@@ -229,10 +262,15 @@ toggleOpenState:function(row, rowObject) {
 },
 removeNextLevel:function(row)
 {
+  //asynchRemote.dump('removeNextLevel');
   if(!this._rows[row])//the very first insert dont have next levels
+  {
+	//asynchRemote.dump('removeNextLevel:!this._rows[row]');
 	return;
+  }
   try
   {
+	//asynchRemote.dump('removeNextLevel:removing next level on row:'+row);
 	row = parseInt(row);
 	
 	var thisLevel = this._rows[row].getLevel;
@@ -246,6 +284,7 @@ removeNextLevel:function(row)
 	}
 	if (deletecount)
 	{
+	  //asynchRemote.dump('removeNextLevel:delte count :'+deletecount);
 	  var firstVisible = this.tree.getFirstVisibleRow();
 	  
 	  this._rows.splice(row, deletecount);
@@ -275,7 +314,7 @@ insertRows:function(aLevel, aRows, aParentRow)
 	if(row == -1)
 	{
 	  this.selectionGoingToChange++;
-		try{this.tree.invalidateRow(row); }catch(e) { asynchRemote.dump('insertRows:1:', e, true); }
+	//	try{this.tree.invalidateRow(row); }catch(e) { asynchRemote.dump('insertRows:1:', e, true); }
 	  this.selectionGoingToChange--;
 	  
 	  this.updating--;
@@ -287,7 +326,6 @@ insertRows:function(aLevel, aRows, aParentRow)
 	aParentRow.isContainerOpen = true;
 	aParentRow.isLoading = false;	
 
-	
 	if(aRows.length <1)
 	{
 	  aParentRow.isContainerEmpty = true;
@@ -325,12 +363,9 @@ insertRows:function(aLevel, aRows, aParentRow)
 	  var b=0;
 	  for(var id in aRows)
 	  {
-	  //for (var i = 0, count = aRows.length; i < count; i++)
 		this._rows.splice(a + b + 1, 0, aRows[id]);
 		b++;
 	  }
-	  //for (var i = 0, count = aRows.length; i < count; i++)
-		//this._rows.splice(a + i + 1, 0, aRows[i]);
 	  
 	  var visibleFirst = this.tree.getFirstVisibleRow();
 	  
@@ -402,9 +437,12 @@ removeRowByPath:function(aPath){
 		aParentRowID = this.findRowID(this._rows[aRowID].aParentRow);
 	  }
 	  
+	  this.removeNextLevel(aRowID);
+	  
 	  var aLevel = this._rows[aRowID].getLevel;
 	  this._rows.splice(aRowID, 1);
 	  var firstVisible = this.tree.getFirstVisibleRow();
+
 	  if(aParentRowID != -1)
 		this.tree.invalidateRow(aParentRowID);
 	  this.tree.rowCountChanged(aLevel, -1);
@@ -412,40 +450,74 @@ removeRowByPath:function(aPath){
 	}
 	
   this.selectionGoingToChange--;
-  this.selectionReselect();
+  this.selectionClear();
   this.updating--;
   this.treeOperationsQueue();
 },
 
-invalidateRowByPath:function(aPath)
+insertRow:function(aRow)
 {
-  
  if(this.updating != 0)//queue
   {
 	var server = this.server;
-	this.treeOperationsQueue(function(){asynchRemote.trees[server].removeRowByPath(aPath);});
+	this.treeOperationsQueue(function(){asynchRemote.trees[server].insertRow(aRow);});
 	return;
   }
  
   this.updating++;
-  this.selectionGoingToChange++;
   
-	  var aRowID = this.findRowByPath(aPath);
-	  if(aRowID != -1)
+  //look if the parent is on the tree
+  if(typeof(aRow.aParentRow) != 'undefined' && aRow.aParentRow != -1 )
+  {
+	var row = this.findRowID(aRow.aParentRow);
+	//the parentRow was closed/removed
+	if(row == -1)
+	{
+	  this.updating--;
+	  this.treeOperationsQueue();
+	  return;
+	}
+  }
+  else
+  {
+	var row = 0;
+  }
+  
+  this.selectionGoingToChange++;
+	
+	try
+	{
+	  var thisLevel = aRow.getLevel;
+
+	  if(thisLevel > 0)
+		row++;
+	  //then where to insert the row?
+	  for (var t = row; t < this._rows.length; t++)
 	  {
-		if(this._rows[aRowID].isContainerOpen)
-		{
-		  this._rows[aRowID].isContainerOpen = false;
-		  this.toggleOpenState(-1, this._rows[aRowID]);
-		}
+		if (this.getLevel(t) > thisLevel){}//not in a subfolder
+		else if (this.getLevel(t) < thisLevel)//break if we are in a sibling folder
+		  break;
+	  	else if (asynchRemote.s.sortLocale(this._rows[t].getFilename.toLowerCase(), aRow.getFilename.toLowerCase()) > 0)//found the position?
+		  break;
+		row++;
 	  }
+	  
+	  //insert the row
+	  this._rows.splice(row, 0, aRow);
+
+	  //keep scroll
+	  var visibleFirst = this.tree.getFirstVisibleRow();
+	  this.tree.rowCountChanged(aRow.aLevel, +1);
+	  this.tree.scrollToRow(visibleFirst);
+	  
+	}catch(e) { asynchRemote.dump('insertRows:3:', e, true); }
   
   this.selectionGoingToChange--;
+  //reselect
   this.selectionReselect();
   this.updating--;
   this.treeOperationsQueue();
 },
-
 
 
 getEventRow:function(event)
@@ -477,8 +549,15 @@ getEventColumn:function(event)
 },
 editCurrentRow:function()
 {
-  if(this.selectionSelectedItems.length === 1)
+  if(this.selectionGetSelectedItems().length === 1)
+  {
 	this.startEditing(this.selection.currentIndex, this.tree.columns.getColumnAt(0));
+	asynchRemote.s.notifyStatusBar(window, 'Type to edit the item name');
+  }
+  else
+  {
+	asynchRemote.s.notifyStatusBar(window, 'Can\'t rename multiples items at the same time');
+  }
 },
 childrenOnClick:function(event)
 {
@@ -547,7 +626,7 @@ treeOnKeyPress:function(event)
 		}
 	  case 13://open
 		{
-		  this.childrenOnDblClick(event);
+		  asynchRemote.actionFromRemote('open-from-tree');
 		  break;
 		}
 	  case 46://delete
@@ -574,9 +653,10 @@ treeOnKeyPress:function(event)
 		  asynchRemote.actionFromRemote('refresh-all-hard');
 		  break;
 		}
-		event.stopPropagation();
-		event.preventDefault();
+
 	}
+	event.stopPropagation();
+	event.preventDefault();
 	return true;
   }
 }

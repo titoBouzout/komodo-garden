@@ -30,7 +30,7 @@ function AsynchRemoteConnection(server)
   this.numMaxLostConnectionTrys = 6;//connection maybe lost many times in a row depending of servers.
   
   //holds logs of connections
-  this.logs = []
+  this.logs = [];
   this.log('status', 'Loaded remote pane: "'+server+'"', 0);
   
   //holds the sizes and modified times of files to not upload the same file again
@@ -132,15 +132,17 @@ AsynchRemoteConnection.prototype = {
 
 		this.connected = false;
 		this.connection = null;
-		this.log('status', 'Disconnected from host, connection was idle.', 0);
+		this.log('status', 'Connection idle, now disconnected from host', 0);
 		this.keepAliveTimer.cancel();
 	  }
 	  else if(this.connecting !== 0 && this.connected)//the connection is doing something
 	  {
+		this.log('status', 'Sending keep alive CWD /', 0);
 		try{this.connect().changeDirectory('/');}catch(e){}
 	  }
 	  else if(this.connected)//the connection is idle, keep alive for two minutes
 	  {
+		this.log('status', 'Sending keep alive CWD /', 0);
 		try{this.connect(0, true).changeDirectory('/');}catch(e){}
 	  }
 	
@@ -262,15 +264,16 @@ AsynchRemoteConnection.prototype = {
 		{
 		  var entries = this.connect().list(('/'+aDirectory).replace(/^\/+/, '/'), 1).getChildren({});
 		  this.log('progress', 'Getting "'+aDirectory+'" list from host', 0);
-		  var child, rowsDirectories = [], rowsFiles = [], rows = [], rowsSorted = [], name, isDirectory;
+		  var child, rowsDirectories = [], rowsFiles = [], rows = [], rowsSorted = [], name, isDirectory, nameSorting;
 		  
 		  for(var i=0;i<entries.length;i++)
 		  {
 			child = entries[i];
 			name = child.getFilename();
+			nameSorting = name.toLowerCase()+' '+i;
 			isDirectory = child.isDirectory();
 			
-			rows[name] = 
+			rows[nameSorting] = 
 			{
 				'getFilename': name,
 				'getFilepath': child.getFilepath(),
@@ -286,10 +289,10 @@ AsynchRemoteConnection.prototype = {
 				'getSize': child.size,
 				'aParentRow':aParentRow
 			}
-			if(rows[name].isDirectory)
-			  rowsDirectories[rowsDirectories.length] = name;
+			if(rows[nameSorting].isDirectory)
+			  rowsDirectories[rowsDirectories.length] = nameSorting;
 			else
-			  rowsFiles[rowsFiles.length] = name;
+			  rowsFiles[rowsFiles.length] = nameSorting;
 		  }
 		  
 		  //sorting names
@@ -300,7 +303,7 @@ AsynchRemoteConnection.prototype = {
 		  for(var id in rowsFiles)
 			rowsSorted[rowsSorted.length] = rows[rowsFiles[id]]
 		  
-		  delete entries, child, name, rows, rowsDirectories, rowsFiles;
+		  delete entries, child, name, nameSorting, rows, rowsDirectories, rowsFiles;
 		  
 		  this.cache.dirs[aDirectory].data = rowsSorted;
 		  
@@ -338,7 +341,7 @@ AsynchRemoteConnection.prototype = {
 		else
 		{
 		  var server = this.server;
-		  this.log('error', 'Unable to get directory listing of "'+aDirectory+'". ', 0);
+		  this.log('error', 'Unable to get directory listing of "'+aDirectory+'". '+error, 0);
 		  asynchRemote.s.runMain(function(){asynchRemote.trees[server].insertRows(aLevel, [], aParentRow);});
 
 		}
@@ -387,7 +390,7 @@ AsynchRemoteConnection.prototype = {
 			throw new Error(e);
 		}
 		//removing the item from cache and tree
-		this.cacheDirectoryItemRemove(aFile);
+		this.cacheDirectoryItemRemove(aFile, false);
 		this.log('sucess', 'removed file "'+aFile+'"', aProcess.id);
 	  }
 	}
@@ -459,8 +462,7 @@ AsynchRemoteConnection.prototype = {
 			  }
 			else{ throw new Error(e);}
 		  }
-		  this.cacheDirectoryItemRemove(aDirectory);
-		  this.cache.dirs[aDirectory] = {};
+		  this.cacheDirectoryItemRemove(aDirectory, true);
 		  this.log('sucess', 'removed directory "'+aDirectory+'"', aProcess.id);
 		}
 		else if(!aInternalCall)
@@ -576,7 +578,7 @@ AsynchRemoteConnection.prototype = {
 	  aProcess.reQueue(aProcess.lastRunnuable);
 	}
   },
-  rename:function(oldName, newName, aProcess, aInternalCall, aInternalCall)
+  rename:function(oldName, newName, isDirectory, aProcess, aInternalCall)
   {
 	if(!aProcess)
 	{
@@ -584,13 +586,13 @@ AsynchRemoteConnection.prototype = {
   	  this.processes[this.processes.length] = aProcess;
 	}
 	var AsynchRemoteConnection = this;
-	aProcess.queue(function(){AsynchRemoteConnection._rename(oldName, newName, aProcess, aInternalCall);}, aInternalCall);
+	aProcess.queue(function(){AsynchRemoteConnection._rename(oldName, newName, isDirectory, aProcess, aInternalCall);}, aInternalCall);
 	asynchRemote.s.runThread(function(){
 										AsynchRemoteConnection.processController(aProcess);
 									  }, this.thread);
 	return aProcess;
   },
-  _rename:function(oldName, newName,  aProcess, aInternalCall)
+  _rename:function(oldName, newName, isDirectory,  aProcess, aInternalCall)
   {
 	if(!aProcess.stopped())
 	{
@@ -621,8 +623,8 @@ AsynchRemoteConnection.prototype = {
 			  connection.rename(oldName, newName);
 			}
 		  }
-		  this.cacheDirectoryItemRemove(oldName);
-		  this.cacheDirectoryItemAdd('/'+newName.replace(/^\/+/, '/'));
+		  this.cacheDirectoryItemRemove(oldName, isDirectory);
+		  this.cacheDirectoryItemAdd('/'+newName.replace(/^\/+/, '/'), isDirectory);
 		  this.log('sucess', 'renamed "'+oldName+'" to "'+newName+'"', aProcess.id);
 		}
 	  }
@@ -669,16 +671,33 @@ AsynchRemoteConnection.prototype = {
 		  }
 		  aDirectory[aDirectory.length] = ourDirectory;
 		  aDirectory = aDirectory.join('/');
-		  
-		  connection.createDirectory(aParentDirectory+'/'+aDirectory, parseInt('0'+''+'755'));
-		  this.cacheDirectoryItemAdd(aParentDirectory+'/'+aDirectory);
-		  this.log('sucess', 'created directory "'+aDirectory+'" in "'+aParentDirectory+'"', aProcess.id);
+		  try{
+			connection.createDirectory(aParentDirectory+'/'+aDirectory, parseInt('0'+''+'755'));
+			this.cacheDirectoryItemAdd(aParentDirectory+'/'+aDirectory, true);
+			this.log('sucess', 'created directory "'+aDirectory+'" in "'+aParentDirectory+'"', aProcess.id);
+		  }
+		  catch(e)
+		  {
+			if(String(e).indexOf('550 Directory already exists') != -1)
+			{
+			  this.log('warning', 'The directory to create "'+aDirectory+'" already exists', aProcess.id);
+			}
+			else{ throw new Error(e);}
+		  }
 		}
 		else
 		{
-		  connection.createDirectory(aParentDirectory+'/'+aDirectory, parseInt('0'+''+'755'));
-		  this.cacheDirectoryItemAdd(aParentDirectory+'/'+aDirectory);
-		  this.log('sucess', 'created directory "'+aDirectory+'" in "'+aParentDirectory+'"', aProcess.id);
+		  try{
+			connection.createDirectory(aParentDirectory+'/'+aDirectory, parseInt('0'+''+'755'));
+			this.cacheDirectoryItemAdd(aParentDirectory+'/'+aDirectory, true);
+			this.log('sucess', 'created directory "'+aDirectory+'" in "'+aParentDirectory+'"', aProcess.id);
+		  } catch(e) {
+			if(String(e).indexOf('550 Directory already exists') != -1)
+			{
+			  this.log('warning', 'The directory to create "'+aDirectory+'" already exists', aProcess.id);
+			}
+			else{ throw new Error(e);}
+		  }
 		}
 	  }
 	}
@@ -706,7 +725,10 @@ AsynchRemoteConnection.prototype = {
 		  if(oldPath.indexOf(aPaths+'/') === 0){}//skiping already know directories
 		  else
 		  {
-			try{connection.createDirectory(aPaths, parseInt('0'+''+'755'));}catch(e){/*subdirectory maybe exists*/}
+			try{
+			  connection.createDirectory(aPaths, parseInt('0'+''+'755'));
+			  this.cacheDirectoryItemAdd(aPaths, true);
+			}catch(e){/*subdirectory maybe exists*/}
 		  }
 		  aPaths += '/';
 		}
@@ -917,7 +939,7 @@ AsynchRemoteConnection.prototype = {
 		  
 		  //writing file
 		  asynchRemote.s.fileWriteBinaryContentIsByteArray(aDestination, aContent);
-
+		  
 		  this.log('sucess', 'downloaded file "'+aFile+'" to "'+aDestination+'" ', aProcess.id);
 		}
 		else
@@ -1044,7 +1066,7 @@ AsynchRemoteConnection.prototype = {
 		  {
 			this.log('sucess', 'skiping upload of file "'+aSource+'" to "'+aFile+'" because file size is 0', aProcess.id);
 		  }
-		  else if(!this.uploads[aSource] || this.uploads[aSource] != checkModified.lastModifiedTime+'_'+checkModified.fileSize)
+		  else if(asynchRemote.s.pref('dont.cache.last.modified') || !this.uploads[aSource] || this.uploads[aSource] != checkModified.lastModifiedTime+'_'+checkModified.fileSize)
 		  {
 			this.uploads[aSource] = checkModified.lastModifiedTime+'_'+checkModified.fileSize;
 			//check if the file exists on remote
@@ -1099,7 +1121,10 @@ AsynchRemoteConnection.prototype = {
 				this.uploads[aSource] ='';
 				throw new Error(e);
 			  }
-			  this.cacheDirectoryItemAdd(aFile);
+			  
+			  this.cacheDirectoryItemRemove(aFile, false);
+			  this.cacheDirectoryItemAdd(aFile, false);
+			  
 			  this.log('sucess', 'uploaded file "'+aSource+'" to "'+aFile+'" ', aProcess.id);
 			}
 			else
@@ -1173,7 +1198,8 @@ AsynchRemoteConnection.prototype = {
 			}
 			if(!aProcess.stopped())
 			{
-			  this.cacheDirectoryItemAdd(aDirectory);
+			  this.cacheDirectoryItemRemove(aDirectory, true);
+			  this.cacheDirectoryItemAdd(aDirectory, true);
 			  this.log('sucess', 'uploaded directory "'+aSource+'" to "'+aDirectory+'" ', aProcess.id);
 			}
 			else if(!aInternalCall)
@@ -1235,7 +1261,6 @@ AsynchRemoteConnection.prototype = {
 		  }
 		  if(!aProcess.stopped())
 		  {
-			this.cacheDirectoryItemAdd(aDirectory);
 			this.log('sucess', 'downloaded directory "'+aDirectory+'" to "'+aDestination+'" ', aProcess.id);
 		  }
 		  else if(!aInternalCall)
@@ -1341,8 +1366,7 @@ AsynchRemoteConnection.prototype = {
 		  }
 		  catch(e) 
 		  {
-			asynchRemote.s.dump(e);
-			//remote directory no exist
+			//remote directory no existasynchRemote.s.dump(e);
 		  }
 		  if(fileExistsRemote)
 		  {
@@ -1378,7 +1402,6 @@ AsynchRemoteConnection.prototype = {
 										asynchRemote.s.sharedObjectDestroyWithPrefix('overWrite.'+AsynchRemoteConnection.server+'.');
 									  }, this.thread);
   	this.log('status', 'Cleaned overwrite settings', 0);
-	
   },
   cleanCacheConnection:function()
   {
@@ -1396,21 +1419,18 @@ AsynchRemoteConnection.prototype = {
 									  }, this.thread);
 	this.log('status', 'Cleaned last modified cache', 0);
   },
-  //this invalidates all decendant paths instead of adding the item and changing all the tree...
-  cacheDirectoryItemAdd:function(aPath)
+
+  cacheDirectoryItemAdd:function(aPath, isDirectory)
   {
-	var aDirs = aPath.split('/');
-	var aParentPath = '';
-	var aPath;
-	var isDirectory = false;
-	for(var aLevel=0, aNextPath =1;aLevel<aDirs.length;aLevel++, aNextPath++)
+	var aDirs = aPath.replace(/^\/+/g, '').replace(/\/+/g, '/').replace(/\/+$/g, '/').split('/');
+	var aPath = '';
+	var aParentPath;
+	for(var aLevel=0;aLevel<aDirs.length;aLevel++)
 	{
-	  if(!aDirs[aNextPath])
-		break;
-	  aParentPath += '/'+aDirs[aLevel];
-	  aParentPath = aParentPath.replace(/\/+/g, '/');
-	  aPath = (aParentPath+'/'+aDirs[aNextPath]).replace(/\/+/g, '/');
-	  
+	  aPath += '/'+aDirs[aLevel];
+	  aParentPath = aPath.replace(/\/[^\/]+$/g, '');
+	  if(aParentPath == '')
+		aParentPath = '/';
 	  //this.dump('buscando en '+aParentPath+' si esta '+aPath);
 	  
 	  if(this.cache.dirs[aParentPath] && this.cache.dirs[aParentPath].data)
@@ -1427,31 +1447,81 @@ AsynchRemoteConnection.prototype = {
 		}
 		if(!found)
 		{
-		  this.cache.dirs[aParentPath] = {};
-		  //remove the item from the tree
+		  //this.dump(aPath+' NO esta en el cache de '+aParentPath);
+		  //kgit.s.dump('parnet path es:'+aParentPath);
+		 // kgit.s.dump('insertando:'+aPath);
+		  var parentRowID = aParentPath.split('/');
+			  parentRowID.pop();
+			  parentRowID = parentRowID.join('/').replace(/\/$/, '');
+			  if(parentRowID == '')
+				parentRowID = '/';
+
+		  var aParentRow = -1;
+		  if(this.cache.dirs[parentRowID] && this.cache.dirs[parentRowID].data)
+		  {
+			for(var id in this.cache.dirs[parentRowID].data)
+			{
+			  if(this.cache.dirs[parentRowID].data[id].getFilepath == aParentPath)
+			  {
+				aParentRow = this.cache.dirs[parentRowID].data[id];
+				break;
+			  }
+			}
+		  }
+		  if(aParentRow == -1)
+			aLevel = 0;
+		  else
+			aLevel = aParentRow.getLevel+1;
+		  
+		  var newItem = {
+						  'getFilename': aPath.split('/').pop(),
+						  'getFilepath': aPath,
+						  'isFile': !isDirectory,
+						  'isDirectory': isDirectory,
+						  'isContainerOpen' : false,
+						  'isContainerEmpty' : false,
+						  'isBusy' : false,
+						  'isLoading' : false,
+						  'getLevel': aLevel,
+						  'getModifiedTime': 0,
+						  'getMode': 0,
+						  'getSize': 0,
+						  'aParentRow':aParentRow
+						}
+						
+		  //kgit.s.dump(newItem);
+		  
+		  aParentRow.isContainerEmpty = false;
+		  var a=0, added = false;
+		  for(var id in this.cache.dirs[aParentPath].data)
+		  {
+			if(asynchRemote.s.sortLocale(this.cache.dirs[aParentPath].data[id].getFilename.toLowerCase(), newItem.getFilename.toLowerCase())>0)
+			{
+			  this.cache.dirs[aParentPath].data.splice(a, 0, newItem);
+			  added = true;
+			  break;
+			}
+			a++;
+		  }
+		  if(!added)
+		  {
+			this.cache.dirs[aParentPath].data.push(newItem);
+		  }
+		  //asynchRemote.s.dump(this.cache.dirs);
+		  //insert the item into the tree
 		  var server = this.server;
-		  var toInvalidate = String(aParentPath);
-		  asynchRemote.s.runMain(function(){asynchRemote.trees[server].invalidateRowByPath(toInvalidate);});
+		  asynchRemote.s.runMain(function(){asynchRemote.trees[server].insertRow(newItem)});
 		}
 	  }
 	}
-	for(var id in this.cache.dirs)
-	{
-	  if(id.indexOf(aPath) === 0)
-		this.cache.dirs[id] = {}
-	}
-
-	if(aPath.split('/').length <= 3)
-	{
-	  this.cache.dirs['/'] = {}
-	  asynchRemote.s.runMain(function(){asynchRemote.actionFromRemote('refresh-all-soft');});
-	}
   },
-  cacheDirectoryItemRemove:function(aPath)
+  cacheDirectoryItemRemove:function(aPath, isDirectory)
   {
 	var aParentDir = aPath.split('/');
 		aParentDir.pop();
 		aParentDir = aParentDir.join('/');
+		if(aParentDir == '')
+		  aParentDir = '/';
 	if(this.cache.dirs[aParentDir])
 	{
 	  var a=0;
@@ -1459,8 +1529,9 @@ AsynchRemoteConnection.prototype = {
 	  {
 		if(this.cache.dirs[aParentDir].data[id].getFilepath == aPath)
 		{
+		  //removing the item from the cache
 		  this.cache.dirs[aParentDir].data.splice(a, 1);
-		  //updating parent if now is empty;
+		  //updating "isContainerEmpty" on parent if now is empty;
 		  if(this.cache.dirs[aParentDir].data.length === 0)
 		  {
 			var aParentParentDir = aParentDir.split('/');
@@ -1480,6 +1551,8 @@ AsynchRemoteConnection.prototype = {
 			  }
 			}
 		  }
+		  if(isDirectory)
+			delete this.cache.dirs[aPath];
 		  break;
 		}
 		a++;
