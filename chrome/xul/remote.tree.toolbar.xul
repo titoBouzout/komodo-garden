@@ -129,8 +129,6 @@
 			  <menuitem action="clean-cache-modified" label="Clean last modified cache of uploaded items"/>
 			  <menuitem action="pref-tools-set" id="asynchremote-tools-toolbarbutton-dont-cache-last-modified"  type="checkbox" checked="false" label="Don't cache last modified, upload it anyway"/>
 			  <menuseparator/>
-			  <menuitem action="clean-cache-connection" label="Clean connection items cache"/>
-			  <menuseparator/>
 			  <menuitem action="clean-cache-overwrite" label="Forget overwrite settings"/>
 			  <menuitem id="asynchremote-tools-toolbarbutton-overwrite-no-ask" type="checkbox" checked="false" action="pref-tools-set" label="Overwrite without asking"/>
 			  <menuseparator/>
