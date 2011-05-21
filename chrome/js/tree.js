@@ -566,7 +566,6 @@ gardenTree.prototype = {
   {
 	var part = {};
 	this.tree.getCellAt(event.pageX, event.pageY, {}, {}, part);
-	this.s.dump(part);
 	if(part.value && ( part.value == 'twisty' ||  part.value == 'image' ))
 	  return true;
 	else
@@ -769,15 +768,17 @@ gardenTree.prototype = {
 	  // hack hack hack avoids tree autoresizing when editing
 	  this.event.renaming = true;
 	 
-	  this.treeElement.setAttribute('height', this.treeElement.getAttribute('height')+1);
 	  this.treeElement.setAttribute('height', this.treeElement.getAttribute('height')-1);
+	  this.treeElement.setAttribute('height', this.treeElement.getAttribute('height')+1);
+
 	  //set the field to editing state
 	  this.treeElement.startEditing(this.selection.currentIndex, this.tree.columns.getColumnAt(0));
-	  this.treeElement.inputField.left = this.treeElement.inputField.left-4;
-	  this.treeElement.inputField.top = this.treeElement.inputField.top-1;
+	  //this.treeElement.inputField.marginLeft = this.treeElement.inputField.marginLeft+1;
+	 // this.treeElement.inputField.top = this.treeElement.inputField.top;
 	  // hack hack hack avoids tree autoresizing when editing
-	  this.treeElement.setAttribute('height', this.treeElement.getAttribute('height')+1);
+
 	  this.treeElement.setAttribute('height', this.treeElement.getAttribute('height')-1);
+	  this.treeElement.setAttribute('height', this.treeElement.getAttribute('height')+1);
 	  this.event.renaming = false;
 	
 	  this.s.notifyStatusBar(window, 'Type to edit the item name');
@@ -854,5 +855,5 @@ gardenTree.prototype = {
   performActionOnRow : function(action, row) {this.s.dump('performActionOnRow');},
   
   rowCount : null,
-  get rowCount function(){this.s.dump('rowCount:'+this._rows.length);return this._rows.length;}
+  get rowCount function(){/*this.s.dump('rowCount:'+this._rows.length);*/return this._rows.length;}
 }

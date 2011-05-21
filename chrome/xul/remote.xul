@@ -39,8 +39,9 @@
 			<hbox id="asynchremote-trees" flex="1"/>
 			
 		  </vbox>
-	  </vbox>
+		</vbox>
 	  </tabpanel>
 	</tabpanels>
   </tabbox>
+
 </overlay>
