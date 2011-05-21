@@ -4,6 +4,8 @@ function gardenTree(){}
 gardenTree.prototype = {
 
   _rows : [],
+  _rowsStates : [],
+  
   focused : false,
   
   init : function(server)
@@ -11,7 +13,6 @@ gardenTree.prototype = {
 	this.server = server;
 	this.history = new this.s.history();
   },
-  
   
 /* listeners */
   _listeners : [],  
@@ -755,10 +756,12 @@ gardenTree.prototype = {
 	{
 	  // hack hack hack avoids tree autoresizing when editing
 	  this.event.renaming = true;
+	 
 	  this.treeElement.setAttribute('height', this.treeElement.getAttribute('height')+1);
 	  this.treeElement.setAttribute('height', this.treeElement.getAttribute('height')-1);
 	  //set the field to editing state
 	  this.treeElement.startEditing(this.selection.currentIndex, this.tree.columns.getColumnAt(0));
+	  this.treeElement.inputField.left = this.treeElement.inputField.left-4;
 	  // hack hack hack avoids tree autoresizing when editing
 	  this.treeElement.setAttribute('height', this.treeElement.getAttribute('height')+1);
 	  this.treeElement.setAttribute('height', this.treeElement.getAttribute('height')-1);
