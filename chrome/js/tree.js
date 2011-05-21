@@ -6,6 +6,8 @@ gardenTree.prototype = {
   _rows : [],
   _rowsStates : [],
   
+  currentPath : '/',
+  
   focused : false,
   
   init : function(server)
@@ -724,7 +726,14 @@ gardenTree.prototype = {
 	this.s.dump('treeOperationsQueueend');
   },
 
-
+/* rebasing */
+  
+  changeBase : function(aPath, addToHistory)
+  {
+	this.currentPath = aPath;
+	
+  },
+  
 /* editing */
   
   editable : false,  
@@ -800,7 +809,6 @@ gardenTree.prototype = {
     return this._atoms[aName];
   },
   
-
 /* something */
 
   tree : null,
