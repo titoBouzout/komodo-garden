@@ -32,8 +32,8 @@ function AsynchRemote()
 
 	//global singleton object
 	Components.utils.import('resource://up.tito.asynchremote/_init.js', this);
-	this.s.extensionID = 'tito@asynchremote';
-	this.s.extensionName = 'Asynch Remote';
+	this.s.extensionID = 'tito@garden';
+	this.s.extensionName = 'Garden';
 	this.s.extensionChromeName = 'asynchremote';
 	this.s.include('observer','preference','file','history','string','thread','serialize','sharedMemory','DOM','prompt','process','search','search','places','window','listener','application','tab','document','urls','clipboard', 'notification','tree','timer');
 	this.s.includeShared('prompt', 'variete');
