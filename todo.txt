@@ -1,66 +1,68 @@
-
-the tree refresh is incomplete.
-
-escribir todos los prompts personalizados con ícono y título
-en los dialogos de sobre escribir el icono para remote diferente a local
-
 olvidar la seleccion cuando se remueven o mueven elementos del tree
+comproba q los elementos no existan antes de insertarlos !!
+
+que los procesos se puedan borrar
+que se puedan borrar todos los procesos
+hay que hacerlos expirar despues de un tiempo
+
+la serializacion tiene q tener un delay
+cuanto te bajas un document lo tiene que bajar como .kup
+
+el keep interval tiene que mandar accion solo si paso determinado tiempo desde la ultima
 
 BUGS
 
-0) the tree refresh is not done yet
+  1) I dont know how to tell to koRemoteConnectionService to use 8bits on the connection, for example,  when creating a folder with filezilla called "Русский" the folder gets created, when trying with koRemoteConnectionService I get a folder created with name: "???????". I want to give the option to use utf8.
+	
+  2) "overwrite prompts" are crazy, no file is overwriten if "no", "cancel" or "no to all" is selected, but functions "yes to all" or "no to all" ask many times the same thing..
+  
+  2.1) the overwrite function looks for the files in the server instead of comparing the modifiedtime and size
+  
+  3) there is no queue of files yet.. wait what!?
+	
+  4) when a file doenst have an extension such .html koRemoteConnectionService skips the file. This cause problems when deleting a folder: "550 Directory not empty." on windows.
 
-1) looks like there is no chance to use 8bits into folders or files names?? when creating a folder with filezilla called "Русский" the folder gets created, when trying with koRemoteConnectionService I get a folder created with name: "???????". I want to give the option to use utf8.
-  
-2) overwrite prompts are crazy, no file is overwriten if "no", "cancel" or "no to all" is selected, but functions "yes to all" or "no to all" ask many times the same thing..
-
-2.1) the overwrite function looks for the files in the server instead of comparing the modifiedtime and size
-
-3) there is no queue of files yet.. wait what!?
-  
-TODO
-  
-  sync ( replicate local on remote or remote on local )
-  
-  select recent ( on wich you can input a time amount on how many is recent )
-  
-  cut, paste, duplicate
-  
-  lock, unlock folders and files from operations
-  
-  compare unified diff on entire folders or selected files
-  
-  open with
-  
-  explore
-  
-  give option to enable or disable horizontal scrolling
-  
-  show a mark on modified not uploaded local files
-  
-  a textbox to filter the tree content
-  
-  virtual folders
+TODO (in no special order)
+    
+  context menu items:
+	select recent ( on wich you can input a time amount on how many is recent )
+	cut, paste, duplicate
+	lock, unlock folders and files from operations
+	compare unified diff on entire folders or selected files
+	open with
+	Open Folder
+	bookmark
+	virtual folders(bookmarks)
+	locate in places
+	locate in remote
+	sync folder ( replicate local on remote or remote on local )
   
   drag and drop!
-  
 	from places to remote
 	from remote to remote
 	from remote to places
+	from everywhere to everywhere
   
-  locate file/folder in remote from local places
-  locate file/folder in places from remote places
-  "go up button" should be a menu-button listing all parent directories
-  
+  tree toolbar
+	"go up button" should be a menu-button listing all parent directories
+	a textbox to filter the tree content and when pressing enter real scan all the base directory
+
   tree
-		
-	  check for "views"(specify files and directories to include or exclude)
+	check for "views"(specify files and directories to include or exclude)
+	give option to enable or disable horizontal scrolling
+	show a mark on modified not uploaded/downloaded files
+	when a item is renamed from the tree: instead of removing the element and appending again we should rename the item sort that item
+	getImageSrc is needed for something??
 	  
   servers
-	
-	  a textbox to allow "cmd remote" commmands
+	a textbox to allow "cmd remote" commmands
   
   chmod:
-  
 	show old permissions for each selected file when requesting a chmod change command
 	chmod dialog should contain nice checkbox about permissino,group,owner,public,read,write,execute etc
+	
+  programming
+  
+	the data related to the tree ( is container open, etc) should be separate from the cache of the paths, then we can share betwen windows the paths without changing the folder status(collapsed/expanded) in all the windows.
+	
+	the tree view should be generic for any tree. when user opens a folder for example there should be something like function onContainerOpened(aContainer){ myCoolCallback(aContainer); } 
