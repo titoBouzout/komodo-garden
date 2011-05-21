@@ -562,11 +562,12 @@ gardenTree.prototype = {
 	this.tree.getCellAt(event.pageX, event.pageY, row, {},{});
 	return row.value;
   },
-  getEventRowIsTwisty :function(event)
+  getEventRowIsTwistyOrIsImage :function(event)
   {
 	var part = {};
 	this.tree.getCellAt(event.pageX, event.pageY, {}, {}, part);
-	if(part.value && part.value == 'twisty')
+	this.s.dump(part);
+	if(part.value && ( part.value == 'twisty' ||  part.value == 'image' ))
 	  return true;
 	else
 	  return false;
@@ -584,7 +585,7 @@ gardenTree.prototype = {
 	if(event.button == 2){}
 	else
 	{
-	  if(this.editable && !this.getEventRowIsTwisty(event))
+	  if(this.editable && !this.getEventRowIsTwistyOrIsImage(event))
 	  {
 		var diff = new Date() - this.event.renameClick;
 		if(diff > 200 && diff < 700 && this.event.renameItem == this.getEventRowID(event))
