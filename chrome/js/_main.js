@@ -97,15 +97,18 @@ function AsynchRemote()
 	  this.element('asynchremote-trees').appendChild(tree);
 	
 	  //view
-	  this.trees[server] = new gardenTree();
-	  this.trees[server]._rows = this.s.serializedSessionGet(server, {'tree':[],'server':{}}, this.s.serializerParser).tree;
-	  this.trees[server].s = this.s;
-	  this.trees[server].init(server);
-	  tree.treeBoxObject.view = this.trees[server];
-	  tree.garden = this.trees[server];
-	  this.trees[server].treeElement = tree;
-	  this.trees[server].editable = true;
-	  this.trees[server].addEventListener('onNewName', function(aData){asynchRemote.actionFromRemote('renameFromTree', aData);});
+	  var treeView = new gardenTree();
+		  treeView._rows = this.s.serializedSessionGet(server, {'tree':[],'server':{}}, this.s.serializerParser).tree;
+		  treeView.s = this.s;
+		  treeView.init(server);
+	  
+	  tree.treeBoxObject.view = treeView;
+	  tree.garden = treeView;
+	  
+		  treeView.treeElement = tree;
+		  treeView.editable = true;
+		  treeView.addEventListener('onNewName', function(aData){asynchRemote.actionFromRemote('renameFromTree', aData);});
+		  treeView.addEventListener('onDataRequired', function(aData){asynchRemote.connections[server].directoryListing(aData);});
 	  
 	  //connection
 	  this.connections[server] = new AsynchRemoteConnection(server);
