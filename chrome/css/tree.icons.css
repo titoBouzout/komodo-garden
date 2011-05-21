@@ -1,7 +1,4 @@
 
-.asynchremote-tree treechildren::-moz-tree-image {
-  margin-right:4px;
-}
 .asynchremote-tree treechildren::-moz-tree-image(container, open) {
   list-style-image:url(chrome://up.tito.icons.files/content/tree/folder-open.png);
 }
@@ -11,9 +8,10 @@
 .asynchremote-tree treechildren::-moz-tree-image(leaf) {
   list-style-image:url(chrome://up.tito.icons.files/content/tree/file-icon.png);
 }
-.asynchremote-tree treechildren::-moz-tree-image(busy) {
+.asynchremote-tree treechildren::-moz-tree-twisty(busy) {
   list-style-image:url(chrome://up.tito.icons.files/content/tree/folder-closed-loading.png);
 }
+
 
 .asynchremote-tree treechildren::-moz-tree-image(apng),
 .asynchremote-tree treechildren::-moz-tree-image(png),

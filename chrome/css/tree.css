@@ -17,7 +17,7 @@
 
 .asynchremote-tree treechildren::-moz-tree-row {
   margin:0px;
-  margin-top:-1px;
+  margin-top:-2px;
   padding:0px;
   padding-left:4px;
 }
@@ -27,6 +27,6 @@
   width:15px;
 }
 .asynchremote-tree treechildren::-moz-tree-image {
-  margin-right:4px;
+  margin-right:3px;
 }
 
