@@ -1,3 +1,3 @@
-rm asynchremote.xpi
-zip  -x \*.git\* -r asynchremote.xpi *
-komodo asynchremote.xpi
+rm garden.xpi
+zip  -x \*.git\* -r garden.xpi *
+komodo garden.xpi

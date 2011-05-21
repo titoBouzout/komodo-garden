@@ -4,13 +4,13 @@
      xmlns:em="http://www.mozilla.org/2004/em-rdf#">
 	
     <Description about="urn:mozilla:install-manifest">
-	  <em:id>tito@asynchremote</em:id>
-	  <em:name>Asynch Remotes</em:name>
-	  <em:version>0.110507.0</em:version>
-	  <em:description>Allows connect, browse, upload and download files and folder from many remotes at same time and all without blocking the application.</em:description>
+	  <em:id>tito@garden</em:id>
+	  <em:name>Garden</em:name>
+	  <em:version>0</em:version>
+	  <em:description>A garden full of trees.</em:description>
 	  <em:creator>Roberto Bouzout (tito)</em:creator>
-	  <em:iconURL>chrome://asynchremote/content/icons/toolbar/disconnected.png</em:iconURL>
-	  <em:homepageURL>https://github.com/titoBouzout/komodo-asynch-remotes</em:homepageURL>
+	  <em:iconURL>chrome://asynchremote/content/icons/icon.png</em:iconURL>
+	  <em:homepageURL>https://github.com/titoBouzout/komodo-garden</em:homepageURL>
 	  <em:targetApplication>
 		<Description>
 			<!-- Komodo Edit's uuid -->
