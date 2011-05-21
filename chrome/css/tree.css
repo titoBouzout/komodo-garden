@@ -13,8 +13,20 @@
   -moz-border-right-colors:transparent !important;
   -moz-border-start-color:transparent !important;
   -moz-border-top-colors:transparent !important;
-  padding-bottom:3px !important;
-  border-bottom:2px;
-  -moz-padding-end:0px;
-  -moz-margin-end:0px;
 }
+
+.asynchremote-tree treechildren::-moz-tree-row {
+  margin:0px;
+  margin-top:-1px;
+  padding:0px;
+  padding-left:4px;
+}
+.asynchremote-tree treechildren::-moz-tree-indentation {
+  margin:0px;
+  padding:0px;
+  width:15px;
+}
+.asynchremote-tree treechildren::-moz-tree-image {
+  margin-right:4px;
+}
+
