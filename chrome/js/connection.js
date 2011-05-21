@@ -217,7 +217,7 @@ AsynchRemoteConnection.prototype = {
 	  this.log('progress', 'Getting listing "'+aDirectory+'" from cache', 0);
 	  var rowsSorted = this.cache.dirs[aDirectory].data;
 	  for(var id in rowsSorted)
-		rowsSorted[id].getLevel = aLevel;
+		rowsSorted[id].getLevel2 = aLevel;
 	  asynchRemote.trees[this.server].insertRows(aLevel, rowsSorted, aParentRow);
 	}
 	else
@@ -258,7 +258,7 @@ AsynchRemoteConnection.prototype = {
 		  //reset the aLevel of the folders
 		  var rowsSorted = this.cache.dirs[aDirectory].data;
 		  for(var id in rowsSorted)
-			rowsSorted[id].getLevel = aLevel;
+			rowsSorted[id].getLevel2 = aLevel;
 		}
 		else
 		{
@@ -272,18 +272,19 @@ AsynchRemoteConnection.prototype = {
 			name = child.getFilename();
 			nameSorting = name.toLowerCase()+' '+i;
 			isDirectory = child.isDirectory();
-			
+
 			rows[nameSorting] = 
 			{
 				'getFilename': name,
 				'getFilepath': child.getFilepath(),
+				'getFileextension': (isDirectory ? '' : (name.split('.').pop().toLowerCase()  || '')),
 				'isFile': !isDirectory,
 				'isDirectory': isDirectory,
 				'isContainerOpen' : false,
 				'isContainerEmpty' : false,
 				'isBusy' : false,
 				'isLoading' : false,
-				'getLevel': aLevel,
+				'getLevel2': aLevel,
 				'getModifiedTime': child.mtime,
 				'getMode': child.mode,
 				'getSize': child.size,
@@ -1425,9 +1426,9 @@ AsynchRemoteConnection.prototype = {
 	var aDirs = aPath.replace(/^\/+/g, '').replace(/\/+/g, '/').replace(/\/+$/g, '/').split('/');
 	var aPath = '';
 	var aParentPath;
-	for(var aLevel=0;aLevel<aDirs.length;aLevel++)
+	for(var i=0;i<aDirs.length;i++)
 	{
-	  aPath += '/'+aDirs[aLevel];
+	  aPath += '/'+aDirs[i];
 	  aParentPath = aPath.replace(/\/[^\/]+$/g, '');
 	  if(aParentPath == '')
 		aParentPath = '/';
@@ -1471,18 +1472,19 @@ AsynchRemoteConnection.prototype = {
 		  if(aParentRow == -1)
 			aLevel = 0;
 		  else
-			aLevel = aParentRow.getLevel+1;
+			aLevel = aParentRow.getLevel2+1;
 		  
 		  var newItem = {
 						  'getFilename': aPath.split('/').pop(),
 						  'getFilepath': aPath,
+						  'getFileextension': (isDirectory ? '' : (aPath.split('.').pop().toLowerCase() || '')),
 						  'isFile': !isDirectory,
 						  'isDirectory': isDirectory,
 						  'isContainerOpen' : false,
 						  'isContainerEmpty' : false,
 						  'isBusy' : false,
 						  'isLoading' : false,
-						  'getLevel': aLevel,
+						  'getLevel2': aLevel,
 						  'getModifiedTime': 0,
 						  'getMode': 0,
 						  'getSize': 0,
