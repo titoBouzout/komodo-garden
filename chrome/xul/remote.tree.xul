@@ -5,50 +5,56 @@
 	<hbox id="asynchremote-trees">
 	  
 	  <!-- remote tree template -->
+	  
 	  <tree
 		id="asynchremote-tree"
 		flex="1"
+		collapsed="false"
+		
 		seltype="multiple"
+		
 		hidecolumnpicker="true"
 		hidehscroll="true"
-		collapsed="false"
+		
 		class="asynchremote-tree"
 		context="asynchremote-context"
 		server=""
+		
 		persist="width height"
 		height="350"
 		width="200"
+		
 		treelines="true"
 		
-		onselect="this.asynchTree.selectionChanged()"
+		onselect="this.garden.selectionSave()"
 		 
-		onfocus="this.asynchTree.focused = true;"
-		onblur="this.asynchTree.focused = false;"
+		onfocus="this.garden.focused = true;"
+		onblur="this.garden.focused = false;"
 		
-		ondragstart="return this.asynchTree.treeOnDragStart(event);"
-		ondragover="return this.asynchTree.treeOnDragOver(event);"
-		ondragenter="return this.asynchTree.treeOnDragEnter(event);"
-		ondrop="return this.asynchTree.treeOnDrop(event);"
-		ondragdrop="return this.asynchTree.treeOnDragDrop(event, this);"
-		ondragexit="return this.asynchTree.treeOnDragExit(event, this);"
+		ondragstart="return this.garden.treeOnDragStart(event);"
+		ondragover="return this.garden.treeOnDragOver(event);"
+		ondragenter="return this.garden.treeOnDragEnter(event);"
+		ondrop="return this.garden.treeOnDrop(event);"
+		ondragdrop="return this.garden.treeOnDragDrop(event);"
+		ondragexit="return this.garden.treeOnDragExit(event);"
 		
-		onkeypress="this.asynchTree.treeOnKeyPress(event);"
+		onkeypress="this.garden.treeOnKeyPress(event);"
 	  >
 		<treecols>
 		  <treecol primary="true" hideheader="true" flex="1"/>
 		</treecols>
 		<treechildren
-					  
+
 		  flex="1"
-		  ondragstart="return this.parentNode.asynchTree.childrenOnDragStart(event);"
-		  ondragover="return this.parentNode.asynchTree.childrenOnDragOver(event);"
-		  ondragenter="return this.parentNode.asynchTree.childrenOnDragEnter(event);"
-		  ondrop="return this.parentNode.asynchTree.childrenOnDrop(event);"
-		  ondragdrop="return this.parentNode.asynchTree.childrenOnDragDrop(event);"
-		  ondragexit="return this.parentNode.asynchTree.childrenOnDragExit(event);"
+		  ondragstart="return this.parentNode.garden.childrenOnDragStart(event);"
+		  ondragover="return this.parentNode.garden.childrenOnDragOver(event);"
+		  ondragenter="return this.parentNode.garden.childrenOnDragEnter(event);"
+		  ondrop="return this.parentNode.garden.childrenOnDrop(event);"
+		  ondragdrop="return this.parentNode.garden.childrenOnDragDrop(event);"
+		  ondragexit="return this.parentNode.garden.childrenOnDragExit(event);"
 		  
-		  onclick="return this.parentNode.asynchTree.childrenOnClick(event);"
-		  ondblclick="return this.parentNode.asynchTree.childrenOnDblClick(event);"
+		  onclick="return this.parentNode.garden.childrenOnClick(event);"
+		  ondblclick="return this.parentNode.garden.childrenOnDblClick(event);"
 		/>
 	  </tree>
 	  
