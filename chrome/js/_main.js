@@ -17,15 +17,7 @@ function AsynchRemote()
   this.initExtension = function()
   {
 	this.debug = true;
-	
-	this.atomService = Components.classes["@mozilla.org/atom-service;1"]
-						.getService(Components.interfaces.nsIAtomService);
-
-	this.iconDirectoryOpen = this.atomService.getAtom("asynchremote_folder_open");
-	this.iconDirectoryClosed = this.atomService.getAtom("asynchremote_folder_closed");
-	this.iconFile = this.atomService.getAtom("asynchremote_file");
-	this.iconBusy = this.atomService.getAtom("asynchremote_busy");
-	
+  
 	this.mRCService = Components
 						  .classes["@activestate.com/koRemoteConnectionService;1"]
 						  .getService(
@@ -43,7 +35,7 @@ function AsynchRemote()
 	this.s.extensionID = 'tito@asynchremote';
 	this.s.extensionName = 'Asynch Remote';
 	this.s.extensionChromeName = 'asynchremote';
-	this.s.include('observer','preference','file','history','string','thread','serialize','sharedMemory','DOM','prompt','process','search','search','places','window','listener','application','tab','document','urls','clipboard', 'notification');
+	this.s.include('observer','preference','file','history','string','thread','serialize','sharedMemory','DOM','prompt','process','search','search','places','window','listener','application','tab','document','urls','clipboard', 'notification','tree','timer');
 	this.s.includeShared('prompt', 'variete');
 	this.windowID = this.s.getWindowID();
 	//end global singleton object
@@ -92,7 +84,7 @@ function AsynchRemote()
 	if(this.element('asynchremote-box').getAttribute('collapsed') == 'true')
 	{
 	  this.element('asynchremote-box').setAttribute('collapsed', 'false');
-	  this.element('asynchremote-box-splitter').setAttribute('collapsed', 'false');
+	  //this.element('asynchremote-box-splitter').setAttribute('collapsed', 'false');
 	}
 	//create tree if no exists
 	if(!foundTree)
@@ -105,10 +97,16 @@ function AsynchRemote()
 	  this.element('asynchremote-trees').appendChild(tree);
 	
 	  //view
-	  this.trees[server] = new AsynchRemoteTree(server);
+	  this.trees[server] = new gardenTree();
+	  this.trees[server]._rows = this.s.serializedSessionGet(server, {'tree':[],'server':{}}, this.s.serializerParser).tree;
+	  this.trees[server].s = this.s;
+	  this.trees[server].init(server);
 	  tree.treeBoxObject.view = this.trees[server];
-	  tree.asynchTree = this.trees[server];
-	  tree.asynchTree.treeElementID = 'asynchremote-tree-'+server;
+	  tree.garden = this.trees[server];
+	  this.trees[server].treeElement = tree;
+	  this.trees[server].editable = true;
+	  this.trees[server].addEventListener('onNewName', function(aData){asynchRemote.actionFromRemote('renameFromTree', aData);});
+	  
 	  //connection
 	  this.connections[server] = new AsynchRemoteConnection(server);
 	  if(!this.s.serializedSessionExists(server))
@@ -935,21 +933,21 @@ function AsynchRemote()
 		}
 	  case 'rename':
 		{
-		  this.trees[server].editCurrentRow();
+		  this.trees[server].startEditing();
 		  break;
 		}
 	  case 'renameFromTree':
 		{
-		  if(aData.oldName != '' && aData.oldName != '/')//avoid move the root directory
+		  if(aData.path != '' && aData.path != '/')//avoid move the root directory
 		  {
-			var parentPath = aData.oldName.split('/');
+			var parentPath = aData.path.split('/');
 			var aPath = parentPath.pop();
 			parentPath = parentPath.join('/');
 			if(aPath && aPath != '')
 			{
 			  var newName = aData.newName;
-			  if(newName != '' && parentPath+'/'+newName != aData.oldName)
-				this.connections[server].rename(aData.oldName, parentPath+'/'+newName, aData.isDirectory);
+			  if(newName != '' && parentPath+'/'+newName != aData.path)
+				this.connections[server].rename(aData.path, parentPath+'/'+newName, aData.isDirectory);
 			}
 		  }
 		  break;
@@ -1276,7 +1274,7 @@ function AsynchRemote()
 	  case 'collapse':
 		{
 		  this.element('asynchremote-box').setAttribute('collapsed', 'true');
-		  this.element('asynchremote-box-splitter').setAttribute('collapsed', 'true');
+		  //this.element('asynchremote-box-splitter').setAttribute('collapsed', 'true');
 		  this.onLocationChange(this.s.tabGetFocused(window));
 		  break;
 		}
