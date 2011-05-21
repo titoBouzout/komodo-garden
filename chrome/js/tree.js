@@ -557,21 +557,23 @@ gardenTree.prototype = {
   {
 	this.s.dump('getEventRowID');
 	var row = {};
-	this.selectionGoingToChange++;
 	this.tree.getCellAt(event.pageX, event.pageY, row, {},{});
-	this.selectionGoingToChange--;
-	this.selectionRestore();
 	return row.value;
+  },
+  getEventRowIsTwisty :function(event)
+  {
+	var part = {};
+	this.tree.getCellAt(event.pageX, event.pageY, {}, {}, part);
+	if(part.value && part.value == 'twisty')
+	  return true;
+	else
+	  return false;
   },
   getEventColumn : function(event)
   {
 	this.s.dump('getEventColumn');
-	var row = {};
 	var column = {};
-	this.selectionGoingToChange++;
-	this.tree.getCellAt(event.pageX, event.pageY, row, column, {});
-	this.selectionGoingToChange--;
-	this.selectionRestore();
+	this.tree.getCellAt(event.pageX, event.pageY, {}, column, {});
 	return column;
   },
   childrenOnClick : function(event)
@@ -580,7 +582,7 @@ gardenTree.prototype = {
 	if(event.button == 2){}
 	else
 	{
-	  if(this.editable)
+	  if(this.editable && !this.getEventRowIsTwisty(event))
 	  {
 		var diff = new Date() - this.event.renameClick;
 		if(diff > 200 && diff < 700 && this.event.renameItem == this.getEventRowID(event))
@@ -762,6 +764,7 @@ gardenTree.prototype = {
 	  //set the field to editing state
 	  this.treeElement.startEditing(this.selection.currentIndex, this.tree.columns.getColumnAt(0));
 	  this.treeElement.inputField.left = this.treeElement.inputField.left-4;
+	  this.treeElement.inputField.top = this.treeElement.inputField.top-1;
 	  // hack hack hack avoids tree autoresizing when editing
 	  this.treeElement.setAttribute('height', this.treeElement.getAttribute('height')+1);
 	  this.treeElement.setAttribute('height', this.treeElement.getAttribute('height')-1);
