@@ -53,6 +53,7 @@ TODO (in no special order)
 	show a mark on modified not uploaded/downloaded files
 	when a item is renamed from the tree: instead of removing the element and appending again we should rename the item sort that item
 	getImageSrc is needed for something??
+	icons should be into one image
 	  
   servers
 	a textbox to allow "cmd remote" commmands

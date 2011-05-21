@@ -13,13 +13,17 @@
   -moz-border-right-colors:transparent !important;
   -moz-border-start-color:transparent !important;
   -moz-border-top-colors:transparent !important;
+  margin-bottom:0px !important;
+  padding-bottom:0px !important;
+  border-bottom:0px !important;
 }
 
 .asynchremote-tree treechildren::-moz-tree-row {
   margin:0px;
-  margin-top:-2px;
+  margin-top:0px;
   padding:0px;
   padding-left:4px;
+  border:0px;
 }
 .asynchremote-tree treechildren::-moz-tree-indentation {
   margin:0px;

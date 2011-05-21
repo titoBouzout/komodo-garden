@@ -110,6 +110,7 @@ function AsynchRemote()
 		  treeView.addEventListener('onNewName', function(aData){asynchRemote.actionFromRemote('renameFromTree', aData);});
 		  treeView.addEventListener('onDataRequired', function(aData){asynchRemote.connections[server].directoryListing(aData);});
 	  
+	  this.trees[server] = tree.garden;
 	  //connection
 	  this.connections[server] = new AsynchRemoteConnection(server);
 	  if(!this.s.serializedSessionExists(server))
@@ -150,8 +151,8 @@ function AsynchRemote()
 		  menuitem.setAttribute('class', 'menuitem-iconic asynchremote-connection');
 		  
 		//playing with icons
-		menuitem.removeAttribute('connected');	 
-		menuitem.removeAttribute('connecting');	 
+		menuitem.removeAttribute('connected');
+		menuitem.removeAttribute('connecting');
 		
 		//check if we are connected
 		if(this.connections[server] && this.connections[server].connected)
