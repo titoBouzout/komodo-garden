@@ -1,0 +1,63 @@
+
+/* the groups toolbarbutton and menus */
+
+  .g-groups-button{
+	list-style-image : url("chrome://asynchremote/content/icons/toolbar/groups.png");
+	margin:0px;
+	padding:0px;
+  }
+  .g-groups-button[connected]{
+	list-style-image : url("chrome://asynchremote/content/icons/toolbar/groups-connected.png");
+  }
+  .g-groups-button[iterations]{
+	list-style-image : url("chrome://asynchremote/content/icons/toolbar/groups-iterations.png");
+  }
+  .g-groups-button[connected][iterations]{
+	list-style-image : url("chrome://asynchremote/content/icons/toolbar/groups-connected-iterations.png");
+  }
+  
+  .g-group{
+	list-style-image : url("chrome://asynchremote/content/icons/toolbar/group.png");
+	font-weight:bold;
+  }
+  .g-group[connected]{
+	list-style-image : url("chrome://asynchremote/content/icons/toolbar/group-connected.png");
+  }
+  .g-group[iterations]{
+	list-style-image : url("chrome://asynchremote/content/icons/toolbar/group-iterations.png");
+  }
+  .g-group[connected][iterations]{
+	list-style-image : url("chrome://asynchremote/content/icons/toolbar/group-connected-iterations.png");
+  }
+  
+  .g-group-add{
+	list-style-image : url("chrome://asynchremote/content/icons/toolbar/group-add.png");
+  }
+  .g-group-delete{
+	list-style-image : url("chrome://asynchremote/content/icons/toolbar/group-delete.png");
+  }
+  .g-group-rename{
+	list-style-image : url("chrome://asynchremote/content/icons/toolbar/group-rename.png");
+  }
+  
+  .g-group-tree{
+	list-style-image : url("chrome://asynchremote/content/icons/toolbar/group-tree.png");
+	padding-left:7px;
+  }
+  .g-group-tree[connected]{
+	list-style-image : url("chrome://asynchremote/content/icons/toolbar/group-tree-connected.png");
+  }
+  .g-group-tree[iterations]{
+	list-style-image : url("chrome://asynchremote/content/icons/toolbar/group-tree-iterations.png");
+  }
+  .g-group-tree[connected][iterations]{
+	list-style-image : url("chrome://asynchremote/content/icons/toolbar/group-tree-connected-iterations.png");
+  }
+  
+  .g-group-tree-delete{
+	list-style-image : url("chrome://asynchremote/content/icons/toolbar/group-tree-delete.png");
+  }
+  
+  .g-group-connection-edit{
+	list-style-image : url("chrome://asynchremote/content/icons/toolbar/group-connection-edit.png");
+  }

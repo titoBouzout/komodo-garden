@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE bindings [
+
+]>
+
+<bindings xmlns="http://www.mozilla.org/xbl"
+          xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+          xmlns:xbl="http://www.mozilla.org/xbl">
+
+	<binding
+		id="g-browser-menupopup-xbl"
+		extends="chrome://global/content/bindings/popup.xml#popup"
+	>
+	  <content
+		onmouseover="return garden.browserNavigate(event);" 
+		onmouseout="return garden.browserNavigate(event);" 
+		ondblclick="garden.s.stopEvent(event)"
+		crop="end"
+	  >
+		<xul:arrowscrollbox class="popup-internal-box" flex="1" orient="vertical" smoothscroll="false">
+		  <children/>
+		</xul:arrowscrollbox>
+	  </content>
+		  
+	</binding>
+	
+</bindings>

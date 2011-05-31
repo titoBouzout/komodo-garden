@@ -1,25 +1,21 @@
 content asynchremote chrome/
 
-content up.tito.icons.files chrome/icons/files/
-
 resource up.tito.asynchremote chrome/js/API/
 
 overlay chrome://komodo/content/komodo.xul chrome://asynchremote/content/xul/_includes.xul
 
-overlay chrome://komodo/content/komodo.xul chrome://asynchremote/content/xul/toolbar.xul
+overlay chrome://komodo/content/komodo.xul chrome://asynchremote/content/xul/ko.toolbar.xul
 
-overlay chrome://komodo/content/komodo.xul chrome://asynchremote/content/xul/remote.xul
+overlay chrome://komodo/content/komodo.xul chrome://asynchremote/content/xul/garden.xul
+overlay chrome://komodo/content/komodo.xul chrome://asynchremote/content/xul/tree.toolbar.top.xul
+overlay chrome://komodo/content/komodo.xul chrome://asynchremote/content/xul/tree.toolbar.bottom.xul
+overlay chrome://komodo/content/komodo.xul chrome://asynchremote/content/xul/tree.xul
+overlay chrome://komodo/content/komodo.xul chrome://asynchremote/content/xul/tree.context.xul
+overlay chrome://komodo/content/komodo.xul chrome://asynchremote/content/xul/log.xul
 
-overlay chrome://komodo/content/komodo.xul chrome://asynchremote/content/xul/remote.tree.xul
-overlay chrome://komodo/content/komodo.xul chrome://asynchremote/content/xul/remote.tree.toolbar.xul
-overlay chrome://komodo/content/komodo.xul chrome://asynchremote/content/xul/remote.tree.toolbar.panel.xul
-overlay chrome://komodo/content/komodo.xul chrome://asynchremote/content/xul/remote.tree.context.xul
-
-overlay chrome://komodo/content/komodo.xul chrome://asynchremote/content/xul/local.tree.toolbar.xul
-overlay chrome://komodo/content/komodo.xul chrome://asynchremote/content/xul/local.tree.context.xul
-
-style chrome://komodo/content/komodo.xul chrome://asynchremote/content/css/tree.icons.css
-style chrome://komodo/content/komodo.xul chrome://asynchremote/content/css/tree.context.css
-style chrome://komodo/content/komodo.xul chrome://asynchremote/content/css/tree.toolbar.css
-style chrome://komodo/content/komodo.xul chrome://asynchremote/content/css/tree.toolbar.log.css
+style chrome://komodo/content/komodo.xul chrome://asynchremote/content/css/context.css
+style chrome://komodo/content/komodo.xul chrome://asynchremote/content/css/files.css
+style chrome://komodo/content/komodo.xul chrome://asynchremote/content/css/groups.css
+style chrome://komodo/content/komodo.xul chrome://asynchremote/content/css/log.css
+style chrome://komodo/content/komodo.xul chrome://asynchremote/content/css/toolbar.css
 style chrome://komodo/content/komodo.xul chrome://asynchremote/content/css/tree.css

@@ -3,491 +3,338 @@ function AsynchRemote()
 {
   this.loadExtension = function(event)
   {
-	event.currentTarget.removeEventListener('load', asynchRemote.loadExtension, false);
-	
-	asynchRemote.initExtension();
+	event.currentTarget.removeEventListener('load', garden.loadExtension, false);
+	garden.initExtension();
   }
   this.unloadExtension = function(event)
   {
-	event.currentTarget.removeEventListener('unload', asynchRemote.unloadExtension, false);
-	
-	asynchRemote.uninitExtension();
+	event.currentTarget.removeEventListener('unload', garden.unloadExtension, false);
+	garden.uninitExtension();
   }
-  
   this.initExtension = function()
   {
-	this.debug = true;
-  
-	this.mRCService = Components
-						  .classes["@activestate.com/koRemoteConnectionService;1"]
-						  .getService(
-									  Components
-										.interfaces
-										.koIRemoteConnectionService
-									  );
-
-	this.servers = [];
-	this.connections = [];
-	this.trees = [];
-
 	//global singleton object
 	Components.utils.import('resource://up.tito.asynchremote/_init.js', this);
 	this.s.extensionID = 'tito@garden';
 	this.s.extensionName = 'Garden';
 	this.s.extensionChromeName = 'asynchremote';
-	this.s.include('observer','preference','file','history','string','thread','serialize','sharedMemory','DOM','prompt','process','search','search','places','window','listener','application','tab','document','urls','clipboard', 'notification','tree','timer');
+	this.s.include('observer','preference','file','history','string','thread','serialize','sharedMemory','DOM','prompt','process','search','search','places','window','listener','application','tab','document','urls','clipboard', 'notification','tree','timer','hash','array');
 	this.s.includeShared('prompt', 'variete');
 	this.windowID = this.s.getWindowID();
 	//end global singleton object
+		
+	this.gardenDrivers = gardenDrivers;
+	this.trees = [];
+	this.instances = [];
 	
-	//listeners
+	for(var id in this.drivers)
+	  new this.drivers[id]().driverRegister();
+	  
+	delete this.drivers;
+	
+	//when the location change some buttons are disabled/enabled
 	this.s.addListener(
 						{'id':this.windowID,'window':window},
 						'onLocationChange',
-						function(aTab){ asynchRemote.onLocationChange(aTab);}
+						function(aTab){ garden.onLocationChange(aTab);}
 						);
+	
+	//if there is some connection working on something let the user know about that before quiting the application
 	this.s.addObserver('quit-application-requested',
 						function(aSubject)
 						{
-						  asynchRemote.onApplicationClose(aSubject);
+						  garden.onApplicationClose(aSubject);
 						});
-	this.element('places-files-popup')
-		  .addEventListener('popupshowing',
-							function(event)
-							{
-							  asynchRemote.placesLocalContextPopupShowing(event);
-							}, false);
-  }
-  
-  //look for the tree and switch to that tree, create the tree if no exists
-  this.switchToServer = function(anElement)
-  {
-	if(!anElement.hasAttribute('server'))
-	  return;
-	var server = anElement.getAttribute('server');
-	var trees = this.element('asynchremote-trees').childNodes;
-	//hide other trees, show ( if loaded ) selected tree
-	var foundTree = false;
-	for(var id =0;id<trees.length;id++)
-	{
-	  if(trees[id].hasAttribute('server'))
-	  {
-		if(trees[id].getAttribute('server') == server)
-		{
-		  trees[id].setAttribute('collapsed', false);
-		  foundTree = true;
-		}
-		else
-		  trees[id].setAttribute('collapsed', true);
-	  }
-	}
-	if(this.element('asynchremote-box').getAttribute('collapsed') == 'true')
-	{
-	  this.element('asynchremote-box').setAttribute('collapsed', 'false');
-	  //this.element('asynchremote-box-splitter').setAttribute('collapsed', 'false');
-	}
-	//create tree if no exists
-	if(!foundTree)
-	{
-	  var tree = this.element('asynchremote-tree').cloneNode(true);
-		  tree.setAttribute('server', server);
-		  tree.setAttribute('id', 'asynchremote-tree-'+server);
-		  tree.setAttribute('collapsed', 'false');
-	  
-	  this.element('asynchremote-trees').appendChild(tree);
-	
-	  //view
-	  var treeView = new gardenTree();
-		  treeView._rows = this.s.serializedSessionGet(server, {'tree':[],'server':{}}, this.s.serializerParser).tree;
-		  treeView.s = this.s;
-		  treeView.init(server);
-	  
-	  tree.treeBoxObject.view = treeView;
-	  tree.garden = treeView;
-	  
-		  treeView.treeElement = tree;
-		  treeView.editable = true;
-		  treeView.addEventListener('onNewName', function(aData){asynchRemote.actionFromRemote('renameFromTree', aData);});
-		  treeView.addEventListener('onDataRequired', function(aData){asynchRemote.connections[server].directoryListing(aData);});
-	  
-	  this.trees[server] = tree.garden;
-	  //connection
-	  this.connections[server] = new AsynchRemoteConnection(server);
-	  if(!this.s.serializedSessionExists(server))
-		this.placesRemoteChangeTreeBase(server, this.servers[server].path);
-	  else
-		this.placesRemoteChangeTreeBase(server, this.connections[server].cache.currentPath);
-	}
-	
-	this.focusedServer = server;
-	
-	this.placesRemoteToolbarUpdate(server);
-	this.onLocationChange(this.s.tabGetFocused(window));
-  }
-  
-/*
-  the asynchremote places toolbarbutton and menupopup
-*/
-
-  //builds the menupopup with the menuitems to select a server
-  this.placesLocalToolbarServersToolbarbuttonPopupShowing = function()
-  {
-	var menupopup = this.element('asynchremote-places-toolbar-button-menupopup');
-	this.s.removeChilds(menupopup);
-	this.servers = [];
-	var servers = this.mRCService.getServerInfoList({});
-	
-	var server;
-	for(var id in servers)
-	{
-	  server = servers[id].alias;
-	  
-	  //append the info
-	  this.servers[server] = servers[id];
-	  var menuitem = document.createElement('menuitem');
-
-		  menuitem.setAttribute('label', servers[id].alias+' - '+servers[id].hostname+''+(servers[id].port > 0 ? ':'+servers[id].port : '')+servers[id].path);
-		  menuitem.setAttribute('server', servers[id].alias);
-		  menuitem.setAttribute('class', 'menuitem-iconic asynchremote-connection');
-		  
-		//playing with icons
-		menuitem.removeAttribute('connected');
-		menuitem.removeAttribute('connecting');
-		
-		//check if we are connected
-		if(this.connections[server] && this.connections[server].connected)
-		  menuitem.setAttribute('connected', true);
-
-		//check if the connection is loading
-		if(this.connections[server] && this.connections[server].connecting)
-		  menuitem.setAttribute('connecting', true);
-
-		  menupopup.insertBefore(menuitem, menupopup.lastChild.previousSibling);
-
-	}
-  }
-  
-  /*
-	when the local places tree popup is going to be show
-  */
-  this.placesLocalContextPopupShowing = function(event)
-  {
-	var server = this.focusedServer;
-	if(!this.connections[server])
-	{
-	  this.element('asynchremote-context-local-download-upload-separator').setAttribute('hidden', true);
-	  this.element('asynchremote-context-local-upload').setAttribute('hidden', true);
-	  this.element('asynchremote-context-local-download').setAttribute('hidden', true);
-	  this.element('asynchremote-context-local-download-to-folder').setAttribute('hidden', true);
-	  this.element('asynchremote-context-local-locate').setAttribute('hidden', true);
-	}
-	else
-	{
-	  this.element('asynchremote-context-local-download-upload-separator').setAttribute('hidden', false);
-	  this.element('asynchremote-context-local-upload').setAttribute('hidden', false);
-	  this.element('asynchremote-context-local-download').setAttribute('hidden', false);
-	  this.element('asynchremote-context-local-download-to-folder').setAttribute('hidden', false);
-	  this.element('asynchremote-context-local-locate').setAttribute('hidden', false);
-	  
-	  if(this.s.placesLocalGetSelectedPaths(window).length > 1)
-	  {
-		this.element('asynchremote-context-local-upload').setAttribute('multiple', true);
-		this.element('asynchremote-context-local-download').setAttribute('multiple', true);
-	  }
-	  else
-	  {
-		this.element('asynchremote-context-local-upload').removeAttribute('multiple');
-		this.element('asynchremote-context-local-download').removeAttribute('multiple');
-	  }
-	}
-	this.element('asynchremote-context-local-locate').setAttribute('disabled', true);
-  }
-
-/*
- the asynchremote tree context menu
-*/
-
-  //disable or enable the tree context menu menuitems depending of the selected items of tree
-  this.placesRemoteContextPopupShowing = function(anElement, aEvent)
-  {
-	var server = this.focusedServer;
-	
-	//init selection properties
-	var multiple = false, file = false, folder = false, root = false;
-	if(document.popupNode && document.popupNode == this.element('asynchremote-nav'))//clicked root button..
-	{
-	  folder = true;
-	  root = true;
-	}
-	else
-	{
-	  //get tree selection and properties
-	  var selectedItems = this.trees[server].selectionGetSelectedItems();
-
-	  if(selectedItems.length > 1)
-		multiple = true;
-	  else if(selectedItems.length < 1)//if no selection hide the popup
-		return false;
-	  
-	  var numFiles = 0;
-	  var numFolders = 0;
-	  var parentIsRoot = false;
-	  for(var id in selectedItems)
-	  {
-		if(selectedItems[id].isDirectory)
-		{
-		  folder = true;
-		  numFolders++;
-		}
-		else
-		{
-		  if(
-			 (
-			  selectedItems[id].getFilepath.replace(this.connections[server].cache.currentPath, '')
-			 ).replace(/^\//, '')
-			 .indexOf('/') == -1)
-			parentIsRoot = true;
-		  file = true;
-		  numFiles++;
-		}
-	  }
-	}
-	//update the context menu
-	var items = anElement.childNodes;
-
-	for(var id =0;id<items.length;id++)
-	{
-	  var item = items[id];
-	  if(item.hasAttribute('testDisableIf'))
-	  {
-		if(!file && folder && item.getAttribute('testDisableIf').indexOf('onlyFolders') != -1)
-		  item.setAttribute('disabled', true);
-		else if(file && !folder && item.getAttribute('testDisableIf').indexOf('onlyFiles') != -1)
-		  item.setAttribute('disabled', true);
-		else if(numFiles != 2 && item.getAttribute('testDisableIf').indexOf('notTwoFiles') != -1)
-		  item.setAttribute('disabled', true);
-		else if(folder && item.getAttribute('testDisableIf').indexOf('folder') != -1)
-		  item.setAttribute('disabled', true);
-		else if(file && item.getAttribute('testDisableIf').indexOf('file') != -1)
-		  item.setAttribute('disabled', true);
-		else if(multiple && item.getAttribute('testDisableIf').indexOf('multiple') != -1)
-		  item.setAttribute('disabled', true);
-		else if(root && item.getAttribute('testDisableIf').indexOf('root') != -1)
-		  item.setAttribute('disabled', true);
-		else if(parentIsRoot && item.getAttribute('testDisableIf').indexOf('parentIsRoot') != -1)
-		  item.setAttribute('disabled', true);
-		else
-		  item.removeAttribute('disabled');
-	  }
-	}
-	if(multiple)
-	{
-	  this.element('asynchremote-context-upload').setAttribute('multiple', true);
-	  this.element('asynchremote-context-download').setAttribute('multiple', true);
-	}
-	else
-	{
-	  this.element('asynchremote-context-upload').removeAttribute('multiple');
-	  this.element('asynchremote-context-download').removeAttribute('multiple');
-	}
-	return true;
-  }
-  
-  this.placesRemoteToolbarProcessListToolbarbuttonPopupShowing = function()
-  {
-	var server = this.focusedServer;
-	var menupopup = this.element('asynchremote-process-list-popup');
-	this.s.removeChilds(menupopup);
-	
-	if(this.connections[server].connected && !this.connections[server].closing)
-	  menupopup.firstChild.removeAttribute('disabled');
-	else
-	  menupopup.firstChild.setAttribute('disabled', true);
-
-	if(this.connections[server].closing)
-	{
-	}
-	else
-	{
-	  for(var id in this.connections[server].processes)
-	  {
-		var process = this.connections[server].processes[id];
-  
-		var menuitem = document.createElement('menuitem');
-			menuitem.setAttribute('label', '['+process.id+'] '+process.name);
-			menuitem.setAttribute('class', 'menuitem-iconic asynchremote-processes');
-			menuitem.setAttribute('running', process.running());
-			menuitem.setAttribute('completed', process.completed());
-			menuitem.setAttribute('paused', process.paused());
-			menuitem.setAttribute('aborted', process.aborted());
-			menuitem.setAttribute('process', id);
-			menuitem.setAttribute('oncommand', "asynchRemote.placesRemoteToolbarProcessListToolbarbuttonCommand(this)");
-			if(process.running())
-			  menuitem.setAttribute('tooltiptext', 'Process is currenlty running, click to pause');
-			else if(process.completed())
-			  menuitem.setAttribute('tooltiptext', 'Process completed, click to re-run');
-			else if(process.paused())
-			  menuitem.setAttribute('tooltiptext', 'Process paused, click to continue');
-			else if(process.aborted())
-			  menuitem.setAttribute('tooltiptext', 'Process aborted, click to continue');
-		  try{
-		   menupopup.insertBefore(menuitem, menupopup.firstChild.nextSibling.nextSibling);
-		  }catch(e){menupopup.appendChild(menuitem)}
-	  }
-	}
-  }
-  this.placesRemoteToolbarProcessListToolbarbuttonCommand = function(aElement)
-  {
-	var server = this.focusedServer;
-	var process = aElement.getAttribute('process');
-	
-	var aProcess = this.connections[server].processes[process];
-	
-	if(aElement.getAttribute('running') == 'true')
-	{
-	  aProcess.paused(true);
-	  this.connections[server].log('status', 'Process '+aProcess.name+' will pause on next iteration', aProcess.id);
-	}
-	else if(aElement.getAttribute('completed') == 'true')
-	{
-	  this.connections[server].log('status', 'Process '+aProcess.name+' was restarted by user', aProcess.id);
-
-	  aProcess.restart();
-	  var AsynchRemoteConnection = this.connections[server];
-		  asynchRemote.s.runThread(function(){
-											  AsynchRemoteConnection.processController(aProcess);
-											}, AsynchRemoteConnection.thread);
-	}
-	else if(
-			aElement.getAttribute('paused') == 'true' ||
-			aElement.getAttribute('aborted') == 'true'
+	if(
+	   this.s.pref('last.focused.groupID') != '0' &&
+	   this.s.pref('last.focused.treeID') != '0' &&
+	   this.s.pref('last.focused.path') != ''   
 	)
 	{
-	  this.connections[server].log('status', 'Process '+aProcess.name+' will continue', aProcess.id);
-	  aProcess.continue();
-	  var AsynchRemoteConnection = this.connections[server];
-		  asynchRemote.s.runThread(function(){
-											  AsynchRemoteConnection.processController(aProcess);
-											}, AsynchRemoteConnection.thread);
+	  //simulating click
+	  var aElement = this.s.create(document, 'menuitem');
+		  aElement.setAttribute('groupID', this.s.pref('last.focused.groupID'));
+		  aElement.setAttribute('treeID', this.s.pref('last.focused.treeID'));
+		  aElement.setAttribute('path', this.s.pref('last.focused.path'));
+	  var aEvent = {};
+		  aEvent.type = 'startup';
+		  
+	  this.switchToTree(aEvent, aElement);
+	  this.element('g-toolbar-top').setAttribute('collapsed', 'false');
 	}
   }
-  this.placesRemoteToolbarToolsToolbarbuttonPopupShowing = function()
+  this.registerDriverClass = function(aClass)
   {
-	var aBase = this.connections[this.focusedServer].cache.currentPath;
-	//can go up
-	if(aBase != '' && aBase != '/')
-	  this.element('asynchremote-tools-toolbarbutton-go-up').removeAttribute('disabled');
-	else
-	  this.element('asynchremote-tools-toolbarbutton-go-up').setAttribute('disabled', 'true');
+	if(!this.drivers)
+	  this.drivers = [];
+	this.drivers[this.drivers.length] = aClass
+  }
+  //look for the group and switch to that group, create the group and the tree if needed no exists
+  this.switchToTree = function(aEvent, aElement)
+  {
+	// if the clicks comes from a mouseup and the clicked element is a menuitem
+	//then we will receive an oncommand.
+	//mouseup is here to receive clicks from menus or menupoups
+	if(aEvent.type == 'mouseup' && (
+								aEvent.originalTarget.tagName == 'menuitem' || 
+								aEvent.button == 2
+							  )
+	)
+	  return true;
 	  
-	//upload.and.rename
-	if(this.s.pref('upload.and.rename'))
-	  this.element('asynchremote-tools-toolbarbutton-upload-and-rename').setAttribute('checked', 'true');
-	else
-	  this.element('asynchremote-tools-toolbarbutton-upload-and-rename').setAttribute('checked', 'false');
-	//upload.and.rename
-	if(this.s.pref('upload.and.rename'))
-	  this.element('asynchremote-tools-toolbarbutton-upload-and-rename').setAttribute('checked', 'true');
-	else
-	  this.element('asynchremote-tools-toolbarbutton-upload-and-rename').setAttribute('checked', 'false');
-	//overwrite no ask
-	if(this.s.pref('dont.cache.last.modified'))
-	  this.element('asynchremote-tools-toolbarbutton-dont-cache-last-modified').setAttribute('checked', 'true');
-	else
-	  this.element('asynchremote-tools-toolbarbutton-dont-cache-last-modified').setAttribute('checked', 'false');
+	if(
+	   !aElement.hasAttribute('groupID') ||
+	   !aElement.hasAttribute('treeID') ||
+	   aElement.hasAttribute('unreadable')
+	)
+	{
+	  this.s.stopEvent(aEvent);
+	  return false;
+	}
+
+	//this.s.dump('el group es'+aElement.hasAttribute('groupID'));
+	//this.s.dump('el tree es'+aElement.hasAttribute('treeID'));
+	 
+	var groupID = aElement.getAttribute('groupID');
+	var groupElementID = 'g-group-'+groupID;
+	
+	var treeID = aElement.getAttribute('treeID');
+	var treeElementID = 'g-tree-'+treeID;
+	
+	var path = '';
+	//this.s.dump('Requested tree:'+treeID+' from group:'+groupID);
+	
+	//groups container
+	var groupsContainer = this.element('g-groups').childNodes;
+	
+	//hide other groups, show selected group if it is there
+	var found = false;
+	var groupContainer;
+	for(var id =0;id<groupsContainer.length;id++)
+	{
+	  if(groupsContainer[id].hasAttribute('id'))
+	  {
+		if(groupsContainer[id].getAttribute('id') == groupElementID)
+		{
+		  //this.s.dump('The group is already created:'+groupID+', switching to group');
+		  groupsContainer[id].setAttribute('collapsed', false);
+		  groupContainer = groupsContainer[id];
+		  found = true;
+		}
+		else
+		{
+		  groupsContainer[id].setAttribute('collapsed', true);
+		}
+	  }
+	}
+	//create the group if no exists
+	if(!found)
+	{
+	  //this.s.dump('The group was not created yet:'+groupID+', creating group..');
+	  groupContainer = this.s.create(document, 'hbox');
+	  groupContainer.setAttribute('id', groupElementID);
+	  groupContainer.setAttribute('flex', '1');
+	  groupContainer.setAttribute('groupID', groupID);
+	  this.element('g-groups').appendChild(groupContainer);
+	}
+	
+	//check if all the trees are there
+	var groupData = this.groupGetFromID(groupID);
+	
+	for(var id in groupData.trees)
+	{
+	  var treeData = groupData.trees[id];
+
+	  //look if the tree is there, if not create the tree
+	  var treeDataElementID = 'g-tree-'+treeData.id;
+	  var treeElement = this.element(treeDataElementID);
+	  //the tree is there show the tree if this is the focused one
+	  if(treeElement)
+	  {
+		if(treeElementID == treeDataElementID)
+		{
+		  //this.s.dump('The tree is already created:'+treeData.id+', switching to tree');
+
+		  this.focusedTree = treeElement.garden;
+		  this.focusedInstance = this.instances[treeData.id];
+		  
+		  if(treeElement.hasAttribute('not-loaded'))
+		  {
+			treeElement.removeAttribute('not-loaded');
+			/*var session = this.s.serializedSessionGet('tree.'+treeData.id, {_rows:[],_rowsStates:{},currentPath:''});
+			if(this.s.serializedSessionExists('tree.'+treeData.id))
+			  treeElement.garden.baseChange(session.currentPath, false);
+			else
+			*/
+		  }
+		  path = aElement.getAttribute('path');
+		  treeElement.garden.baseChange(aElement.getAttribute('path'), true);		  
+		  treeElement.setAttribute('collapsed', false);
+		}
+		else
+		  treeElement.setAttribute('collapsed', true);
+		  
+		//if the tree is already create continue
+		continue;
+	  }
+	  //this.s.dump('The tree was not created yet:'+treeData.id+', creating tree..');
+	  //if the tree is not there create the tree
+	  var treeElement = this.element('g-tree').cloneNode(true);
+		  treeElement.setAttribute('id', treeDataElementID);
+		  treeElement.setAttribute('treeID', treeID);
+		  treeElement.setAttribute('groupID', groupID);
+		  
+	  //append the tree to the container
+	  groupContainer.appendChild(treeElement);
+	  
+	  var session = this.s.serializedSessionGet('tree.'+treeData.id,
+												{
+												  _rows:[],
+												  _rowsStates:{},
+												  currentPath:''
+												});
+	  
+	  //view
+	  var treeView = new gardenTree();
+		  treeView.init();
+		  
+		  treeView._rows = session._rows;
+		  treeView._rowsStates = session._rowsStates;
+		  treeView.currentPath = session.currentPath;
+		  
+	  treeElement.treeBoxObject.view = treeView;
+	  treeElement.garden = treeView;
+	  
+		  treeView.treeElement = treeElement;
+		  treeView.treeID = treeData.id;
+		  treeView.groupID = groupID;
+		  treeView.editable = true;
+		  
+		  this.trees[treeData.id] = treeView;
+
+		  this.instances[treeData.id] = this.gardenDrivers.getInstance(
+										  treeData.id,
+										  treeData.aDriverTypeID,
+										  treeData.entryID
+										);
+		  
+		  this.instances[treeData.id].tree = treeView;
+		  treeView.instance = this.instances[treeData.id];
+		  
+		  this.instances[treeData.id].treeID = treeData.id;
+
+	  if(treeElementID == treeDataElementID)
+	  {
+		this.focusedTree = treeView;
+		this.focusedInstance = this.instances[treeData.id];
+		
+		if(this.s.serializedSessionExists('tree.'+treeData.id))
+		{
+		   path = session.currentPath;
+		}
+		else
+		{
+		  path = treeData.path;
+		  treeView.baseChange(treeData.path, false);
+		}
+		  
+		treeElement.setAttribute('collapsed', false);
+		treeElement.removeAttribute('not-loaded');
+	  }
+	  else
+	  {
+		treeElement.setAttribute('collapsed', true);
+	  }
+	}
+	
+	this.element('g-toolbar-group-menupopup').hidePopup();
+	
+	//this.s.dump('switchToTree:toolbarUpdate');
+	this.toolbarUpdate();
+	
+	//show the top toolbar if it is collapsed
+	this.element('g-toolbar-top').setAttribute('collapsed', 'false');
+	
+	this.onLocationChange(this.s.tabGetFocused(window));
+	
+	this.s.pref('last.focused.treeID', treeID);
+	this.s.pref('last.focused.groupID', groupID);
+	this.s.pref('last.focused.path', path);
   }
 
-  /*rebase tree to folder*/
-  this.placesRemoteChangeTreeBase = function(server, aBase)
+  this.toolbarUpdate = function()
   {
-	aBase = '/'+(aBase.replace(/^\/+/, '').replace(/\/+$/, ''));
-	
-	if(aBase != this.connections[server].cache.currentPath)
-	{
-	  this.connections[server].cache.currentPath = aBase;
-	  
-	  this.placesRemoteToolbarUpdate(server);
-	  
-	  this.trees[server].resetSoft();
-	  this.connections[server].directoryListing(0, aBase);
-	}
-  }
-  /*update tree toolbar*/
-  this.placesRemoteToolbarUpdate = function(server)
-  {
-	var aBase = this.connections[server].cache.currentPath;
-	
 	//update breadcrumb
-	this.element('asynchremote-nav').setAttribute('label', (aBase.split('/').pop() || server));
-	this.element('asynchremote-nav').setAttribute('tooltiptext', aBase);
+	this.element('g-toolbar-breadcrumb').setAttribute('label', this.focusedTree.currentPathTitle);
+	this.element('g-toolbar-breadcrumb').setAttribute('tooltiptext', this.focusedTree.currentPath);
 	
 	//update connection status
-	this.element('asynchremote-nav').removeAttribute('connected');
-	this.element('asynchremote-nav').removeAttribute('connecting');
+	this.element('g-toolbar-breadcrumb').removeAttribute('connected');
+	this.element('g-toolbar-breadcrumb').removeAttribute('iterations');
+	
 	//we are connected
-	if(this.connections[server] && this.connections[server].connected)
-	  this.element('asynchremote-nav').setAttribute('connected', 'true');
+	if(this.focusedInstance.connected)
+	  this.element('g-toolbar-breadcrumb').setAttribute('connected', 'true');
 	//the connection is loading
-	if(this.connections[server] && this.connections[server].connecting)
-	  this.element('asynchremote-nav').setAttribute('connecting', 'true');
-		
+	if(this.focusedInstance.iterations)
+	  this.element('g-toolbar-breadcrumb').setAttribute('iterations', 'true');
+
 	//back forward buttons
-	if(this.trees[server].history.canGoBack())
-	  this.element('asynchremote-toolbarbutton-back').removeAttribute('disabled');
+	if(this.focusedTree.history.canGoBack())
+	  this.element('g-toolbar-base-back').removeAttribute('disabled');
 	else
-	  this.element('asynchremote-toolbarbutton-back').setAttribute('disabled', 'true');  
-	if(this.trees[server].history.canGoForward())
-	  this.element('asynchremote-toolbarbutton-forward').removeAttribute('disabled');
+	  this.element('g-toolbar-base-back').setAttribute('disabled', 'true');  
+	if(this.focusedTree.history.canGoForward())
+	  this.element('g-toolbar-base-forward').removeAttribute('disabled');
 	else
-	  this.element('asynchremote-toolbarbutton-forward').setAttribute('disabled', 'true');
+	  this.element('g-toolbar-base-forward').setAttribute('disabled', 'true');
 	
 	//can go up
-	if(aBase != '' && aBase != '/')
-	  this.element('asynchremote-toolbarbutton-go-up').removeAttribute('disabled');
+	if(this.focusedTree.baseCanGoUp())
+	  this.element('g-toolbar-base-up').removeAttribute('disabled');
 	else
-	  this.element('asynchremote-toolbarbutton-go-up').setAttribute('disabled', 'true');
+	  this.element('g-toolbar-base-up').setAttribute('disabled', 'true');
 	  
-	var countErrors = document.getAnonymousElementByAttribute(this.element('asynchremote-log'), 'anonid', 'errors');
-	if(this.connections[server].errorCount > 0)
+	//show count of iterations and errors into the log button
+	var errorCountElement = document.getAnonymousElementByAttribute(
+																this.element('g-toolbar-log'),
+																'anonid',
+																'errors');
+	if(this.focusedInstance.errorCount > 0)
 	{
-	  countErrors.setAttribute('value', this.connections[server].errorCount);
-	  countErrors.setAttribute('hidden', false);
+	  errorCountElement.setAttribute('value', this.focusedInstance.errorCount);
+	  errorCountElement.setAttribute('hidden', false);
 	}
 	else
-	  countErrors.setAttribute('hidden', true);
-	  
-	var countProcesses = document.getAnonymousElementByAttribute(this.element('asynchremote-log'), 'anonid', 'queue');
-	var count = this.connections[server].connecting;
-	for(var id in this.connections[server].processes)
+	  errorCountElement.setAttribute('hidden', true);
+
+	var processCountElement = document.getAnonymousElementByAttribute(
+																   this.element('g-toolbar-log'),
+																   'anonid',
+																   'iterations');
+	var count = this.focusedInstance.iterations;
+	for(var id in this.focusedInstance.processes)
 	{
-	  if(this.connections[server].processes[id].running())
-		count += this.connections[server].processes[id].runnables.length;
+	  if(this.focusedInstance.processes[id].running())
+		count += this.focusedInstance.processes[id].runnables.length;
 	}
 	if(count > 0)
 	{
-	  countProcesses.setAttribute('value', count);
-	  countProcesses.setAttribute('hidden', false);
+	  processCountElement.setAttribute('value', count);
+	  processCountElement.setAttribute('hidden', false);
 	}
 	else
-	  countProcesses.setAttribute('hidden', true);
+	  processCountElement.setAttribute('hidden', true);
 	  
-	//update icons on toolbarbutton menuitems but only if it is opened
-	if(this.element('asynchremote-places-toolbar-button-menupopup').state == 'open')
-	  this.placesLocalToolbarServersToolbarbuttonPopupShowing();
+	//update icons on toolbarbutton and menuitems but only if it is opened
+	if(this.element('g-groups-menupopup').state == 'open')
+	  this.groupsPopupshowing();
+	  	
+	this.element('g-toolbar-free-space').setAttribute('value', this.focusedInstance.diskSpaceAvailable);
   }
-  this.placesRemotePanelSetOptions = function()
-  {
-	this.s.pref('log.show.progress', this.element('asynchremote-toolbar-panel-show-progress').checked);
-	this.s.pref('log.show.warning', this.element('asynchremote-toolbar-panel-show-warning').checked);
-	this.s.pref('log.show.error', this.element('asynchremote-toolbar-panel-show-error').checked);
-	this.s.pref('log.show.sucess', this.element('asynchremote-toolbar-panel-show-sucess').checked);
-	this.actionFromRemote('log-update-if-opened');
-  }
-  this.placesRemotePanelClearLog = function()
-  {
-	this.connections[this.focusedServer].logs = [];
-	this.actionFromRemote('log-update-if-opened');
-  }
+
+  //disable or enable the tree context menu menuitems depending of the selected items of tree
+ 
   //the action when clicking a menuitem from "places local context menu"
   this.actionFromLocal = function(action, aboutFocusedTab, aData)
   {
@@ -639,270 +486,99 @@ function AsynchRemote()
 		  break;
 		}
 	}
-	this.placesRemoteToolbarUpdate(server);
+	//this.s.dump('actionFromLocal:toolbarUpdate');
+	this.toolbarUpdate();
   }
-  //the action when clicking a menuitem from "places remote context menu"
-  this.actionFromRemote = function(action, aData)
+  //the action or command when clicking a menuitem from "tree or browser context menu"
+  //the idea of this method is to "fire" some action from a selection, a tree selection or a browser selection
+  //if no selection exists then the command shoul't be here
+  this.gardenCommand = function(aCommand, aData)
   {
-	var server = this.focusedServer;
-	if(!server || !action || server == '' || action == '')
-	  return false;
-	
-	//context on root button
-  	if(document.popupNode && document.popupNode == this.element('asynchremote-nav'))
+  
+	if(document.popupNode && document.popupNode == this.element('g-toolbar-breadcrumb'))//clicked root button..
 	{
+	  this.s.dump('the clicked element is the root button');
+	  var tree = this.focusedTree;
+	  var instance = this.focusedInstance;
+	  
 	  //simulate tree selection and properties
 	  var selectedItems = [];
 		  selectedItems[0] = {};
-		  selectedItems[0].getFilepath = this.connections[server].cache.currentPath;
+		  selectedItems[0].path = tree.currentPath;
 		  selectedItems[0].isDirectory = true;
 		  
 	  var selectedPaths = [];
 	  for(var id in selectedItems)
-		selectedPaths[selectedPaths.length] = selectedItems[id].getFilepath;
+		selectedPaths[selectedPaths.length] = selectedItems[id].path;
+	  var selectedPath = selectedPaths[0];//the very first path on the selection
+	  var selectedItem = selectedItems[0];//the very first item on the selection
+	}
+	else if(document.popupNode && document.popupNode.hasAttribute('path'))
+	{
+	  this.s.dump('the clicked element is a menuitem from a "browser" element');
+	  //simulate tree selection and properties
+	  var selectedItems = [];
+		  selectedItems[0] = {};
+		  selectedItems[0].path = document.popupNode.getAttribute('path');
+		  selectedItems[0].isDirectory = true;
+		  
+	  var selectedPaths = [];
+	  for(var id in selectedItems)
+		selectedPaths[selectedPaths.length] = selectedItems[id].path;
 	  var selectedPath = selectedPaths[0];//the very first path on the selection
 	  var selectedItem = selectedItems[0];//the very first item on the selection
 	}
 	else
 	{
+	  this.s.dump('the clicked element is a tree childreen');
+	  var tree = this.focusedTree;
+	  var instance = this.focusedInstance;
+	  
 	  //get tree selection and properties
-	  var selectedItems = this.trees[server].selectionGetSelectedItems();
+	  var selectedItems = tree.selectionGetSelectedItems();
 	  var selectedPaths = [];
 	  for(var id in selectedItems)
-		selectedPaths[selectedPaths.length] = selectedItems[id].getFilepath;
-	  var selectedItem = this.trees[server].selectionGetSelectedItem();
+		selectedPaths[selectedPaths.length] = selectedItems[id].path;
+	  var selectedItem = tree.selectionGetSelectedItem();
 	  if(!selectedItem){}
 	  else
 	  {
-		var selectedPath = selectedItem.getFilepath;//the very first path on the selection
+		var selectedPath = selectedItem.path;//the very first path on the selection
 	  }
 	}
 	
-	var currentRemotePath 	= this.connections[server].cache.currentPath
-	var currentLocalPath 	= this.s.placesLocalCurrentPath(window);
-	var tree = this.trees[server];
+	var currentPath = this.focusedTree.currentPath
 	
-	switch(action)
+	switch(aCommand)
 	{
 	  case 'rebase':
 		{
 		  if(!selectedItem.isDirectory)
 		  {
-			var selectedPath = selectedPath.split('/');
+			var selectedPath = selectedPath.split(instance.__DS);
 				selectedPath.pop();
-				selectedPath = selectedPath.join('/');
+				selectedPath = selectedPath.join(instance.__DS);
 		  }
 		  if(selectedPath == '')
-			selectedPath = '/';
-		  if(currentRemotePath != selectedPath)
-		  {
-			tree.history.change(currentRemotePath);
-			this.placesRemoteChangeTreeBase(server, selectedPath);
-		  }
+			selectedPath = instance.__DS;
+		  this.focusedTree.baseChange(selectedPath, true);
+		  
 		  break;
 		}
-  	  case 'go-up':
-		{
-		  var parentPath = currentRemotePath.split('/');
-			  parentPath.pop();
-			  parentPath = parentPath.join('/');
-		  
-		  if(parentPath == '')
-			parentPath = '/';
-			
-		  if(parentPath != currentRemotePath )
-		  {
-			tree.history.change(currentRemotePath);
-			this.placesRemoteChangeTreeBase(server, parentPath);
-		  }
-		  break;
-		}
-	  case 'history-back':
-		{
-		  if(tree.history.canGoBack())
-		  {
-			this.placesRemoteChangeTreeBase(server, tree.history.goBack(currentRemotePath));
-		  }
-		  break;
-		}
-	  case 'history-forward':
-		{
-		  if(tree.history.canGoForward())
-		  {
-			this.placesRemoteChangeTreeBase(server, tree.history.goForward(currentRemotePath));
-		  }
-		  break;
-		}
-	  case 'log-open':
-		{
-		  if(this.element('asynchremote-toolbar-panel').state != 'open')
-		  {
-			this.element('asynchremote-toolbar-panel-show-progress')
-					.checked = this.s.pref('log.show.progress');
-			this.element('asynchremote-toolbar-panel-show-warning')
-					.checked = this.s.pref('log.show.warning');
-			this.element('asynchremote-toolbar-panel-show-error')
-					.checked = this.s.pref('log.show.error');
-			this.element('asynchremote-toolbar-panel-show-sucess')
-					.checked = this.s.pref('log.show.sucess');
-  
-			this.actionFromRemote('log-update');
-			
-			this.element('asynchremote-toolbar-panel')
-				  .openPopup(
-							  this.element('asynchremote-log'),
-							  'after_start'
-							);
-			this.connections[server].errorCount = 0;
-			this.placesRemoteToolbarUpdate(server);
-		  }
-		  break;
-		}
-	  case 'log-save':
-	  {
-		var f = ko.filepicker.saveFile(null, 'remote-log-'+this.focusedServer+'.html','Save log in…', null); 
-		if(f)
-		{
-			var log = '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd"><html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><style>div{font-size:11px;font-family:arial, tahoma, sans-serif;} .sucess{ color:#45a44e; }  .status{color:#5d61af;}.error{ color:#d73d3d; } .warning{ color:#666666;}.canceled{ color:#876F71;}.progress{ color:#999999;}.process{ color:#45a44e;font-weight:bold;}</style></head><body>';
-		  
-		  var showErrors = this.s.pref('log.show.error');
-		  var showWarnings = this.s.pref('log.show.warning');
-		  var showProgress = this.s.pref('log.show.progress');
-		  var showSucess = this.s.pref('log.show.sucess');
-		  
-		  var searchString = this.element('asynchremote-toolbar-panel-search').value;
-		  for(var id in this.connections[server].logs)
-		  {
-			var aType = this.connections[server].logs[id].aType;
-			if(
-			   aType == 'error' && !showErrors ||
-			   aType == 'warning' && !showWarnings ||
-			   aType == 'sucess' && !showSucess ||
-			   aType == 'progress' && !showProgress
-			  )
-			{
-			  continue;
-			}
-			
-			if(searchString != '' && !this.s.searchEngineSearch(searchString, this.connections[server].logs[id].aMsg ))
-			  continue;
-			
-			log += '<div class="'+this.connections[server].logs[id].aType+'">';
-			log += this.connections[server].logs[id].aDate;
-			log += ' [';
-			log += this.connections[server].logs[id].aProcessID;
-			log += '] → ';			
-			log += this.connections[server].logs[id].aType;
-			log += ' : ';
-			log += this.connections[server].logs[id].aMsg;
-			log += '\n';
-			log += '</div>'
-		  }
-		  log += '</body></html>';
-		  
-		  this.s.fileWrite(f, log);
-		}
-		break;
-	  }
-	  case 'log-update':
-		{
-		  var log = this.element('asynchremote-toolbar-panel-log');
-		  var childrens = [];
-		  
-		  var showErrors = this.s.pref('log.show.error');
-		  var showWarnings = this.s.pref('log.show.warning');
-		  var showProgress = this.s.pref('log.show.progress');
-		  var showSucess = this.s.pref('log.show.sucess');
-		  
-		  var searchString = this.element('asynchremote-toolbar-panel-search').value;
-		  var count = this.connections[server].logs.length;
-		  for(var i = count-1, a=0; i>=a;i--)
-		  {
-			var entry = this.connections[server].logs[i];
-			var aType = entry.aType;
-			if(
-			   aType == 'error' && !showErrors ||
-			   aType == 'warning' && !showWarnings ||
-			   aType == 'sucess' && !showSucess ||
-			   aType == 'progress' && !showProgress
-			  )
-			{
-			  continue;
-			}
-			
-			if(searchString != '' && !this.s.searchEngineSearch(searchString, entry.aMsg ))
-			  continue;
-			
-			var description = document.createElement('description');
-				description.setAttribute('flex', '1');
-				description.setAttribute('wrap', 'true');
-				description.appendChild(document.createTextNode(
-				  entry.aDate
-				  + ' ['
-				  + entry.aProcessID
-				  + '] → '
-				  + entry.aType
-				  + ' : '
-				  + entry.aMsg
-				));
-			var richlistitem = document.createElement('richlistitem');
-				richlistitem.setAttribute('class', 'asynchremote-toolbar-panel-log-row asynchremote-log-item-'+entry.aType);
-				richlistitem.appendChild(description);
-			  childrens[childrens.length] = richlistitem;
-		  }
-		  
-		  this.s.removeChilds(log);
-		  for(var id in childrens)
-			log.appendChild(childrens[id]);
 
-		  break;
-		}
-	  case 'log-copy-selected':
-		{
-		  var log = this.element('asynchremote-toolbar-panel-log');
-		  var selected = log.selectedItems;
-		  var text = '';
-		  for(var id in selected)
-		  {
-			text += selected[id].firstChild.firstChild.nodeValue;
-			text += this.s.__NL;
-		  }
-		  this.s.copyToClipboard(text);
-		  
-		  break;
-		}
-	  case 'log-copy-all':
-		{
-		  var log = this.element('asynchremote-toolbar-panel-log');
-		  var count = log.getRowCount();
-		  var text = '';
-		  for(var i=0;i<count;i++)
-		  {
-			text += log.getItemAtIndex(i).firstChild.firstChild.nodeValue;
-			text += this.s.__NL;
-		  }
-		  this.s.copyToClipboard(text);
-		  
-		  break;
-		}
-	  case 'log-update-if-opened':
-		{
-		  if(this.element('asynchremote-toolbar-panel').state == 'open')
-			this.actionFromRemote('log-update');
-		  break;
-		}
 	  case 'delete':
 		{
-		  
 		  if(selectedPaths.join('') != '' && this.s.confirm('Are you sure you want to delete?\n\n\t'+selectedPaths.join('\n\t')+'\n'))
 		  {
 			var aProcess = false;//group the processes into one process object
 			for(var id in selectedItems)
 			{
+			  /*
 			  if(selectedItems[id].isDirectory)
-				aProcess = this.connections[server].removeDirectory(selectedItems[id].getFilepath, aProcess);
+				aProcess = instance.removeDirectory(selectedItems[id].path, aProcess);
 			  else
-				aProcess = this.connections[server].removeFile(selectedItems[id].getFilepath, aProcess);
+				aProcess = instance.removeFile(selectedItems[id].path, aProcess);
+			  */
 			}
 		  }
 		  break;
@@ -1212,7 +888,7 @@ function AsynchRemote()
 			 
 		  )
 		  {
-			this.actionFromRemote('upload');
+			this.gardenCommand('upload');
 		  }
 		  else if(
 				  //if the remote pane has NO focus and the places pane has focus
@@ -1239,7 +915,7 @@ function AsynchRemote()
 			 
 		  )
 		  {
-			this.actionFromRemote('download');
+			this.gardenCommand('download');
 		  }
 		  else if(
 				  //if the remote pane has NO focus and the places pane has focus
@@ -1277,68 +953,27 @@ function AsynchRemote()
 		}
 	  case 'collapse':
 		{
-		  this.element('asynchremote-box').setAttribute('collapsed', 'true');
-		  //this.element('asynchremote-box-splitter').setAttribute('collapsed', 'true');
 		  this.onLocationChange(this.s.tabGetFocused(window));
 		  break;
 		}
-	  case 'close':
-		{
-		  this.connections[server].close();
-		  break;
-		}
-	  case 'clean-cache-modified':
-		{
-		  this.connections[server].cleanCacheModified();
-		  break;
-		}
-	  case 'clean-cache-overwrite':
-		{
-		  this.connections[server].cleanCacheOverWrite();
-		  break;
-		}
-	  case 'pref-tools-set':
-		{
-		  this.s.pref('upload.and.rename', this.element('asynchremote-tools-toolbarbutton-upload-and-rename').getAttribute('checked') == 'true')
-		  this.s.pref('overwrite.no.ask', this.element('asynchremote-tools-toolbarbutton-overwrite-no-ask').getAttribute('checked') == 'true')
-		  this.s.pref('dont.cache.last.modified', this.element('asynchremote-tools-toolbarbutton-dont-cache-last-modified').getAttribute('checked') == 'true');
-		  
-		  break;
-		}
-	  case 'contribute':
-		{
-		  this.s.openURI('https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=H738SJGDU3NJ8');
-		  break;
-		}
-	  /* refresh the tree without cleaning the cache*/
-	  case 'refresh-all-soft':
-		{
-		  this.connections[server].cache.currentPath = '';
-		  this.placesRemoteChangeTreeBase(server, currentRemotePath);
-		  break;
-		}
-	  /* refresh the tree cleaning the cache of directories*/
-	  case 'refresh-all-hard':
-		{
-		  this.s.serializedSessionRemove(server);
-		  this.connections[server].cleanCacheConnection();
-		  this.connections[server].cache.currentPath = '';
-		  this.placesRemoteChangeTreeBase(server, currentRemotePath);
-		  break;
-		}
+
+
 	  /*mmmm*/
 	  case 'refresh-selected':
 		{
-		 
 		  break;
 		}
+	  default:
+	  {
+		throw new Error('the switch of actions cant match the action'+aCommand);
+	  }
 	}
-	this.placesRemoteToolbarUpdate(server);
+	this.toolbarUpdate();
   }
-
   //disable or enable the toolbarbuttons for current document
   this.onLocationChange = function(aTab)
   {
+	/*
 	var focusedPath = this.s.documentGetLocation(this.s.documentGetFromTab(aTab));
 	var currentLocalPath 	= this.s.placesLocalCurrentPath(window);
 	var server = this.focusedServer;
@@ -1347,36 +982,45 @@ function AsynchRemote()
 	  !this.connections[server]
 	)
 	{
-	  this.element('asynchremote-toolbar-local-upload').setAttribute('disabled', true);
-	  this.element('asynchremote-toolbar-local-download').setAttribute('disabled', true);
+	  this.element('g-toolbar-local-upload').setAttribute('disabled', true);
+	  this.element('g-toolbar-local-download').setAttribute('disabled', true);
 	}
 	else
 	{
-	  this.element('asynchremote-toolbar-local-upload').removeAttribute('disabled');
-	  this.element('asynchremote-toolbar-local-download').removeAttribute('disabled');
-	}
+	  this.element('g-toolbar-local-upload').removeAttribute('disabled');
+	  this.element('g-toolbar-local-download').removeAttribute('disabled');
+	}*/
   }
   this.onApplicationClose = function(aSubject)
   {
 	var processesRunning = 0;
-	var servers = this.mRCService.getServerInfoList({});
-	var server;
-	for(var id in servers)
+	
+	var groups = this.element('g-groups').childNodes;
+	
+	var iterations = false;
+	var connected = false;
+	
+	for(var i=0;i<groups.length;i++)
 	{
-	  server = servers[id].alias;
-	  if(!this.connections[server]){}
-	  else
+	  var trees = groups[i].childNodes;
+	  var groupID = groups[i].getAttribute('groupID');
+	  
+	  for(var a=0;a<trees.length;a++)
 	  {
-		processesRunning += this.connections[server].connecting;
-		for(var id in this.connections[server].processes)
+		var treeID = trees[a].getAttribute('treeID');
+		if(this.instances[treeID])
 		{
-		  if(this.connections[server].processes[id].running())
-			processesRunning += this.connections[server].processes[id].runnables.length;
+		  processesRunning += this.instances[treeID].iterations;
+		  for(var id in this.instances[treeID].processes)
+		  {
+			if(this.instances[treeID].processes[id].running())
+			  processesRunning += this.instances[treeID].processes[id].runnables.length;
+		  }
 		}
 	  }
 	}
 	
-	if(processesRunning > 0 && !this.s.confirm('There is processes running into "Asynch Remotes".\n Do you still want to close the application?'))
+	if(processesRunning > 0 && !this.s.confirm('There is processes running into "Garden Extension".\n Do you still want to close the application?'))
 	{
 	  aSubject.data = true;
 	}
@@ -1384,49 +1028,72 @@ function AsynchRemote()
 	{
 	  this.s.folderDeleteTemporal();
 	}
-
   }
-  this.notifyProgress =  function(server)
+  this.notifyProgress =  function(aNotifierTreeID)
   {
-	//when at last one server is connected show the icon as "connected"
-	var servers = this.mRCService.getServerInfoList({});
-	var button = this.element('asynchremote-places-toolbar-button');
-		button.removeAttribute('connecting');
-		button.removeAttribute('connected');
-	for(var id in servers)
+	if(!this.focusedTree)
 	{
-	  if(this.connections[servers[id].alias] && this.connections[servers[id].alias].connected)
-		button.setAttribute('connected', 'true');
-	  if(this.connections[servers[id].alias] && this.connections[servers[id].alias].connecting)
-		button.setAttribute('connecting', 'true');
+	  /*
+	    when loading the first tree, we open all the trees for that group.
+	    until the selected tree is created there is no focusedTree
+	  */
 	}
-	if(server == this.focusedServer)
+	else
 	{
-	  this.placesRemoteToolbarUpdate(server);
-	  //if the log is opened update the value
-	  this.actionFromRemote('log-update-if-opened');
-	}
-  }
-  this.uninitExtension = function()
-  {
-
-  }
-  
-/*
-	UTILS!
-*/
-
-  this.element = function(anElement)
-  {
-	return document.getElementById(anElement);
-  }
-  this.dump = function(aName, aString, aError)
-  {
-	if(!this.debug && !aError)
-	  return;
-	if(typeof(aString) ==  'undefined')
-	  aString = '';
+	  //when at last one server is connected show the icon as "connected"
+	  var button = this.element('g-groups-button');
+		  button.removeAttribute('iterations');
+		  button.removeAttribute('connected');
+		  
+	  var groups = this.element('g-groups').childNodes;
 	  
+	  var iterations = false;
+	  var connected = false;
+	  
+	  for(var i=0;i<groups.length;i++)
+	  {
+		var trees = groups[i].childNodes;
+		var groupID = groups[i].getAttribute('groupID');
+		
+		for(var a=0;a<trees.length;a++)
+		{
+		  var treeID = trees[a].getAttribute('treeID');
+		  if(this.instances[treeID])
+		  {
+			if(this.instances[treeID].connected)
+			{
+			  button.setAttribute('connected', 'true');
+			  connected = true;
+			}
+			if(this.instances[treeID].iterations)
+			{
+			  button.setAttribute('iterations', 'true');
+			  iterations = true;
+			}
+			if(connected && iterations)
+			  break;
+		  }
+		}
+		if(connected && iterations)
+		  break;
+	  }
+	  if(aNotifierTreeID == this.focusedTree.treeID)
+	  {
+		//this.s.dump('notifyProgress:toolbarUpdate'+this.focusedTree.treeID);
+		this.toolbarUpdate();
+		//if the log is opened update the value
+		this.logUpdateIfOpened();
+	  }
+	}
+  }
+  this.uninitExtension = function(){}
+
+  this.element = function(aElement)
+  {
+	return document.getElementById(aElement);
+  }
+  this.dump = function(aName, aString)
+  {
 	this.s.dump(aName+':'+aString);
   }
 
@@ -1434,6 +1101,7 @@ function AsynchRemote()
 }
 
 var asynchRemote = new AsynchRemote();
+var garden = asynchRemote;
 
-addEventListener('load', asynchRemote.loadExtension, false);
-addEventListener('unload', asynchRemote.unloadExtension, false);
+addEventListener('load', garden.loadExtension, false);
+addEventListener('unload', garden.unloadExtension, false);

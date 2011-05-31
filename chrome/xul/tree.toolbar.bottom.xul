@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<overlay xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+
+	<!-- container -->
+	<hbox id="g-toolbar-bottom">
+
+	  <!-- trees bottom toolbarbuttons -->
+	  
+	  <toolbarbutton
+		id="g-groups-button" class="g-groups-button"
+		buttonstyle="pictures" type="button" persist="buttonstyle" orient="horizontal"
+		onclick="if(event.button==2)this.firstChild.openPopup(this, 'before_start')"
+		oncommand="this.firstChild.openPopup(this, 'before_start')"
+		tooltiptext="Tree Groups"
+	  >
+		<menupopup
+		  id="g-groups-menupopup"
+		  onpopupshowing="garden.groupsPopupshowing()"
+		  oncommand="garden.switchToTree(event, event.originalTarget)"
+		  context="g-group-context"
+		>
+		  <menuseparator locked="true"/>
+		  <menuitem
+			locked="true"
+			label="Add group…"
+			class="menuitem-iconic g-group-add"
+			action="add-group"
+			oncommand="garden.groupContextAction(event, event.originalTarget, this);"
+		  />
+		</menupopup>
+	  </toolbarbutton>
+	  <description class="g-toolbar-free-space-title">Free Space:</description><description id="g-toolbar-free-space" class="g-toolbar-free-space"></description>
+	  <spacer flex="1"/>
+	  <!--
+		onmouseup fires the clicks on menu or menupopups
+		oncommand fires the clicks on menuitems
+	  -->
+	  <menupopup
+		id="g-group-context"
+		onpopupshowing="if(event.originalTarget == event.currentTarget)return garden.groupContextPopupshowing(event, document.popupNode)"
+		onmouseup="garden.groupContextAction(event, event.originalTarget, this);"
+		oncommand="garden.groupContextAction(event, event.originalTarget, this);"
+	  >
+		<menuseparator locked="true"/>
+		<menuitem locked="true" action="rename-group" label="Rename group" class="menuitem-iconic g-group-rename"/>
+		<menuitem locked="true" action="delete-group" label="Remove group" class="menuitem-iconic g-group-delete"/>
+		<menuseparator locked="true"/>
+		<menuitem locked="true" action="delete-tree" label="Remove tree from group" class="menuitem-iconic g-group-tree-delete"/>
+	  </menupopup>
+	  
+	</hbox>
+
+</overlay>

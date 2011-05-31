@@ -54,3 +54,14 @@
 					  .split('//').join('/');
 	return aLocalFile;
   }
+  
+  this.hasCustomIconIcons = ["todo","apng","png","jpg","gif","jpeg" ,"bmp","psd","js","xpi","xml","rdf","dtd","xul","htm","html","md","xhtml","css","sql","sqlite","sqlitedb","ai","cdr","mov","mpeg","avi","mpg","flv","wmv","mp3","wav","aif","aiff","snd","wma","asf","asx","pcm","php","php3","php4","php5","pdf","as","fla","swf","doc","rtf","xls","xlsx","ppt","pptx","zip","tar","rar","gz","exe","ini","conf","dat","txt","readme","sh","bat","py","pl","rb","htaccess","htpasswd","diff","komodotool","kpz","komodoproject","json","rss","bak","tmp","part","properties","fifo","ico","jar","gitignore","gitk","gitconfig","manifest","log",'tpl'];
+  
+  this.hasCustomIcon = function(aFileExtension)
+  {
+	if(this.hasCustomIconIcons.indexOf(aFileExtension) != -1)
+	  return true;
+	else
+	  return false;
+  }
+ 

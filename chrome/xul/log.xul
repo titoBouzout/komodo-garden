@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<overlay xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+  
+  <!--container-->
+  <popupset id="extensionPopupSet">
+	
+	<!--panel-->
+	<panel
+	  id="g-log-panel"
+	  class="g-log-panel"
+	  resizable="true"
+	  onpopuphidden="
+		garden.logDontShowForAWhile = true;
+		garden.s.timerAdd(150, function(){ garden.logDontShowForAWhile = false;});
+	  "
+	>
+	  <vbox>
+		<richlistbox
+		  width="780" 
+		  id="g-log"
+		  seltype="multiple"
+		  context="g-log-context"
+		  rows="10"
+		  height="200"
+		  maxheight="200"
+		  onselect="try{this.nextSibling.value = this.selectedItems[0].firstChild.firstChild.nodeValue;}catch(e){}"
+		/>
+		<textbox flex="1" emptytext="Selected log entry…" placeholder="Selected log entry…"/>
+		<hbox style="padding-top:1px;padding-bottom:2px;">
+		  <description style="margin: 6px ! important;" value="Show the following messages:"/>
+		  <checkbox label="Progress" id="g-log-show-progress" oncommand="garden.logSaveOptions()"/>
+		  <checkbox label="Warnings" id="g-log-show-warning" oncommand="garden.logSaveOptions()"/>	
+		  <checkbox label="Errors" id="g-log-show-error" oncommand="garden.logSaveOptions()"/>
+		  <checkbox label="Sucess" id="g-log-show-sucess" oncommand="garden.logSaveOptions()"/>
+		  <textbox id="g-log-search" emptytext="Search…" placeholder="Search…" flex="1" 
+				type="search" timeout="230"
+				oncommand="garden.logUpdate();"
+				onkeypress="
+				  if(garden.s.eventKeyCode(event) == 27)
+				  {
+					if(this.value=='')
+					{
+					  this.parentNode.parentNode.parentNode.hidePopup();
+					} else {
+					  this.value='';
+					  garden.s.stopEvent(event);
+					}
+				  }
+				  else if(garden.s.eventKeyCode(event) == 13)
+					garden.logUpdate();
+				"
+				style="padding:0px;padding-left:2px;padding-right:2px;margin:0px;"
+		  />
+		  <button label="Clear log" oncommand="garden.logClear()"/>
+		  <button label="Save log to file…" oncommand="garden.logSave();"/>
+		</hbox>
+	  </vbox>
+	</panel>
+	<menupopup id="g-log-context">
+	  <menuitem label="Copy selected" oncommand="garden.logCopySelected()"/>
+	  <menuitem label="Copy entire log" oncommand="garden.logCopyAll()"/>
+	</menupopup>
+  </popupset>
+
+  
+</overlay>

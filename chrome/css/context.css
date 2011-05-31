@@ -1,0 +1,107 @@
+
+/*tree context or other context*/
+
+  .g-tree-context menuitem[disabled]
+  {
+	text-shadow:none !important;
+	/*
+	text shadow pass event to the elements behind
+	https://bugzilla.mozilla.org/show_bug.cgi?id=660511
+	*/
+  }
+
+  .g-new-file {
+	list-style-image : url("chrome://asynchremote/content/icons/context/new-file.png");
+  }
+  .g-new-file[disabled] {
+	list-style-image : url("chrome://asynchremote/content/icons/context/new-file-disabled.png");
+  }
+  .g-new-folder {
+	list-style-image : url("chrome://asynchremote/content/icons/context/new-folder.png");
+  }
+  .g-new-folder[disabled] {
+	list-style-image : url("chrome://asynchremote/content/icons/context/new-folder-disabled.png");
+  }
+  
+  .g-edit{
+	list-style-image : url("chrome://asynchremote/content/icons/context/edit.png");
+  }
+  .g-edit[disabled] {
+	list-style-image : url("chrome://asynchremote/content/icons/context/edit-disabled.png");
+  }
+  .g-open{
+	list-style-image : url("chrome://asynchremote/content/icons/context/open.png");
+  }
+  .g-open[disabled] {
+	list-style-image : url("chrome://asynchremote/content/icons/context/open-disabled.png");
+  }
+  .g-refresh {
+	  list-style-image : url("chrome://asynchremote/content/icons/toolbar/base-refresh.png");
+  }
+  
+
+  .g-upload{
+	list-style-image : url("chrome://asynchremote/content/icons/context/upload.png");
+  }
+  .g-upload[disabled]{
+	list-style-image : url("chrome://asynchremote/content/icons/context/upload-multiple.png");
+  }
+  .g-upload[disabled]{
+	list-style-image : url("chrome://asynchremote/content/icons/context/upload-disabled.png");
+  }
+  .g-download{
+	list-style-image : url("chrome://asynchremote/content/icons/context/download.png");
+  }
+  .g-download[disabled]{
+	list-style-image : url("chrome://asynchremote/content/icons/context/download-multiple.png");
+  }
+  .g-download[disabled]{
+	list-style-image : url("chrome://asynchremote/content/icons/context/download-disabled.png");
+  }
+  .g-download-to-folder{
+	list-style-image : url("chrome://asynchremote/content/icons/context/download-to-folder.png");
+  }
+  .g-download-this-to-folder{
+	list-style-image : url("chrome://asynchremote/content/icons/context/download-this-to-folder.png");
+  }
+  
+  .g-locate{
+	list-style-image : url("chrome://asynchremote/content/icons/context/locate.png");
+  }
+  .g-locate[disabled]{
+	list-style-image : url("chrome://asynchremote/content/icons/context/locate-disabled.png");
+  }
+  .g-diff{
+	list-style-image : url("chrome://asynchremote/content/icons/context/diff.png");
+  }
+  .g-diff[disabled] {
+	list-style-image : url("chrome://asynchremote/content/icons/context/diff-disabled.png");
+  }
+  
+  .g-rebase {
+	list-style-image : url("chrome://asynchremote/content/icons/context/rebase.png");
+  }
+  .g-rebase[disabled] {
+	list-style-image : url("chrome://asynchremote/content/icons/context/rebase-disabled.png");
+  }
+  
+  .g-rename{
+	list-style-image : url("chrome://asynchremote/content/icons/context/rename.png");
+  }
+  .g-rename[disabled]{
+	list-style-image : url("chrome://asynchremote/content/icons/context/rename-disabled.png");
+  }
+  .g-move{
+	list-style-image : url("chrome://asynchremote/content/icons/context/move.png");
+  }
+  .g-move[disabled]{
+	list-style-image : url("chrome://asynchremote/content/icons/context/move-disabled.png");
+  }
+  
+  .g-delete{
+	list-style-image : url("chrome://asynchremote/content/icons/context/delete.png");
+  }
+  
+  .g-permissions{
+	list-style-image : url("chrome://asynchremote/content/icons/context/permissions.png");
+  }

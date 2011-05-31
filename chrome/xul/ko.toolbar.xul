@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<overlay xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+ 
+ <!-- toolbarbutton-->
+
+  <toolbaritem id="standardToolbar">
+	  <toolbarseparator id="g-toolbar-local-download-upload-separator"/>
+	  <toolbarbutton
+		id="g-toolbar-local-upload"
+		label="Upload"
+		buttonstyle="pictures"
+		type="button"
+		persist="buttonstyle"
+		class="asynchremote-upload"
+		action="upload"
+		disabled="true"
+		tooltiptext="Upload Document"
+		oncommand="asynchRemote.actionFromLocal(this.getAttribute('action'), true)"
+	   />
+	  <toolbarbutton
+		id="g-toolbar-local-download"
+		label="Download"
+		buttonstyle="pictures"
+		type="button"
+		persist="buttonstyle"
+		class="asynchremote-download"
+		action="download"
+		disabled="true"
+		tooltiptext="Download Document"
+		oncommand="asynchRemote.actionFromLocal(this.getAttribute('action'), true)"
+	   />
+
+   </toolbaritem>
+	  
+</overlay>

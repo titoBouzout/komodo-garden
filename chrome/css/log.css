@@ -1,0 +1,64 @@
+/* toolbar log button */
+
+  .g-toolbar-log-xbl
+  {
+    -moz-binding:url('chrome://asynchremote/content/xml/log-button.xml#g-toolbar-log-xbl');
+	list-style-image : url("chrome://asynchremote/content/icons/toolbar/log.png");
+	min-width:26px;
+	padding-left: 4px;
+  }
+  
+/* toolbar log richlistbox */
+
+  .g-log > description
+  {
+	font-size:11px;
+	font-family:arial, tahoma, sans-serif;
+	border-bottom: 1px solid ThreeDLightShadow;
+	padding:0px;
+	margin:0px;
+  }
+
+  .g-log-row
+  {
+	padding:0px;
+	margin:0px;
+	padding-top:1px;
+	padding-bottom:0px;
+	background-color:white;
+  }
+  
+  /* modified background image taken from the console*/
+  .g-log-row[selected="true"]
+  {
+	background-image: url("chrome://asynchremote/content/icons/toolbar/richlistbox/item-selected.png") !important;
+  }
+  
+  .g-log-row-item-sucess
+  {
+	color:#45a44e;
+  }
+  .g-log-row-item-status
+  {
+	color:#5d61af;
+	}
+  .g-log-row-item-error
+  {
+	color:#d73d3d;
+  }
+  .g-log-row-item-warning
+  {
+	color:#666666;
+  }
+  .g-log-row-item-canceled
+  {
+	color:#876F71;
+  }
+  .g-log-row-item-progress
+  {
+	color:#999999;
+	}
+  .g-log-row-item-process
+  {
+	color:#45a44e;font-weight:bold;
+  }

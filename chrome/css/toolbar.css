@@ -1,0 +1,75 @@
+
+/* navigation */
+  
+	.g-toolbar-breadcrumb{
+	  -moz-box-align: start !important;
+	}
+	.g-toolbar-breadcrumb > label {
+	  text-align:left !important;
+	  margin-left:4px !important;
+	}
+	.g-toolbar-breadcrumb > dropmarker
+	{
+	  display:none !important;
+	}
+
+	.g-toolbar-base-up {
+	  list-style-image : url("chrome://asynchremote/content/icons/toolbar/base-up.png");
+	}
+	.g-toolbar-base-up[disabled] {
+	  list-style-image : url("chrome://asynchremote/content/icons/toolbar/base-up-disabled.png");
+	}
+	.g-toolbar-base-back {
+	  list-style-image : url("chrome://asynchremote/content/icons/toolbar/base-back.png");
+	}
+	.g-toolbar-base-back[disabled] {
+	  list-style-image : url("chrome://asynchremote/content/icons/toolbar/base-back-disabled.png");
+	}
+	.g-toolbar-base-forward {
+	  list-style-image : url("chrome://asynchremote/content/icons/toolbar/base-forward.png");
+	}
+	.g-toolbar-base-forward[disabled] {
+	  list-style-image : url("chrome://asynchremote/content/icons/toolbar/base-forward-disabled.png");
+	}
+	.g-toolbar-base-refresh {
+	  list-style-image : url("chrome://asynchremote/content/icons/toolbar/base-refresh.png");
+	}
+  
+  	.g-toolbar-tools {
+	  list-style-image : url("chrome://asynchremote/content/icons/toolbar/tools.png");
+	}
+
+/* processes */
+
+  .g-processes-close{
+	list-style-image : url("chrome://asynchremote/content/icons/toolbar/processes/shutdown.png");
+  }
+  .g-processes-button{
+	list-style-image : url("chrome://asynchremote/content/icons/toolbar/processes/pocesses.png");
+  }
+  .g-processes{
+	list-style-image : url("chrome://asynchremote/content/icons/toolbar/processes/pause.png");
+  }
+  .g-processes[running="true"]{
+	list-style-image : url("chrome://asynchremote/content/icons/toolbar/processes/pause.png");
+  }
+  .g-processes[paused="true"]{
+	list-style-image : url("chrome://asynchremote/content/icons/toolbar/processes/play.png");
+  }
+  .g-processes[aborted="true"]{
+	list-style-image : url("chrome://asynchremote/content/icons/toolbar/processes/aborted.png");
+  }
+  .g-processes[completed="true"]{
+	list-style-image : url("chrome://asynchremote/content/icons/toolbar/processes/repeat.png");
+  }
+  
+/* bottom toolbar metadata */
+
+  .g-toolbar-free-space,
+  .g-toolbar-free-space-title
+  {
+	margin:0px;
+	padding:0px;
+	padding-left:2px;
+	padding-top:3px;
+  }

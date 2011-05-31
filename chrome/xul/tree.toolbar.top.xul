@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<overlay xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+
+	<!-- container -->
+	<hbox id="g-toolbar-top" collapsed="true">
+	  
+	  <!-- remote tree toolbarbuttons -->
+	 
+		  <toolbarbutton
+			id="g-toolbar-base-back" 
+			buttonstyle="pictures" type="button" persist="buttonstyle" orient="horizontal"
+			class="g-toolbar-base-back"
+			tooltiptext="Previous directory in history"
+			oncommand="garden.focusedTree.historyGoBack();garden.toolbarUpdate();"
+		  />
+		  <toolbarbutton
+			id="g-toolbar-base-forward"
+			buttonstyle="pictures" type="button" persist="buttonstyle" orient="horizontal"
+			class="g-toolbar-base-forward"
+			tooltiptext="Next directory in history"
+			oncommand="garden.focusedTree.historyGoForward();garden.toolbarUpdate();"
+		  />
+		  <toolbarbutton
+			id="g-toolbar-base-up"
+			buttonstyle="pictures" type="button" persist="buttonstyle" orient="horizontal"
+			class="g-toolbar-base-up"
+			tooltiptext="Go up one directory"
+			oncommand="garden.focusedTree.baseGoUp();garden.toolbarUpdate();"
+		  />
+		  
+		  <!--toolbarbutton
+			buttonstyle="pictures" type="button" persist="buttonstyle" orient="horizontal"
+			class="asynchremote-upload"
+			tooltiptext="Upload selected Items"
+			action="upload-from-remote-toolbarbutton"
+			oncommand="garden.action(this.getAttribute('action'))"
+		  />
+		  <toolbarbutton
+			buttonstyle="pictures" type="button" persist="buttonstyle" orient="horizontal"
+			class="asynchremote-download"
+			tooltiptext="Download selected Items"
+			action="download-from-remote-toolbarbutton"
+			oncommand="garden.action(this.getAttribute('action'))"
+			
+			oncommand="garden.switchToTree(event.originalTarget)"
+			
+		  /-->
+
+		  <toolbarbutton
+			type="button" orient="horizontal" crop="right" flex="1" pack="start"
+			class="normal g-group g-toolbar-breadcrumb"
+			id="g-toolbar-breadcrumb"
+			tooltiptext=""
+			context="g-tree-context"
+			oncommand="if(event.originalTarget == this)this.firstChild.openPopup(this, 'after_start');"
+		  >
+			<menupopup
+			  id="g-toolbar-group-menupopup"
+			  onpopupshowing="if(event.originalTarget==event.currentTarget)garden.groupToolbarPopupshowing()"
+			  
+			  onmouseup="
+			  garden.switchToTree(event, event.originalTarget, this);
+			  if(event.button == 2)
+			  {
+				if(event.originalTarget.hasAttribute('path'))
+				{
+				  document.popupNode = event.originalTarget;
+				  garden.element('g-tree-context').openPopupAtScreen(event.screenX, event.screenY, true);
+				}
+			  }"
+			  oncommand="garden.switchToTree(event, event.originalTarget, this);"
+
+			  class="g-browser-menupopup-xbl"
+			  action="add-tree"
+			/>
+		  </toolbarbutton>
+		  
+		  <toolbarbutton
+			buttonstyle="pictures" type="button" persist="buttonstyle" orient="horizontal"
+			class="g-toolbar-log g-toolbar-log-xbl"
+			id="g-toolbar-log"
+			tooltiptext="Connection log"
+			oncommand="garden.logOpen()"
+		  />
+		  
+		  <toolbarbutton
+			buttonstyle="pictures" type="menu" persist="buttonstyle" orient="horizontal"
+			class="g-processes-button"
+			id="g-process"
+			tooltiptext="Process list"
+		  >
+			<menupopup
+			  id="g-process-list-popup"
+			  onpopupshowing="garden.processListPopupShowing()"
+			>
+			  <menuitem
+				label="Close this connection (will wait for processes running and pause any remaining)"
+				tooltiptext="Close connection"
+				class="menuitem-iconic g-processes-close"
+				locked="true"
+				oncommand="garden.focusedInstance.close();"/>
+			  <menuseparator locked="true"/>
+			</menupopup>
+		  </toolbarbutton>
+				  
+		  <toolbarbutton
+			buttonstyle="pictures" type="button" persist="buttonstyle" orient="horizontal"
+			class="g-toolbar-base-refresh"
+			tooltiptext="Refresh Hard"
+			oncommand="garden.focusedTree.refreshHard();"
+		  />
+		  
+		  <toolbarbutton
+			buttonstyle="pictures" type="menu" persist="buttonstyle" orient="horizontal"
+			class="g-toolbar-tools"
+			tooltiptext="Tools and configuration"
+			onpopupshowing="garden.toolsPopupShowing()"
+		  >
+			<menupopup>
+			  <menuitem oncommand="garden.focusedInstance.cleanCacheModified()" label="Clean last modified cache"/>
+			  <menuitem oncommand="garden.toolsSaveOptions();" id="g-tools-dont-cache-last-modified"  type="checkbox" checked="false" label="Don't cache last modified"/>
+			  <menuseparator/>
+			  <menuitem oncommand="garden.focusedInstance.cleanCacheOverWrite()" label="Forget overwrite settings"/>
+			  <menuitem oncommand="garden.toolsSaveOptions();" id="g-tools-overwrite-no-ask" type="checkbox" checked="false" label="Overwrite without asking"/>
+			  <menuseparator/>
+			  <menuitem oncommand="garden.toolsSaveOptions();" id="g-tools-upload-and-rename" type="checkbox" checked="false" label="Treat files as '.kup' and then rename the file"/>
+			  <menuseparator/>
+			  <menuitem disabled="true" type="checkbox" checked="true" label="Single tree view"/>
+			  <menuitem disabled="true" type="checkbox" checked="false" label="Multiples trees horizontal"/>
+			  <menuitem disabled="true" type="checkbox" checked="false" label="Multiples trees vertical"/>
+			  <menuseparator/>
+			  <menuitem oncommand="garden.toolsContribute();" label="Support extension author" class="menuitem-iconic" image="chrome://asynchremote/content/icons/toolbar/balance.png"/>
+
+			</menupopup>
+		  </toolbarbutton>
+
+		</hbox>
+
+</overlay>

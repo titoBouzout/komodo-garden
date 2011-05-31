@@ -1,0 +1,468 @@
+  /*the "browser", a menupopup that changes menuitems for menupopups if these contains files*/
+  .g-browser-menuitem-xbl {
+	list-style-image:url(chrome://asynchremote/content/icons/files/tree/folder-closed.png);
+	-moz-binding:  url('chrome://asynchremote/content/xml/browser.xml#g-browser-menuitem-xbl');
+  }
+  .g-browser-menupopup-xbl {
+	-moz-binding:  url('chrome://asynchremote/content/xml/browser.xml#g-browser-menupopup-xbl');
+  }
+  .g-browser-parents {
+	list-style-image:url(chrome://asynchremote/content/icons/files/parents.png);
+  }
+  
+  /*normal status*/
+  .g-browser-container[open],
+  .g-tree treechildren::-moz-tree-image(container, open) {
+	list-style-image:url(chrome://asynchremote/content/icons/files/tree/folder-open.png);
+  }
+  .g-browser-container,
+  .g-tree treechildren::-moz-tree-image(container, closed) {
+	list-style-image:url(chrome://asynchremote/content/icons/files/tree/folder-closed.png);
+  }
+  .g-browser-leaf,
+  .g-tree treechildren::-moz-tree-image(leaf) {
+	list-style-image:url(chrome://asynchremote/content/icons/files/tree/file-icon.png);
+  }
+  
+  /* hidden */
+  /*hidden transparent images*/
+  .g-browser-container[open][isHidden],
+  .g-tree treechildren::-moz-tree-image(container, open, hidden) {
+	list-style-image:url(chrome://asynchremote/content/icons/files/tree/folder-open-hidden.png);
+  }
+  .g-browser-container[isHidden],
+  .g-tree treechildren::-moz-tree-image(container, closed, hidden) {
+	list-style-image:url(chrome://asynchremote/content/icons/files/tree/folder-closed-hidden.png);
+  }
+  .g-browser-leaf[isHidden],
+  .g-tree treechildren::-moz-tree-image(leaf, hidden) {
+	list-style-image:url(chrome://asynchremote/content/icons/files/tree/file-icon-hidden.png);
+  }
+  /*hidden text color*/
+  .g-browser-container[open][isHidden],
+  .g-tree treechildren::-moz-tree-cell-text(container, open, hidden) {
+	color:#5b5b5b;
+  }
+  .g-browser-container[isHidden],
+  .g-tree treechildren::-moz-tree-cell-text(container, closed, hidden) {
+	color:#5b5b5b;
+  }
+  .g-browser-leaf[isHidden],
+  .g-tree treechildren::-moz-tree-cell-text(leaf, hidden) {
+	color:#5b5b5b;
+  }
+  /*hidden text color selected*/
+  .g-browser-container[open][isHidden]:hover,
+  .g-browser-container[open][isHidden]:focus,
+  .g-browser-container[open][isHidden]:active,
+  .g-tree treechildren::-moz-tree-cell-text(container, open, hidden, selected){
+	color:HighlightText;
+  }
+  .g-browser-container[isHidden]:hover,
+  .g-browser-container[isHidden]:focus,
+  .g-browser-container[isHidden]:active,
+  .g-tree treechildren::-moz-tree-cell-text(container, closed, hidden, selected){
+	color:HighlightText;
+  }
+  .g-browser-leaf[isHidden]:hover,
+  .g-browser-leaf[isHidden]:focus,
+  .g-browser-leaf[isHidden]:active,
+  .g-tree treechildren::-moz-tree-cell-text(leaf, hidden, selected){
+	color:HighlightText;
+  }
+  
+  /*labels*/
+  .g-browser-leaf > hbox,
+  .g-browser-container > hbox{
+	opacity:0.9999;
+	z-index:1;
+  }
+  .g-browser-leaf > label,
+  .g-browser-container > label{
+	background-repeat:no-repeat;
+	background-position:0px 1px;
+	margin-left:-16px !important;
+	padding-left:18px !important;
+	opacity:0.9999;
+	z-index:2;
+  }
+  .g-tree treechildren::-moz-tree-cell-text{
+	background-repeat:no-repeat;
+	margin-left:-19px !important;
+	padding-left:19px !important;
+  }
+
+  .g-browser-leaf[symlink] > label,
+  .g-browser-container[symlink] > label,
+  .g-tree treechildren::-moz-tree-cell-text(symlink) {
+	background-image:url(chrome://asynchremote/content/icons/files/tree/labels/symlink.png) !important;
+  }
+  .g-browser-leaf[unwritable] > label,
+  .g-browser-container[unwritable] > label,
+  .g-tree treechildren::-moz-tree-cell-text(unwritable) {
+	background-image:url(chrome://asynchremote/content/icons/files/tree/labels/unwritable.png) !important;
+  }
+  .g-browser-leaf[unreadable] > label,
+  .g-browser-container[unreadable] > label,
+  .g-tree treechildren::-moz-tree-cell-text(unreadable) {
+	background-image:url(chrome://asynchremote/content/icons/files/tree/labels/unreadable.png) !important;
+  }
+  .g-browser-leaf[added] > label,
+  .g-browser-container[added] > label,
+  .g-tree treechildren::-moz-tree-cell-text(added) {
+	background-image:url(chrome://asynchremote/content/icons/files/tree/labels/added.png) !important;
+  }
+  .g-browser-leaf[deleted] > label,
+  .g-browser-container[deleted] > label,
+  .g-tree treechildren::-moz-tree-cell-text(deleted) {
+	background-image:url(chrome://asynchremote/content/icons/files/tree/labels/deleted.png) !important;
+  }
+  .g-browser-leaf[modified] > label,
+  .g-browser-container[modified] > label,
+  .g-tree treechildren::-moz-tree-cell-text(modified) {
+	background-image:url(chrome://asynchremote/content/icons/files/tree/labels/modified.png) !important;
+  }
+  .g-browser-leaf[unknow] > label,
+  .g-browser-container[unknow] > label,
+  .g-tree treechildren::-moz-tree-cell-text(unknow) {
+	background-image:url(chrome://asynchremote/content/icons/files/tree/labels/unknow.png) !important;
+  }
+  .g-browser-leaf[ignored] > label,
+  .g-browser-container[ignored] > label,
+  .g-tree treechildren::-moz-tree-cell-text(ignored) {
+	background-image:url(chrome://asynchremote/content/icons/files/tree/labels/ignored.png) !important;
+  }
+  .g-browser-leaf[new] > label,
+  .g-browser-container[new] > label,
+  .g-tree treechildren::-moz-tree-cell-text(new) {
+	background-image:url(chrome://asynchremote/content/icons/files/tree/labels/new.png) !important;
+  }
+  .g-browser-leaf[busy] > label,
+  .g-browser-container[busy] > label,
+  .g-tree treechildren::-moz-tree-cell-text(busy) {
+	background-image:url(chrome://asynchremote/content/icons/files/tree/labels/busy.png) !important;
+  }
+  
+  /* file extensions */
+  .g-browser-leaf[ext="gapng"],
+  .g-browser-leaf[ext="gpng"],
+  .g-browser-leaf[ext="gjpg"],
+  .g-browser-leaf[ext="ggif"],
+  .g-browser-leaf[ext="gjpeg"], 
+  .g-browser-leaf[ext="gbmp"],
+  .g-tree treechildren::-moz-tree-image(gapng),
+  .g-tree treechildren::-moz-tree-image(gpng),
+  .g-tree treechildren::-moz-tree-image(gjpg),
+  .g-tree treechildren::-moz-tree-image(ggif),
+  .g-tree treechildren::-moz-tree-image(gjpeg), 
+  .g-tree treechildren::-moz-tree-image(gbmp) {
+	list-style-image:url(chrome://asynchremote/content/icons/files/image.png);
+  }
+  
+  .g-browser-leaf[ext="gpsd"],
+  .g-tree treechildren::-moz-tree-image(gpsd) {
+	list-style-image:url(chrome://asynchremote/content/icons/files/psd.png);
+  }
+  
+  .g-browser-leaf[ext="gjs"],
+  .g-tree treechildren::-moz-tree-image(gjs) {
+	list-style-image:url(chrome://asynchremote/content/icons/files/js.png);
+  }
+  
+  .g-browser-leaf[ext="gxpi"],
+  .g-tree treechildren::-moz-tree-image(gxpi) {
+	list-style-image:url(chrome://asynchremote/content/icons/files/xpi.png);
+  }
+  
+  .g-browser-leaf[ext="gxml"],
+  .g-browser-leaf[ext="grdf"],
+  .g-browser-leaf[ext="gdtd"],
+  .g-browser-leaf[ext="gxul"],
+  .g-tree treechildren::-moz-tree-image(gxml),
+  .g-tree treechildren::-moz-tree-image(grdf),
+  .g-tree treechildren::-moz-tree-image(gdtd),
+  .g-tree treechildren::-moz-tree-image(gxul) {
+	list-style-image:url(chrome://asynchremote/content/icons/files/xml.png);
+  }
+  
+  .g-browser-leaf[ext="ghtm"],
+  .g-browser-leaf[ext="ghtml"],
+  .g-browser-leaf[ext="gmd"],
+  .g-browser-leaf[ext="gxhtml"],
+  .g-tree treechildren::-moz-tree-image(ghtm),
+  .g-tree treechildren::-moz-tree-image(ghtml),
+  .g-tree treechildren::-moz-tree-image(gmd),
+  .g-tree treechildren::-moz-tree-image(gxhtml)
+  {
+	list-style-image:url(chrome://asynchremote/content/icons/files/html.png);
+  }
+  
+  .g-browser-leaf[ext="gtpl"],
+  .g-tree treechildren::-moz-tree-image(gtpl)
+  {
+	list-style-image:url(chrome://asynchremote/content/icons/files/tpl.png);
+  }
+  
+  .g-browser-leaf[ext="gcss"],
+  .g-tree treechildren::-moz-tree-image(gcss) {
+	list-style-image:url(chrome://asynchremote/content/icons/files/css.png);
+  }
+  
+  .g-browser-leaf[ext="gsql"],
+  .g-browser-leaf[ext="gsqlite"],
+  .g-browser-leaf[ext="gsqlitedb"],
+  .g-tree treechildren::-moz-tree-image(gsql),
+  .g-tree treechildren::-moz-tree-image(gsqlite),
+  .g-tree treechildren::-moz-tree-image(gsqlitedb)
+  {
+	list-style-image:url(chrome://asynchremote/content/icons/files/sql.png);
+  }
+  
+  .g-browser-leaf[ext="gai"],
+  .g-tree treechildren::-moz-tree-image(gai) {
+	list-style-image:url(chrome://asynchremote/content/icons/files/ai.png);
+  }
+  
+  .g-browser-leaf[ext="gcdr"],
+  .g-tree treechildren::-moz-tree-image(gcdr) {
+	list-style-image:url(chrome://asynchremote/content/icons/files/cdr.png);
+  }
+  
+  
+  .g-browser-leaf[ext="gmov"],
+  .g-browser-leaf[ext="gmpeg"],
+  .g-browser-leaf[ext="gavi"],
+  .g-browser-leaf[ext="gmpg"],
+  .g-browser-leaf[ext="gflv"],
+  .g-browser-leaf[ext="gwmv"],
+  .g-tree treechildren::-moz-tree-image(gmov),
+  .g-tree treechildren::-moz-tree-image(gmpeg),
+  .g-tree treechildren::-moz-tree-image(gavi),
+  .g-tree treechildren::-moz-tree-image(gmpg),
+  .g-tree treechildren::-moz-tree-image(gflv),
+  .g-tree treechildren::-moz-tree-image(gwmv)
+  {
+	list-style-image:url(chrome://asynchremote/content/icons/files/film.png);
+  }
+  
+  
+  .g-browser-leaf[ext="gmp3"],
+  .g-browser-leaf[ext="gwav"],
+  .g-browser-leaf[ext="gaif"],
+  .g-browser-leaf[ext="gaiff"],
+  .g-browser-leaf[ext="gsnd"],
+  .g-browser-leaf[ext="gwma"],
+  .g-browser-leaf[ext="gasf"],
+  .g-browser-leaf[ext="gasx"],
+  .g-browser-leaf[ext="gpcm"],
+  .g-tree treechildren::-moz-tree-image(gmp3),
+  .g-tree treechildren::-moz-tree-image(gwav),
+  .g-tree treechildren::-moz-tree-image(gaif),
+  .g-tree treechildren::-moz-tree-image(gaiff),
+  .g-tree treechildren::-moz-tree-image(gsnd),
+  .g-tree treechildren::-moz-tree-image(gwma),
+  .g-tree treechildren::-moz-tree-image(gasf),
+  .g-tree treechildren::-moz-tree-image(gasx),
+  .g-tree treechildren::-moz-tree-image(gpcm)
+  {
+	list-style-image:url(chrome://asynchremote/content/icons/files/music.png);
+  }
+  
+  
+  .g-browser-leaf[ext="gphp"],
+  .g-browser-leaf[ext="gphp3"],
+  .g-browser-leaf[ext="gphp4"],
+  .g-browser-leaf[ext="gphp5"],
+  .g-tree treechildren::-moz-tree-image(gphp),
+  .g-tree treechildren::-moz-tree-image(gphp3),
+  .g-tree treechildren::-moz-tree-image(gphp4),
+  .g-tree treechildren::-moz-tree-image(gphp5)
+  {
+	list-style-image:url(chrome://asynchremote/content/icons/files/php.png);
+  }
+  
+  .g-browser-leaf[ext="gpdf"],
+  .g-tree treechildren::-moz-tree-image(gpdf){
+	list-style-image:url(chrome://asynchremote/content/icons/files/pdf.png);
+  }
+  
+  .g-browser-leaf[ext="gas"],
+  .g-tree treechildren::-moz-tree-image(gas){
+	list-style-image:url(chrome://asynchremote/content/icons/files/as.png);
+  }
+  
+  .g-browser-leaf[ext="gfla"],
+  .g-tree treechildren::-moz-tree-image(gfla){
+	list-style-image:url(chrome://asynchremote/content/icons/files/fla.png);
+  }
+  
+  .g-browser-leaf[ext="gswf"],
+  .g-tree treechildren::-moz-tree-image(gswf){
+	list-style-image:url(chrome://asynchremote/content/icons/files/swf.png);
+  }
+  
+  .g-browser-leaf[ext="gdoc"],
+  .g-browser-leaf[ext="grtf"],
+  .g-tree treechildren::-moz-tree-image(gdoc),
+  .g-tree treechildren::-moz-tree-image(grtf)
+  {
+	list-style-image:url(chrome://asynchremote/content/icons/files/doc.png);
+  }
+  
+  .g-browser-leaf[ext="gxls"],
+  .g-browser-leaf[ext="gxlsx"],
+  .g-tree treechildren::-moz-tree-image(gxls),
+  .g-tree treechildren::-moz-tree-image(gxlsx)
+  {
+	list-style-image:url(chrome://asynchremote/content/icons/files/xls.png);
+  }
+  
+  .g-browser-leaf[ext="gppt"],
+  .g-browser-leaf[ext="gpptx"],
+  .g-tree treechildren::-moz-tree-image(gppt),
+  .g-tree treechildren::-moz-tree-image(gpptx)
+  {
+	list-style-image:url(chrome://asynchremote/content/icons/files/ppt.png);
+  }
+  
+  .g-browser-leaf[ext="gzip"],
+  .g-browser-leaf[ext="gtar"],
+  .g-browser-leaf[ext="grar"],
+  .g-browser-leaf[ext="ggz"],
+  .g-browser-leaf[ext="gbz2"],
+  .g-tree treechildren::-moz-tree-image(gzip),
+  .g-tree treechildren::-moz-tree-image(gtar),
+  .g-tree treechildren::-moz-tree-image(grar),
+  .g-tree treechildren::-moz-tree-image(ggz),
+  .g-tree treechildren::-moz-tree-image(gbz2)
+  {
+	list-style-image:url(chrome://asynchremote/content/icons/files/compressed.png);
+  }
+  
+  .g-browser-leaf[ext="gexe"],
+  .g-tree treechildren::-moz-tree-image(gexe){
+	list-style-image:url(chrome://asynchremote/content/icons/files/exe.png);
+  }
+  
+  .g-browser-leaf[ext="gini"],
+  .g-browser-leaf[ext="gconf"],
+  .g-browser-leaf[ext="gdat"],
+  .g-tree treechildren::-moz-tree-image(gini),
+  .g-tree treechildren::-moz-tree-image(gconf),
+  .g-tree treechildren::-moz-tree-image(gdat),
+  .g-browser-leaf[ext="gtxt"],
+  .g-browser-leaf[ext="greadme"],
+  .g-tree treechildren::-moz-tree-image(gtxt),
+  .g-tree treechildren::-moz-tree-image(greadme)
+  {
+	list-style-image:url(chrome://asynchremote/content/icons/files/txt.png) !important;
+  }
+  
+  .g-browser-leaf[ext="gsh"],
+  .g-browser-leaf[ext="gbat"],
+  .g-tree treechildren::-moz-tree-image(gsh),
+  .g-tree treechildren::-moz-tree-image(gbat)
+  {
+	list-style-image:url(chrome://asynchremote/content/icons/files/sh.png);
+  }
+  
+  .g-browser-leaf[ext="gpy"],
+  .g-browser-leaf[ext="gpl"],
+  .g-tree treechildren::-moz-tree-image(gpy),
+  .g-tree treechildren::-moz-tree-image(gpl){
+	list-style-image:url(chrome://asynchremote/content/icons/files/p.png);
+  }
+  
+  .g-browser-leaf[ext="grb"],
+  .g-tree treechildren::-moz-tree-image(grb){
+	list-style-image:url(chrome://asynchremote/content/icons/files/rb.png);
+  }
+  
+  .g-browser-leaf[ext="ghtaccess"],
+  .g-browser-leaf[ext="ghtpasswd"],
+  .g-tree treechildren::-moz-tree-image(ghtaccess),
+  .g-tree treechildren::-moz-tree-image(ghtpasswd){
+	list-style-image:url(chrome://asynchremote/content/icons/files/htaccess.png);
+  }
+  
+  .g-browser-leaf[ext="gdiff"],
+  .g-tree treechildren::-moz-tree-image(gdiff){
+	list-style-image:url(chrome://asynchremote/content/icons/files/diff.png);
+  }
+  
+  .g-browser-leaf[ext="gkomodotool"],
+  .g-browser-leaf[ext="gkpz"],
+  .g-browser-leaf[ext="gkomodoproject"],
+  .g-tree treechildren::-moz-tree-image(gkomodotool),
+  .g-tree treechildren::-moz-tree-image(gkpz),
+  .g-tree treechildren::-moz-tree-image(gkomodoproject)
+  {
+	list-style-image:url(chrome://asynchremote/content/icons/files/komodo16.png);
+  }
+  
+  .g-browser-leaf[ext="gjson"],
+  .g-tree treechildren::-moz-tree-image(gjson){
+	list-style-image:url(chrome://asynchremote/content/icons/files/json.png);
+  }
+  
+  .g-browser-leaf[ext="grss"],
+  .g-tree treechildren::-moz-tree-image(grss){
+	list-style-image:url(chrome://asynchremote/content/icons/files/rss.png);
+  }
+  
+  .g-browser-leaf[ext="gbak"],
+  .g-tree treechildren::-moz-tree-image(gbak){
+	list-style-image:url(chrome://asynchremote/content/icons/files/bak.png);
+  }
+  
+  .g-browser-leaf[ext="gtmp"],
+  .g-browser-leaf[ext="gpart"],
+  .g-tree treechildren::-moz-tree-image(gpart),
+  .g-tree treechildren::-moz-tree-image(gtmp){
+	list-style-image:url(chrome://asynchremote/content/icons/files/tmp.png);
+  }
+  
+  .g-browser-leaf[ext="gproperties"],
+  .g-tree treechildren::-moz-tree-image(gproperties){
+	list-style-image:url(chrome://asynchremote/content/icons/files/properties.png);
+  }
+  
+  .g-browser-leaf[ext="gfifo"],
+  .g-tree treechildren::-moz-tree-image(gfifo){
+	list-style-image:url(chrome://asynchremote/content/icons/files/fifo.png);
+  }
+  
+  .g-browser-leaf[ext="gico"],
+  .g-tree treechildren::-moz-tree-image(gico){
+	list-style-image:url(chrome://asynchremote/content/icons/files/ico.png);
+  }
+  
+  .g-browser-leaf[ext="gjar"],
+  .g-tree treechildren::-moz-tree-image(gjar){
+	list-style-image:url(chrome://asynchremote/content/icons/files/jar.png);
+  }
+  
+  .g-browser-leaf[ext="ggitignore"],
+  .g-browser-leaf[ext="ggitk"],
+  .g-browser-leaf[ext="ggitconfig"],
+  .g-tree treechildren::-moz-tree-image(ggitignore),
+  .g-tree treechildren::-moz-tree-image(ggitk),
+  .g-tree treechildren::-moz-tree-image(ggitconfig){
+	list-style-image:url(chrome://asynchremote/content/icons/files/git.png);
+  }
+  
+  .g-browser-leaf[ext="gmanifest"],
+  .g-tree treechildren::-moz-tree-image(gmanifest){
+	list-style-image:url(chrome://asynchremote/content/icons/files/manifest.png);
+  }
+  
+  .g-browser-leaf[ext="glog"],
+  .g-tree treechildren::-moz-tree-image(glog){
+	list-style-image:url(chrome://asynchremote/content/icons/files/log.png);
+  }
+  
+  /*file names*/
+  .g-browser-leaf[ext="todo"],  
+  .g-tree treechildren::-moz-tree-image(leaf, todo) {
+	list-style-image:url(chrome://asynchremote/content/icons/files/todo.png) !important;
+  }
