@@ -1,11 +1,13 @@
-Adds a toolbarbutton to the places toolbar to allow browse remotes (ftp, etc).
+ADDON CURRENLTY UNDER DEVELOPMENT! NOT READY FOR NOTHING.
+
+Adds a sidebar to allow manage files on many file systems types (ftp, etc).
 
 Usage:
 
 <blockquote>
-Select from the toolbarbutton a server to connect, that will open a new tree showing the remote directories.
 
-Use the context menu to upload/download and do any other operation into the remote places. There is also a toolbarbutton to upload/download the current document.
+here description
+
 </blockquote><br/>
 
 License:<br/>
