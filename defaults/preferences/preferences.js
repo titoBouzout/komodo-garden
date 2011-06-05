@@ -15,3 +15,6 @@ pref('extensions.asynchremote.last.focused.treeID', '0');
 pref('extensions.asynchremote.last.focused.groupID', '0');
 pref('extensions.asynchremote.last.focused.path', '');
 
+pref('extensions.asynchremote.sidebar.view.type.single', true);
+pref('extensions.asynchremote.sidebar.view.type.multiple.horizontal', false);
+pref('extensions.asynchremote.sidebar.view.type.multiple.vertical', false);

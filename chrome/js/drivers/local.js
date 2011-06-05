@@ -10,11 +10,17 @@ GardenLocal.prototype = {
 	  this.__DS = '/';
 	  
 	this.shouldKeepAlive = false;
+	this.shouldShowLoading = false;
   },
   /* register the connection */
   driverRegister: function()
   {
-	gardenDrivers.register('local', 'Local and network files', GardenLocal);
+	gardenDrivers.register(
+							'local',
+							'Local and network files',
+							GardenLocal,
+							'local'
+						  );
   },
   driverGetEntries:function()
   {
@@ -97,7 +103,40 @@ GardenLocal.prototype = {
 	}
 	//garden.s.dump('object:directoryList:end');
 	return entries;
-  }
+  },
+ 
+  removeFile:function(aFile)
+  {
+	garden.s.fileRemove(aFile);
+  },
+  removeDirectory:function(aFile)
+  {
+	garden.s.fileRemove(aFile);
+  },
+  removeDirectoryRecursive:function(aFile)
+  {
+	garden.s.fileRemove(aFile);
+  },
+  trashFile:function(aFile)
+  {
+	garden.s.fileTrash(aFile);
+  },
+  trashDirectory:function(aFile)
+  {
+	garden.s.fileTrash(aFile);
+  },
+  trashDirectoryRecursive:function(aFile)
+  {
+	garden.s.fileTrash(aFile);
+  },
+  rename:function(oldName, newName)
+  {
+	garden.s.fileRename(oldName, newName);
+  },
+  createDirectory:function(aDirectory, aPermissions)
+  {
+	garden.s.folderCreate(aDirectory, aPermissions);
+  },
 };
 
 garden.registerDriverClass(GardenLocal);

@@ -28,6 +28,23 @@
 	  this.element('g-tools-dont-cache-last-modified').setAttribute('checked', 'true');
 	else
 	  this.element('g-tools-dont-cache-last-modified').setAttribute('checked', 'false');
+	  
+	if(this.s.pref('sidebar.view.type.single'))
+	  this.element('g-tools-sidebar-view-single').setAttribute('checked', 'true');
+	else
+	  this.element('g-tools-sidebar-view-single').setAttribute('checked', 'false');
+	
+	if(this.s.pref('sidebar.view.type.multiple.horizontal'))	
+	  this.element('g-tools-sidebar-view-multiple-horizontal').setAttribute('checked', 'true');
+	else
+	  this.element('g-tools-sidebar-view-multiple-horizontal').setAttribute('checked', 'false');
+	
+	if(this.s.pref('sidebar.view.type.multiple.vertical'))	
+	  this.element('g-tools-sidebar-view-multiple-vertical').setAttribute('checked', 'true');
+	else
+	  this.element('g-tools-sidebar-view-multiple-vertical').setAttribute('checked', 'false');
+	  
+	  
   }
   
 }).apply(garden);

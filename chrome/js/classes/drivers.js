@@ -6,12 +6,13 @@ GardenDrivers.prototype = {
   driversTypes : [],
   driversInstances : [],
   //register a new connection type
-  register : function(aDriverTypeID, aDescription, aConstructor)
+  register : function(aDriverTypeID, aDescription, aConstructor, aType)
   {
 	this.driversTypes[aDriverTypeID] = {}
 	this.driversTypes[aDriverTypeID].id = aDriverTypeID;
 	this.driversTypes[aDriverTypeID].description = aDescription;
 	this.driversTypes[aDriverTypeID].contructor = aConstructor;
+	this.driversTypes[aDriverTypeID].type = aType;
   },
 
   //returns all available "servers" for a connection type
@@ -79,7 +80,8 @@ GardenDrivers.prototype = {
 		serverID,
 		this.driversTypes[aDriverTypeID].contructor,
 		this.getEntry(aDriverTypeID, aEntryID),
-		aEntryID
+		aEntryID,
+		this.driversTypes[aDriverTypeID].type
 	  );
 	return this.driversInstances[instanceID];
   }

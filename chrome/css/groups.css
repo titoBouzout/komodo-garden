@@ -57,6 +57,9 @@
   .g-group-tree-delete{
 	list-style-image : url("chrome://asynchremote/content/icons/toolbar/group-tree-delete.png");
   }
+  .g-group-tree-sibling{
+	list-style-image : url("chrome://asynchremote/content/icons/toolbar/group-tree-sibling.png");
+  }
   
   .g-group-connection-edit{
 	list-style-image : url("chrome://asynchremote/content/icons/toolbar/group-connection-edit.png");

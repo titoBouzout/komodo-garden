@@ -56,6 +56,7 @@
 			groupMenuitem.setAttribute('label', group.name);
 			groupMenuitem.setAttribute('groupID', group.id);
 			groupMenuitem.setAttribute('class', 'menuitem-iconic g-group');
+			groupMenuitem.setAttribute('tooltiptext', 'Right click to attach a tree');
   
 			menupopup.insertBefore(groupMenuitem, menupopup.lastChild.previousSibling);
 	  
@@ -180,17 +181,8 @@
 			
 			menuitem.setAttribute('isDirectory', 'true');
 			menuitem.setAttribute("crop", 'center');
-			menuitem.setAttribute('type', 'folders');
+			//menuitem.setAttribute('type', 'folders');
 			menuitem.setAttribute('action', 'add-tree');
-			
-			/*
-			//check if we are connected
-			if(this.trees[tree.id] && this.instances[tree.id].connected)
-			  menuitem.setAttribute('connected', true);
-			//check if the connection is loading
-			if(this.trees[tree.id] && this.instances[tree.id].iterations)
-			  menuitem.setAttribute('iterations', true);
-			*/
 			  
 		menupopup.appendChild(menuitem);
 	  }
@@ -211,7 +203,7 @@
 	{
 	  //the menupopup of the connnection type (example: ftp) with all the available servers
 	  var connectionMenu = document.createElement('menu');
-		  connectionMenu.setAttribute('label', 'Add tree from '+this.gardenDrivers.driversTypes[id].description);
+		  connectionMenu.setAttribute('label', 'Add tree to group from '+this.gardenDrivers.driversTypes[id].description);
 		  connectionMenu.setAttribute('class', 'menu-iconic');
 		  connectionMenu.setAttribute('image', 'chrome://asynchremote/content/js/drivers/'+id+'.png');
 		  //connectionMenu.setAttribute('action','add-tree');
@@ -258,19 +250,32 @@
 							.previousSibling
 							.previousSibling
 							.previousSibling
+							.previousSibling
 						  );
 	}
 	
 	//if the context is on a tree show "remove tree from group"
 	if(document.popupNode.hasAttribute('treeID'))
 	{
+	  
 	  context.lastChild.setAttribute('hidden', false);
+	  if(this.groupTreeIsSibling(
+								 document.popupNode.getAttribute('groupID'),
+								 document.popupNode.getAttribute('treeID')
+								 )
+	  )
+		context.lastChild.previousSibling.setAttribute('checked', true);
+	  else
+		context.lastChild.previousSibling.setAttribute('checked', false);
+		
 	  context.lastChild.previousSibling.setAttribute('hidden', false);
+	  context.lastChild.previousSibling.previousSibling.setAttribute('hidden', false);
 	}
 	else
 	{
 	  context.lastChild.setAttribute('hidden', true);
 	  context.lastChild.previousSibling.setAttribute('hidden', true);
+	  context.lastChild.previousSibling.previousSibling.setAttribute('hidden', true);
 	}
   }
   
@@ -309,12 +314,45 @@
 			  {
 				if(groups[id].id == groupID)
 				{
+				  //delete the trees elements and references
+				  for(var a in groups[id].trees)
+				  {
+					var treeID =  groups[id].trees[a].id;
+					this.element('g-tree-'+treeID).parentNode.removeChild(this.element('g-tree-'+treeID));
+					this.trees[treeID].sessionRemove();
+					this.trees[treeID] = null;
+					this.instances[treeID] = null;
+				  }
+				  
 				  groups.splice(i, 1);
+				  this.groupsSet(groups);
+				  
+				  //delete the group element
+				  if(this.element('g-group-'+groupID))
+				  {
+					this.element('g-group-'+groupID).parentNode.removeChild(this.element('g-group-'+groupID))
+					this.element('g-toolbar-top').setAttribute('collapsed', true);
+				  }
+				  //try to focus another group and tree
+				  if(this.element('g-groups') && this.element('g-groups').firstChild)
+				  {
+					//focus group with at least one tree
+					for(var i=0;i<this.element('g-groups').childNodes.length;i++)
+					{
+					  if(this.element('g-groups').childNodes[i].firstChild)
+					  {
+						this.element('g-groups').childNodes[i].removeAttribute('collapsed');
+						this.element('g-groups').childNodes[i].firstChild.removeAttribute('collapsed');
+						this.element('g-toolbar-top').setAttribute('collapsed', false);
+						this.setTreeFocus(this.element('g-groups').childNodes[i].firstChild);
+						break;
+					  }
+					}
+				  }
 				  break;
 				}
 				i++;
 			  }
-			  this.groupsSet(groups);
 			}
 		  }
 		  break;
@@ -361,6 +399,7 @@
 			var newGroup = {};
 				newGroup.name = aName;
 				newGroup.id = this.s.sha1(new Date());
+				newGroup.trees = [];
 				groups[groups.length] = newGroup;
 				
 			this.groupsSet(groups);
@@ -370,7 +409,7 @@
 	  case 'add-tree':
 		{
 		  var path 				= aElement.getAttribute('path');
-		  var aDriverTypeID = aElement.getAttribute('aDriverTypeID');
+		  var aDriverTypeID 	= aElement.getAttribute('aDriverTypeID');
 		  var entryID 			= aElement.getAttribute('entryID');
 		  var groupID 			= value.getAttribute('groupID');
 		  
@@ -393,8 +432,10 @@
 								  path:path,
 								  aDriverTypeID:aDriverTypeID,
 								  id : this.s.sha1(new Date()),
-								  entryID:entryID
+								  entryID:entryID,
+								  isSibling:true
 								}
+				//this.s.dump('newTree:', newTree);
 				var found = false;
 				for(var i in groups[id].trees)
 				{
@@ -405,15 +446,27 @@
 				  )
 				  {
 					found = true;
+					newTree = groups[id].trees[i];
 					break;
 				  }
 				}
 				if(!found)
+				{
 				  groups[id].trees.push(newTree);
+				}
+				this.groupsSet(groups);
+				//simulating click
+				var aElement = this.s.create(document, 'menuitem');
+					aElement.setAttribute('groupID', groupID);
+					aElement.setAttribute('treeID', newTree.id);
+					aElement.setAttribute('path', path);
+				var aEvent = {};
+					aEvent.type = 'adding.tree';
+				this.switchToTree(aEvent, aElement);
 				break;
 			  }
 			}
-			this.groupsSet(groups);
+			
 		  }
 		  break;
 		}
@@ -422,34 +475,114 @@
 		  if(this.s.confirm('Are you sure you want to delete the tree from the group?'))
 		  {
 			var groupID = value.getAttribute('groupID');
+			var treeID = value.getAttribute('treeID');
 			var groups = this.groupsGet();
 		   
+			//this.s.dump('going to delete treeID '+treeID+' from groupID'+groupID);
 			for(var id in groups)
 			{
+			  //this.s.dump('looking for groupID '+groupID+' on '+groups[id].id );
 			  if(groups[id].id == groupID)
 			  {
-				var treeID = value.getAttribute('treeID');
+				//this.s.dump('found groupID ');
 				var a=0;
 				for(var i in groups[id].trees)
 				{
-				  if(treeID ==  groups[id].trees[i].id)
+				 // this.s.dump('looking for treeID '+treeID+' on '+groups[id].trees[i].id);
+				  if(treeID == groups[id].trees[i].id)
 				  {
+					//this.s.dump('found treeID ');
 					groups[id].trees.splice(a, 1);
+					this.groupsSet(groups);
+					
+					if(this.element('g-tree-'+treeID))
+					{
+					  this.element('g-tree-'+treeID).parentNode.removeChild(this.element('g-tree-'+treeID));
+					  this.trees[treeID].sessionRemove();
+					  this.trees[treeID] = null;
+					  this.instances[treeID] = null;
+					  //if there is another tree into this group
+					  if(this.element('g-group-'+groupID) && this.element('g-group-'+groupID).firstChild)
+					  {
+						this.element('g-group-'+groupID).firstChild.removeAttribute('collapsed');
+						this.setTreeFocus(this.element('g-group-'+groupID).firstChild);
+					  }
+					  //there is no tree into this group, delete the group and try to focus another tree
+					  else if(this.element('g-group-'+groupID))
+					  {
+						this.element('g-group-'+groupID).parentNode.removeChild(this.element('g-group-'+groupID))
+						//the toolbar should be hhidden
+						this.element('g-toolbar-top').setAttribute('collapsed', true);
+						//try to focus another group and tree
+						if(this.element('g-groups') && this.element('g-groups').firstChild)
+						{
+						  //focus group with at least one tree
+						  for(var i=0;i<this.element('g-groups').childNodes.length;i++)
+						  {
+							if(this.element('g-groups').childNodes[i].firstChild)
+							{
+							  this.element('g-groups').childNodes[i].removeAttribute('collapsed');
+							  this.element('g-groups').childNodes[i].firstChild.removeAttribute('collapsed');
+							  this.element('g-toolbar-top').setAttribute('collapsed', false);
+							  this.setTreeFocus(this.element('g-groups').childNodes[i].firstChild);
+							  break;
+							}
+						  }
+						}
+					  }
+					}
 				  }
 				  a++;
 				}
+				break;
+			  }
+			}
+		  }
+		  break;
+		}
+	  case 'sibling-tree':
+		{
+		  var groupID = value.getAttribute('groupID');
+		  var treeID = value.getAttribute('treeID');
+		  var groups = this.groupsGet();
+		 
+		  //this.s.dump('going to delete treeID '+treeID+' from groupID'+groupID);
+		  for(var id in groups)
+		  {
+			//this.s.dump('looking for groupID '+groupID+' on '+groups[id].id );
+			if(groups[id].id == groupID)
+			{
+			  //this.s.dump('found groupID ');
+			  var a=0;
+			  for(var i in groups[id].trees)
+			  {
+			   // this.s.dump('looking for treeID '+treeID+' on '+groups[id].trees[i].id);
+				if(treeID == groups[id].trees[i].id)
+				{
+				  groups[id].trees[i].isSibling = !groups[id].trees[i].isSibling;
+				  this.groupsSet(groups);
+				  break;
+				}
+				a++;
 			  }
 			  break;
 			}
-			this.groupsSet(groups);
 		  }
 		  break;
+		}
+	  case 'tree-selection':
+		{
+		  this.s.timerAdd(10, function(){
+		  garden.element('g-groups-menupopup').openPopup(garden.element('g-groups-menupopup').parentNode, 'before_start');
+		  //garden.element('g-group-context').openPopupAtScreen(aEvent.screenX, aEvent.screenY, true);
+		  });
+		  return;
 		}
 	}
 	
 	var popup = document.popupNode.parentNode;
 	
-	if(popup.id == 'g-groups-menupopup')
+	if(popup && popup.id == 'g-groups-menupopup')
 	{
 	  this.s.timerAdd(210, function(){
 		if(popup.state == 'closed')
@@ -460,6 +593,75 @@
 	this.element('g-group-context').hidePopup();
 	this.element('g-groups-menupopup').hidePopup();
 	this.element('g-toolbar-group-menupopup').hidePopup();
+  }
+  
+  this.groupTreeExists = function(groupID, treeID)
+  {
+	var groups = this.groupsGet();
+		   
+	for(var id in groups)
+	{
+	  if(groups[id].id == groupID)
+	  {
+		for(var i in groups[id].trees)
+		{
+		  if(treeID ==  groups[id].trees[i].id)
+		  {
+			return true;
+		  }
+		}
+	  }
+	}
+	return false;
+  }
+  this.groupTreeIsSibling = function(groupID, treeID)
+  {
+	var groups = this.groupsGet();
+		   
+	for(var id in groups)
+	{
+	  if(groups[id].id == groupID)
+	  {
+		for(var i in groups[id].trees)
+		{
+		  if(treeID ==  groups[id].trees[i].id)
+		  {
+			if(groups[id].trees[i].isSibling)
+			  return true;
+			else
+			  return false;
+		  }
+		}
+	  }
+	}
+	return false;
+  }
+  this.groupTreeGetSiblingLocal = function(treeElement)
+  {
+	var groupID = treeElement.getAttribute('groupID');
+	var treeID = treeElement.getAttribute('treeID');
+	
+	var groups = this.groupsGet();
+		   
+	for(var id in groups)
+	{
+	  if(groups[id].id == groupID)
+	  {
+		for(var i in groups[id].trees)
+		{
+		  if(treeID !=  groups[id].trees[i].id)
+		  {
+			if(groups[id].trees[i].isSibling && this.instances && this.instances[groups[id].trees[i].id].type == 'local')
+			  return [
+					  groups[id].trees[i].path,
+					  this.instances[groups[id].trees[i].id].__DS,
+					  this.instances[groups[id].trees[i].id]
+					  ];
+		  }
+		}
+	  }
+	}
+	return false;
   }
 
 }).apply(garden);

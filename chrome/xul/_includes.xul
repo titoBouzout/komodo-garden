@@ -6,10 +6,12 @@
 <script src="chrome://asynchremote/content/js/classes/tree.js" type="application/x-javascript"></script>
 <script src="chrome://asynchremote/content/js/_main.js" type="application/x-javascript"></script>
 <script src="chrome://asynchremote/content/js/log.js" type="application/x-javascript"></script>
-<script src="chrome://asynchremote/content/js/browser.js" type="application/x-javascript"></script>
-<script src="chrome://asynchremote/content/js/groups.js" type="application/x-javascript"></script>
-<script src="chrome://asynchremote/content/js/process.js" type="application/x-javascript"></script>
+<script src="chrome://asynchremote/content/js/command.js" type="application/x-javascript"></script>
 <script src="chrome://asynchremote/content/js/context.js" type="application/x-javascript"></script>
+<script src="chrome://asynchremote/content/js/groups.js" type="application/x-javascript"></script>
+<script src="chrome://asynchremote/content/js/browser.js" type="application/x-javascript"></script>
+<script src="chrome://asynchremote/content/js/process.js" type="application/x-javascript"></script>
+<script src="chrome://asynchremote/content/js/sidebar.js" type="application/x-javascript"></script>
 <script src="chrome://asynchremote/content/js/tools.js" type="application/x-javascript"></script>
 <script src="chrome://asynchremote/content/js/drivers/komodo.js" type="application/x-javascript"></script>
 <script src="chrome://asynchremote/content/js/drivers/local.js" type="application/x-javascript"></script>

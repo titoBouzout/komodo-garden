@@ -1,13 +1,16 @@
 
 /*tree context or other context*/
 
-  .g-tree-context menuitem[disabled]
+  .g-tree-context menuitem[disabled],
+  .g-tree-context button[disabled]
   {
-	text-shadow:none !important;
 	/*
 	text shadow pass event to the elements behind
 	https://bugzilla.mozilla.org/show_bug.cgi?id=660511
 	*/
+	text-shadow:none !important;
+
+	 color: GrayText !important;
   }
 
   .g-new-file {
@@ -35,15 +38,25 @@
   .g-open[disabled] {
 	list-style-image : url("chrome://asynchremote/content/icons/context/open-disabled.png");
   }
-  .g-refresh {
-	  list-style-image : url("chrome://asynchremote/content/icons/toolbar/base-refresh.png");
+  .g-find-replace{
+	list-style-image : url("chrome://asynchremote/content/icons/context/find-replace.png");
+  }
+  .g-find-replace[disabled]{
+	list-style-image : url("chrome://asynchremote/content/icons/context/find-replace-disabled.png");
+  }
+
+  .g-reload {
+	  list-style-image : url("chrome://asynchremote/content/icons/toolbar/reload.png");
+  }
+  .g-reload[disabled] {
+	  list-style-image : url("chrome://asynchremote/content/icons/toolbar/reload-disabled.png");
   }
   
 
   .g-upload{
 	list-style-image : url("chrome://asynchremote/content/icons/context/upload.png");
   }
-  .g-upload[disabled]{
+  .g-upload[multiple]{
 	list-style-image : url("chrome://asynchremote/content/icons/context/upload-multiple.png");
   }
   .g-upload[disabled]{
@@ -52,7 +65,7 @@
   .g-download{
 	list-style-image : url("chrome://asynchremote/content/icons/context/download.png");
   }
-  .g-download[disabled]{
+  .g-download[multiple]{
 	list-style-image : url("chrome://asynchremote/content/icons/context/download-multiple.png");
   }
   .g-download[disabled]{
@@ -65,12 +78,6 @@
 	list-style-image : url("chrome://asynchremote/content/icons/context/download-this-to-folder.png");
   }
   
-  .g-locate{
-	list-style-image : url("chrome://asynchremote/content/icons/context/locate.png");
-  }
-  .g-locate[disabled]{
-	list-style-image : url("chrome://asynchremote/content/icons/context/locate-disabled.png");
-  }
   .g-diff{
 	list-style-image : url("chrome://asynchremote/content/icons/context/diff.png");
   }
@@ -78,12 +85,25 @@
 	list-style-image : url("chrome://asynchremote/content/icons/context/diff-disabled.png");
   }
   
+  .g-show-in-folder{
+	list-style-image : url("chrome://asynchremote/content/icons/context/show-in-folder.png");
+  }
+  .g-show-in-folder[disabled]{
+	list-style-image : url("chrome://asynchremote/content/icons/context/show-in-folder-disabled.png");
+  }
+  .g-locate{
+	list-style-image : url("chrome://asynchremote/content/icons/context/locate.png");
+  }
+  .g-locate[disabled]{
+	list-style-image : url("chrome://asynchremote/content/icons/context/locate-disabled.png");
+  }
   .g-rebase {
 	list-style-image : url("chrome://asynchremote/content/icons/context/rebase.png");
   }
   .g-rebase[disabled] {
 	list-style-image : url("chrome://asynchremote/content/icons/context/rebase-disabled.png");
   }
+
   
   .g-rename{
 	list-style-image : url("chrome://asynchremote/content/icons/context/rename.png");
@@ -101,7 +121,113 @@
   .g-delete{
 	list-style-image : url("chrome://asynchremote/content/icons/context/delete.png");
   }
+  .g-delete[disabled]{
+	list-style-image : url("chrome://asynchremote/content/icons/context/delete-disabled.png");
+  }
+  .g-trash{
+	list-style-image : url("chrome://asynchremote/content/icons/context/trash.png");
+  }
+  .g-trash[disabled]{
+	list-style-image : url("chrome://asynchremote/content/icons/context/trash-disabled.png");
+  }
   
   .g-permissions{
 	list-style-image : url("chrome://asynchremote/content/icons/context/permissions.png");
+  }
+  
+  .g-cut
+  {
+	list-style-image : url("chrome://asynchremote/content/icons/context/cut.png");
+  }
+  .g-cut[disabled]
+  {
+	list-style-image : url("chrome://asynchremote/content/icons/context/cut-disabled.png");
+  }
+  .g-copy
+  {
+	list-style-image : url("chrome://asynchremote/content/icons/context/copy.png");
+  }
+  .g-copy[disabled]
+  {
+	list-style-image : url("chrome://asynchremote/content/icons/context/copy-disabled.png");
+  }
+  .g-paste
+  {
+	list-style-image : url("chrome://asynchremote/content/icons/context/paste.png");
+  }
+  .g-paste[disabled]
+  {
+	list-style-image : url("chrome://asynchremote/content/icons/context/paste-disabled.png");
+  }
+  .g-duplicate
+  {
+	list-style-image : url("chrome://asynchremote/content/icons/context/duplicate.png");
+  }
+  .g-duplicate[disabled]
+  {
+	list-style-image : url("chrome://asynchremote/content/icons/context/duplicate-disabled.png");
+  }
+  .g-refresh
+  {
+	list-style-image : url("chrome://asynchremote/content/icons/context/refresh.png");
+  }
+  .g-refresh[disabled]
+  {
+	list-style-image : url("chrome://asynchremote/content/icons/context/refresh-disabled.png");
+  }
+  
+
+/*binding*/
+
+  .g-menuitem-single-xbl {
+	-moz-binding:  url('chrome://asynchremote/content/xml/menuitem.xml#g-menuitem-single-xbl');
+  }
+  .g-menuitem-double-xbl {
+	-moz-binding:  url('chrome://asynchremote/content/xml/menuitem.xml#g-menuitem-double-xbl');
+  }
+  .g-menuitem-triple-xbl {
+	-moz-binding:  url('chrome://asynchremote/content/xml/menuitem.xml#g-menuitem-triple-xbl');
+  }
+  
+  .g-menuitem,
+  .g-menuitem-content,
+  .g-menuitem-container,
+  .g-menuitem > hbox,
+  .g-menuitem > hbox > label,
+  .g-menuitem > hbox > image,
+  .g-menuitem-single-xbl,
+  .g-menuitem-double-xbl,
+  .g-menuitem-triple-xbl
+  {
+	-moz-appearance:none;
+	padding:0px !important;
+	margin:0px !important;
+	
+	-moz-margin-end: 0px !important;
+	-moz-margin-start: 0px !important;
+	
+	-moz-padding-end:0px !important;
+	-moz-padding-end:0px !important;
+  }
+
+  .g-menuitem
+  {
+	width:50% !important;
+	max-width:50% !important;
+	border:0px !important;
+	padding-right:4px !important;
+  }
+  .g-menuitem[_moz-menuactive="true"],
+  .g-menuitem:hover
+  {
+	background-color:highlight !important;
+	color: HighlightText !important;
+  }
+  .g-menuitem > hbox > image
+  {
+	padding-right:2px !important;
+	padding-left:2px !important;
+	padding-top:1px !important;
+	padding-bottom:1px !important;
+	margin-top:-1px !important;
   }

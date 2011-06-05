@@ -55,19 +55,22 @@
   .g-browser-container[open][isHidden]:hover,
   .g-browser-container[open][isHidden]:focus,
   .g-browser-container[open][isHidden]:active,
-  .g-tree treechildren::-moz-tree-cell-text(container, open, hidden, selected){
+  .g-browser-container[open][isHidden]:target,
+  .g-tree treechildren::-moz-tree-cell-text(container, open, hidden, selected, focus){
 	color:HighlightText;
   }
   .g-browser-container[isHidden]:hover,
   .g-browser-container[isHidden]:focus,
   .g-browser-container[isHidden]:active,
-  .g-tree treechildren::-moz-tree-cell-text(container, closed, hidden, selected){
+  .g-browser-container[isHidden]:target,
+  .g-tree treechildren::-moz-tree-cell-text(container, closed, hidden, selected, focus){
 	color:HighlightText;
   }
   .g-browser-leaf[isHidden]:hover,
   .g-browser-leaf[isHidden]:focus,
   .g-browser-leaf[isHidden]:active,
-  .g-tree treechildren::-moz-tree-cell-text(leaf, hidden, selected){
+  .g-browser-leaf[isHidden]:target,
+  .g-tree treechildren::-moz-tree-cell-text(leaf, hidden, selected, focus){
 	color:HighlightText;
   }
   

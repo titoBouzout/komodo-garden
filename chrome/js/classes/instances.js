@@ -1,9 +1,10 @@
 
-function GardenInstances(aName, instanceID, serverID, object, entry, aEntryID)
+function GardenInstances(aName, instanceID, serverID, object, entry, aEntryID, aType)
 {
   /* BASIC */
 	
 	this.name = aName;
+	this.label = entry.labelWithPath;
 	this.instanceID = instanceID;
 	this.serverID = serverID;
 	this.object =  new object();//holds our "connection object" from where we get data
@@ -13,6 +14,7 @@ function GardenInstances(aName, instanceID, serverID, object, entry, aEntryID)
 	this.entryID = aEntryID;
 	this.object.aData = entry.aData;
 	
+	this.type = aType; //should be local or remote
 	this.thread = garden.s.newThread();//holds a thread for this connection
 	
 	this.__DS = this.object.__DS;
@@ -42,7 +44,7 @@ function GardenInstances(aName, instanceID, serverID, object, entry, aEntryID)
   
 	//holds logs of connections
 	this.logs = [];
-	this.log('status', 'Loaded pane: "'+aName+'"', 0);
+	this.log('status', 'Loaded pane: "'+this.label+'"', 0);
 	  
 	this.errorCount = 0;
 	
@@ -133,9 +135,13 @@ GardenInstances.prototype = {
 	  this.keepAliveOrCloseConnectionUninit();
 	  this.keepAliveTimer.init({
 		  observe: function(aSubject, aTopic, aData) {
-			garden.s.runThread(function(){
-			   instance.keepAliveOrCloseConnection();
-			}, instance.thread);
+			if(!instance.keepAliveSent)
+			{
+			  instance.keepAliveSent = true;
+			  garden.s.runThread(function(){
+				instance.keepAliveOrCloseConnection();
+			  }, instance.thread);
+			}
 		  }
 		}, 1000 * 56, Components.interfaces.nsITimer.TYPE_REPEATING_SLACK);
 	}
@@ -164,18 +170,26 @@ GardenInstances.prototype = {
 		  this.connection = null;
 		  this.log('status', 'Connection idle, now disconnected from host', 0);
 		  this.keepAliveTimer.cancel();
+		  this.keepAliveSent = false;
 		}
 		else if(this.iterations !== 0 && this.connected)//the connection is doing something
 		{
 		  this.log('status', 'Sending keep alive', 0);
-		  try{this.object.keepAlive();}catch(e){}
+		  try{
+			this.connect();
+			this.object.keepAlive();
+			this.keepAliveSent = false;
+		  }catch(e){}
 		}
-		else if(this.connected)//the connection is idle, keep alive for two minutes
+		else if(this.connected)//the connection is idle, keep alive for minutes
 		{
 		  this.log('status', 'Sending keep alive', 0);
-		  try{this.object.keepAlive();}catch(e){}
+		  try{
+			this.connect(0, true);
+			this.object.keepAlive();
+			this.keepAliveSent = false;
+		  }catch(e){}
 		}
-	  
 	  this.notifyProgress();
 	}
   },
@@ -242,7 +256,7 @@ GardenInstances.prototype = {
   */
   directoryList: function(aData)
   {
-	//garden.s.dump('instance:directoryList');
+	//this.dump('instance:directoryList');
 	if(this.listings[aData.path] && this.listings[aData.path].data)
 	{
 	  this.log('progress', 'Getting listing "'+aData.path+'" from cache', 0);
@@ -287,7 +301,7 @@ GardenInstances.prototype = {
   //threaded directory listing for tree view
   _directoryList:function(aData, aNumTry)
   {
-	//garden.s.dump('instance:_directoryList');
+	//this.dump('instance:_directoryList');
 	var aDirectory = aData.path;
 	
 	if(!this.listings[aDirectory])
@@ -320,7 +334,7 @@ GardenInstances.prototype = {
 		  var entries = this.object.directoryList(aDirectory);
 		  
 		  var rowsDirectories = [], rowsFiles = [], rows = [], rowsSorted = [], nameSorting;
-		  //garden.s.dump('instance:_directoryList:startParsing');
+		  //this.dump('instance:_directoryList:startParsing');
 		  for(var i=0;i<entries.length;i++)
 		  {
 			nameSorting = entries[i].name.toLowerCase()+' '+i;
@@ -329,8 +343,8 @@ GardenInstances.prototype = {
 			{
 			  'name': entries[i].name,
 			  'path': entries[i].path,
-			  'pathMapped': entries[i].path,
-			  'id': garden.s.sha1(entries[i].path+'-'+entries[i].path),
+			  'pathMapped': entries[i].pathMapped,
+			  'id': garden.s.sha1(entries[i].path+'-'+entries[i].pathMapped),
 			  'extension': (entries[i].isDirectory ? '' : (entries[i].name.split('.').pop().toLowerCase()  || '')),
 			  'isFile': !entries[i].isDirectory,
 			  'isDirectory': entries[i].isDirectory,
@@ -338,11 +352,10 @@ GardenInstances.prototype = {
 			  'isHidden': entries[i].isHidden,
 			  'isWritable': entries[i].isWritable,
 			  'isReadable': entries[i].isReadable,
-			  'modifiedTime': entries[i].time,
-			  'permissions': entries[i].mode,
+			  'modifiedTime': entries[i].modifiedTime,
+			  'permissions': entries[i].permissions,
 			  'size': entries[i].size
 			}
-			
 			if(rows[nameSorting].isDirectory)
 			  rowsDirectories[rowsDirectories.length] = nameSorting;
 			else
@@ -364,7 +377,7 @@ GardenInstances.prototype = {
 		  
 		  this.log('sucess', 'Directory "'+aDirectory+'" list completed', 0);
 		  
-		  //garden.s.dump('instance:_directoryList:endParsing');
+		  //this.dump('instance:_directoryList:endParsing');
 		  aData.aEntries = this.listings[aDirectory].data;
 		  garden.s.runMain(function(){aData.aFunction(aData);});
 		}
@@ -450,6 +463,7 @@ GardenInstances.prototype = {
 	  aProcess.reQueue(aProcess.lastRunnuable);
 	}
   },
+  
   removeDirectory:function(aDirectory, aProcess, aInternalCall)
   {
 	if(!aProcess)
@@ -474,51 +488,196 @@ GardenInstances.prototype = {
 	  this.log('progress', 'going to remove directory "'+aDirectory+'" …', aProcess.id);
 	  if(connection)
 	  {
-		try  {
-		  //ok directory no empty maybe
-		  var entries = this.connect().list(('/'+aDirectory).replace(/^\/+/, '/'), 1).getChildren({});
-		}
-		catch(e)
+		if(typeof(this.object.removeDirectoryRecursive) == 'function') //try recursive first
 		{
-		  //trying again to list the content
-		  try{
-			var entries = this.connect().list(('/'+aDirectory).replace(/^\/+/, '/'), 1).getChildren({});
-		  } catch(e) {
-			this.log('error', 'Can\'t list directory "'+aDirectory+'" maybe no exists', aProcess.id);
-			//throw new Error('Can\'t list content of folder "'+aDirectory+'"');
-			//return;
-		  }
-		}
-		if(entries)
-		{
-		  for(var i=0;i<entries.length;i++)
-		  {
-			if(entries[i].isDirectory())
-			  this._removeDirectory(entries[i].getFilepath(), aProcess, true);
-			else
-			  this._removeFile(entries[i].getFilepath(), aProcess, true);
-		  }
-		}
-		if(!aProcess.stopped())
-		{
-		  try{
-			connection.removeDirectory(aDirectory);
-		  } catch(e){
-			if(
-			   String(e).indexOf('550 Directory not found') != -1 || 
-			   String(e).indexOf('No such file or directory') != -1 
-			   )
-			  {
-				this.log('warning', 'The directory to remove "'+aDirectory+'" was not found', aProcess.id);
-			  }
-			else{ throw new Error(e);}
-		  }
+		  this.object.removeDirectoryRecursive(aDirectory);
 		  this.cacheDirectoryItemRemove(aDirectory, true);
 		  this.log('sucess', 'removed directory "'+aDirectory+'"', aProcess.id);
 		}
-		else if(!aInternalCall)
+		else
 		{
-		  aProcess.reQueue(aProcess.lastRunnuable);
+		  try  {
+			//ok directory no empty maybe
+			var entries = this.object.directoryList(aDirectory);
+		  }
+		  catch(e)
+		  {
+			//trying again to list the content
+			try{
+			  var entries = this.object.directoryList(aDirectory);
+			} catch(e) {
+			  this.log('error', 'Can\'t list directory "'+aDirectory+'" maybe no exists', aProcess.id);
+			  //throw new Error('Can\'t list content of folder "'+aDirectory+'"');
+			  //return;
+			}
+		  }
+		  
+		  if(entries)
+		  {
+			for(var i=0;i<entries.length;i++)
+			{
+			  if(entries[i].isDirectory)
+				this._removeDirectory(entries[i].path, aProcess, true);
+			  else
+				this._removeFile(entries[i].path, aProcess, true);
+			}
+		  }
+		  if(!aProcess.stopped())
+		  {
+			try{
+			  this.object.removeDirectory(aDirectory);
+			} catch(e){
+			  if(
+				 String(e).indexOf('550 Directory not found') != -1 || 
+				 String(e).indexOf('No such file or directory') != -1 
+				 )
+				{
+				  this.log('warning', 'The directory to remove "'+aDirectory+'" was not found', aProcess.id);
+				}
+			  else{ throw new Error(e);}
+			}
+			this.cacheDirectoryItemRemove(aDirectory, true);
+			this.log('sucess', 'removed directory "'+aDirectory+'"', aProcess.id);
+		  }
+		  else if(!aInternalCall)
+		  {
+			aProcess.reQueue(aProcess.lastRunnuable);
+		  }
+		}
+	  }
+	}
+	else if(!aInternalCall)
+	{
+	  aProcess.reQueue(aProcess.lastRunnuable);
+	}
+  },
+  trashFile:function(aFile, aProcess, aInternalCall)
+  {
+	if(!aProcess)
+	{
+	  aProcess = new garden.s.process('trash file "'+aFile+'"', ++this.numProcesses);
+	  this.processes[this.processes.length] = aProcess;
+	}
+
+	var instance = this;
+	aProcess.queue(function(){instance._trashFile(aFile, aProcess, aInternalCall);}, aInternalCall);
+	garden.s.runThread(function(){
+									instance.processController(aProcess);
+								  }, this.thread);
+	return aProcess;
+  },
+  _trashFile:function(aFile, aProcess, aInternalCall)
+  {
+	if(!aProcess.stopped())
+	{
+	  var connection = this.connect();
+	  this.log('progress', 'going to trash file "'+aFile+'" …', aProcess.id);
+	  if(connection)
+	  {
+		try{
+		  this.object.trashFile(aFile);
+		}
+		catch(e)
+		{
+		  if(
+			String(e).indexOf('550 File not found') != -1 ||
+			String(e).indexOf('No such file or directory') != -1 
+		  )
+		  {
+			this.log('warning', 'the file to trash "'+aFile+'" was not found', aProcess.id);
+		  }
+		  else
+			throw new Error(e);
+		}
+		//removing the item from cache and tree
+		this.cacheDirectoryItemRemove(aFile, false);
+		this.log('sucess', 'trashed file "'+aFile+'"', aProcess.id);
+	  }
+	}
+	else if(!aInternalCall)
+	{
+	  aProcess.reQueue(aProcess.lastRunnuable);
+	}
+  },
+  trashDirectory:function(aDirectory, aProcess, aInternalCall)
+  {
+	if(!aProcess)
+	{
+	  aProcess = new garden.s.process('trash directory "'+aDirectory+'"', ++this.numProcesses);
+	  this.processes[this.processes.length] = aProcess;
+	}
+
+	var instance = this;
+	aProcess.queue(function(){instance._trashDirectory(aDirectory, aProcess, aInternalCall);}, aInternalCall);
+	garden.s.runThread(function(){
+									instance.processController(aProcess);
+								  }, this.thread);
+	return aProcess;
+  
+  },
+  _trashDirectory:function(aDirectory, aProcess, aInternalCall)
+  {
+	if(!aProcess.stopped())
+	{
+	  var connection = this.connect();
+	  this.log('progress', 'going to trash directory "'+aDirectory+'" …', aProcess.id);
+	  if(connection)
+	  {
+		if(typeof(this.object.trashDirectoryRecursive) == 'function') //try recursive first
+		{
+		  this.object.trashDirectoryRecursive(aDirectory);
+		  this.cacheDirectoryItemRemove(aDirectory, true);
+		  this.log('sucess', 'trashed directory "'+aDirectory+'"', aProcess.id);
+		}
+		else
+		{
+		  try  {
+			//ok directory no empty maybe
+			var entries = this.object.directoryList(aDirectory);
+		  }
+		  catch(e)
+		  {
+			//trying again to list the content
+			try{
+			  var entries = this.object.directoryList(aDirectory);
+			} catch(e) {
+			  this.log('error', 'Can\'t list directory "'+aDirectory+'" maybe no exists', aProcess.id);
+			  //throw new Error('Can\'t list content of folder "'+aDirectory+'"');
+			  //return;
+			}
+		  }
+		  
+		  if(entries)
+		  {
+			for(var i=0;i<entries.length;i++)
+			{
+			  if(entries[i].isDirectory)
+				this._trashDirectory(entries[i].path, aProcess, true);
+			  else
+				this._trashFile(entries[i].path, aProcess, true);
+			}
+		  }
+		  if(!aProcess.stopped())
+		  {
+			try{
+			  this.object.trashDirectory(aDirectory);
+			} catch(e){
+			  if(
+				 String(e).indexOf('550 Directory not found') != -1 || 
+				 String(e).indexOf('No such file or directory') != -1 
+				 )
+				{
+				  this.log('warning', 'The directory to trash "'+aDirectory+'" was not found', aProcess.id);
+				}
+			  else{ throw new Error(e);}
+			}
+			this.cacheDirectoryItemRemove(aDirectory, true);
+			this.log('sucess', 'trashed directory "'+aDirectory+'"', aProcess.id);
+		  }
+		  else if(!aInternalCall)
+		  {
+			aProcess.reQueue(aProcess.lastRunnuable);
+		  }
 		}
 	  }
 	}
@@ -549,7 +708,7 @@ GardenInstances.prototype = {
 	  this.log('progress', 'going to set permissions on file "'+aFile+'" to '+aPermissions+' …', aProcess.id);
 	  if(connection)
 	  {
-		connection.chmod(aFile, parseInt('0'+''+aPermissions));
+		this.object.chmod(aFile, parseInt('0'+''+aPermissions));
 		this.log('sucess', 'changed permissions to file "'+aFile+'" to '+aPermissions, aProcess.id);
 	  }
 	}
@@ -583,34 +742,42 @@ GardenInstances.prototype = {
 	  {
 		if(aRecursive)
 		{
-		  try
+		  if(typeof(this.object.chmodRecursive) == 'function')
 		  {
-			connection.chmod(aDirectory, parseInt('0'+''+aPermissions));
-			
-			//ok directory no empty maybe
-			var entries = this.connect().list(('/'+aDirectory).replace(/^\/+/, '/'), 1).getChildren({});
-			for(var i=0;i<entries.length;i++)
-			{
-			  if(entries[i].isDirectory())
-				this.chmodDirectory(entries[i].getFilepath(),  aPermissions, aRecursive, aProcess, true);
-			  else
-				this.chmodFile(entries[i].getFilepath(), aPermissions, aProcess, true);
-			}
-			if(!aProcess.stopped())
-			{	
-			  this.log('sucess', 'changed permissions to directory "'+aDirectory+'" to '+aPermissions, aProcess.id);
-			}
-			else if(!aInternalCall)
-			{
-			  aProcess.reQueue(aProcess.lastRunnuable);
-			}
+			this.object.chmodRecursive(aDirectory, parseInt('0'+''+aPermissions));
+			this.log('sucess', 'changed permissions to directory "'+aDirectory+'" to '+aPermissions, aProcess.id);
 		  }
-		  catch(e)// ok directory dont have content, or maybe no exists and when trying to list the content throw a error
+		  else
 		  {
-			if(connection)
+			try
 			{
-			  connection.chmod(aDirectory, parseInt('0'+''+aPermissions));
-			  this.log('sucess', 'changed permissions to directory "'+aDirectory+'" to '+aPermissions, aProcess.id);
+			  this.object.chmod(aDirectory, parseInt('0'+''+aPermissions));
+			  
+			  //ok directory no empty maybe
+			  var entries = this.object.directoryList(aDirectory);
+			  for(var i=0;i<entries.length;i++)
+			  {
+				if(entries[i].isDirectory)
+				  this.chmodDirectory(entries[i].path,  aPermissions, aRecursive, aProcess, true);
+				else
+				  this.chmodFile(entries[i].path, aPermissions, aProcess, true);
+			  }
+			  if(!aProcess.stopped())
+			  {
+				this.log('sucess', 'changed permissions to directory "'+aDirectory+'" to '+aPermissions, aProcess.id);
+			  }
+			  else if(!aInternalCall)
+			  {
+				aProcess.reQueue(aProcess.lastRunnuable);
+			  }
+			}
+			catch(e)// ok directory dont have content, or maybe no exists and when trying to list the content throw a error
+			{
+			  if(connection)
+			  {
+				this.object.chmod(aDirectory, parseInt('0'+''+aPermissions));
+				this.log('sucess', 'changed permissions to directory "'+aDirectory+'" to '+aPermissions, aProcess.id);
+			  }
 			}
 		  }
 		}
@@ -618,7 +785,7 @@ GardenInstances.prototype = {
 		{
 		  if(connection)
 		  {
-			connection.chmod(aDirectory, parseInt('0'+''+aPermissions));
+			this.object.chmod(aDirectory, parseInt('0'+''+aPermissions));
 			this.log('sucess', 'changed permissions to directory "'+aDirectory+'" to '+aPermissions, aProcess.id);
 		  }
 		}
@@ -652,7 +819,7 @@ GardenInstances.prototype = {
   
 	  if(connection)
 	  {
-		if(newName.indexOf(oldName+'/') === 0)
+		if(newName.indexOf(oldName+this.__DS) === 0)
 		{
 		  this.log('error', 'can\'t move "'+oldName+'" into self "'+newName+'"', aProcess.id);
 		}
@@ -660,22 +827,22 @@ GardenInstances.prototype = {
 		{
 		  try
 		  {
-			connection.rename('/'+oldName.replace(/^\/+/, '/'), '/'+newName.replace(/^\/+/, '/'));
+			this.object.rename(oldName, newName);
 		  }
 		  catch(e)
 		  {
 			//may directories no exists.
 			try{
-			  this._tryCreatingDirectories('/'+oldName.replace(/^\/+/, '/'), '/'+newName.replace(/^\/+/, '/'), connection);
-			  connection.rename(oldName, newName);
+			  this._tryCreatingDirectories(oldName, newName);
+			  this.object.rename(oldName, newName);
 			}
 			catch(e)//ok leave the extension manage de error
 			{
-			  connection.rename(oldName, newName);
+			  this.object.rename(oldName, newName);
 			}
 		  }
 		  this.cacheDirectoryItemRemove(oldName, isDirectory);
-		  this.cacheDirectoryItemAdd('/'+newName.replace(/^\/+/, '/'), isDirectory);
+		  this.cacheDirectoryItemAdd(newName, isDirectory);
 		  this.log('sucess', 'renamed "'+oldName+'" to "'+newName+'"', aProcess.id);
 		}
 	  }
@@ -707,29 +874,32 @@ GardenInstances.prototype = {
 	  this.log('progress', 'going to create directory "'+aDirectory+'" in "'+aParentDirectory+'" …', aProcess.id);
 	  if(connection)
 	  {
-		aDirectory = aDirectory.replace(/\/+$/, '').replace(/^\/+/, '');
-		if(aDirectory.indexOf('/') != -1)//if the user wants to create many directories..
+		if(aDirectory.indexOf(this.__DS) != -1)//if the user wants to create many directories..
 		{
-		  aDirectory = aDirectory.split('/');
+		  aDirectory = aDirectory.split(this.__DS);
 		  var ourDirectory = aDirectory.pop();//keep the last to try outside of a try and catch
 		  
-		  var path = '/';
+		  var path = '';
 		  for(var id in aDirectory)
 		  {
 			path += aDirectory[id];
-			try{connection.createDirectory(aParentDirectory+path, parseInt('0'+''+'755'));}catch(e){/*subdirectory maybe exists*/}
-			path += '/';
+			try{this.object.createDirectory(aParentDirectory+this.__DS+path, parseInt('0'+''+'755'));}catch(e){/*subdirectory maybe exists*/}
+			path += this.__DS;
 		  }
 		  aDirectory[aDirectory.length] = ourDirectory;
-		  aDirectory = aDirectory.join('/');
+		  aDirectory = aDirectory.join(this.__DS);
 		  try{
-			connection.createDirectory(aParentDirectory+'/'+aDirectory, parseInt('0'+''+'755'));
-			this.cacheDirectoryItemAdd(aParentDirectory+'/'+aDirectory, true);
+			this.object.createDirectory(aParentDirectory+this.__DS+aDirectory, parseInt('0'+''+'755'));
+			this.cacheDirectoryItemAdd(aParentDirectory+this.__DS+aDirectory, true);
 			this.log('sucess', 'created directory "'+aDirectory+'" in "'+aParentDirectory+'"', aProcess.id);
 		  }
 		  catch(e)
 		  {
-			if(String(e).indexOf('550 Directory already exists') != -1)
+			if(
+			   String(e).indexOf('550 Directory already exists') != -1 ||
+			   String(e).indexOf('File exists') != -1
+			   
+			)
 			{
 			  this.log('warning', 'The directory to create "'+aDirectory+'" already exists', aProcess.id);
 			}
@@ -739,11 +909,14 @@ GardenInstances.prototype = {
 		else
 		{
 		  try{
-			connection.createDirectory(aParentDirectory+'/'+aDirectory, parseInt('0'+''+'755'));
-			this.cacheDirectoryItemAdd(aParentDirectory+'/'+aDirectory, true);
+			this.object.createDirectory(aParentDirectory+this.__DS+aDirectory, parseInt('0'+''+'755'));
+			this.cacheDirectoryItemAdd(aParentDirectory+this.__DS+aDirectory, true);
 			this.log('sucess', 'created directory "'+aDirectory+'" in "'+aParentDirectory+'"', aProcess.id);
 		  } catch(e) {
-			if(String(e).indexOf('550 Directory already exists') != -1)
+			if(
+			  String(e).indexOf('550 Directory already exists') != -1 ||
+			  String(e).indexOf('File exists') != -1
+			)
 			{
 			  this.log('warning', 'The directory to create "'+aDirectory+'" already exists', aProcess.id);
 			}
@@ -760,52 +933,52 @@ GardenInstances.prototype = {
   //used when trying to work with a deep directory that was not created first
   _tryCreatingDirectories:function(oldPath, newPath, connection)
   {
-	newPath = newPath.replace(/\/+$/, '').split('/');
+	newPath = newPath.split(this.__DS);
 	newPath.pop();//remove file or directory name from list.
 	if(newPath.length > 0)
 	{
-	  newPath = newPath.join('/');
-	  if(newPath == '/' || newPath == ''){}
+	  newPath = newPath.join(this.__DS);
+	  if(newPath == this.__DS || newPath == ''){}
 	  else
 	  {
-		newPath = newPath.replace(/\/+$/, '').replace(/^\/+/, '').split('/');
-		var aPaths = '/';
+		newPath = newPath.split(this.__DS);
+		var aPaths = '';
 		for(var id in newPath)
 		{
 		  aPaths += newPath[id];
-		  if(oldPath.indexOf(aPaths+'/') === 0){}//skiping already know directories
+		  if(oldPath.indexOf(aPaths+this.__DS) === 0){}//skiping already know directories
 		  else
 		  {
 			try{
-			  connection.createDirectory(aPaths, parseInt('0'+''+'755'));
+			  this.object.createDirectory(aPaths, parseInt('0'+''+'755'));
 			  this.cacheDirectoryItemAdd(aPaths, true);
 			}catch(e){/*subdirectory maybe exists*/}
 		  }
-		  aPaths += '/';
+		  aPaths += this.__DS;
 		}
 	  }
 	}
   },
-  openFile:function(aFile, aRemotePlacesPath, aLocalPlacesPath, aProcess, aInternalCall)
+  
+  
+  downloadAndOpenFile:function(aFile, aLocalPath, aParentInstance, aProcess, aInternalCall)
   {
-	var aDestination = asynchRemote.s.getLocalPathFromRemotePath(aRemotePlacesPath, aLocalPlacesPath, aFile);
 	if(!aProcess)
 	{
 	  aProcess = new garden.s.process('open file "'+aFile+'" ', ++this.numProcesses);
 	  this.processes[this.processes.length] = aProcess;
 	}
 	var instance = this;
-	aProcess.queue(function(){instance._openFile(aFile, aRemotePlacesPath, aLocalPlacesPath, aProcess, aInternalCall);}, aInternalCall);
+	aProcess.queue(function(){instance._downloadAndOpenFile(aFile, aLocalPath, aParentInstance, aProcess, aInternalCall);}, aInternalCall);
 	garden.s.runThread(function(){
 									instance.processController(aProcess);
 								  }, this.thread);
 	return aProcess;
   },
-  _openFile:function(aFile, aRemotePlacesPath, aLocalPlacesPath, aProcess, aInternalCall)
+  _downloadAndOpenFile:function(aFile, aLocalPath, aParentInstance, aProcess, aInternalCall)
   {
 	if(!aProcess.stopped())
 	{
-	  var aDestination = asynchRemote.s.getLocalPathFromRemotePath(aRemotePlacesPath, aLocalPlacesPath, aFile);
 	  var connection = this.connect();
 	  this.log('progress', 'going to open file "'+aFile+'" …', aProcess.id);
 	  if(connection)
@@ -813,18 +986,18 @@ GardenInstances.prototype = {
 		//download already ask for overWrite
 		//this.overWriteResolve(aProcess, null, null, aDestination, true);
 		
-		this._downloadFile(aFile, aRemotePlacesPath, aLocalPlacesPath, aProcess, true);
+		this._downloadFile(aFile, aLocalPath, aProcess, true);
 		//run in a thread and then back to main thread because we need to wait for the file to download
 		if(!aProcess.stopped())
 		{
 		  if(aProcess.overWriteLocal)
 		  {
 			garden.s.runThread(function(){
-								  if(asynchRemote.s.fileExists(aDestination))
-									garden.s.runMain(function(){asynchRemote.s.launch(aDestination);});
+								  if(garden.s.fileExists(aLocalPath))
+									garden.s.runMain(function(){garden.s.launch(aLocalPath);});
 								  }, this.thread);
-		  
-			this.log('sucess', 'opened file "'+aFile+'" ', aProcess.id);
+			this.cacheDirectoryItemAdd(aLocalPath, false, aParentInstance);
+			this.log('sucess', 'opened file "'+aLocalPath+'" ', aProcess.id);
 		  }
 		}
 		else if(!aInternalCall)
@@ -838,27 +1011,26 @@ GardenInstances.prototype = {
 	  aProcess.reQueue(aProcess.lastRunnuable);
 	}
   },
-  compareWithLocal:function(aFile, aRemotePlacesPath, aLocalPlacesPath, aTemporalLocalPath, aProcess, aInternalCall)
+  
+  
+  compareWithLocal:function(aFile, aLocalPath, aTemporalLocalPath, aProcess, aInternalCall)
   {
-	var aDestination = asynchRemote.s.getLocalPathFromRemotePath(aRemotePlacesPath, aLocalPlacesPath, aFile);
 	if(!aProcess)
 	{
 	  aProcess = new garden.s.process('compare file "'+aFile+'" with local version', ++this.numProcesses);
 	  this.processes[this.processes.length] = aProcess;
 	}
 	var instance = this;
-	aProcess.queue(function(){instance._compareWithLocal(aFile, aRemotePlacesPath, aLocalPlacesPath, aTemporalLocalPath, aProcess, aInternalCall);}, aInternalCall);
+	aProcess.queue(function(){instance._compareWithLocal(aFile, aLocalPath, aTemporalLocalPath, aProcess, aInternalCall);}, aInternalCall);
 	garden.s.runThread(function(){
 									instance.processController(aProcess);
 								  }, this.thread);
 	return aProcess;
   },
-  _compareWithLocal:function(aFile, aRemotePlacesPath, aLocalPlacesPath, aTemporalLocalPath, aProcess, aInternalCall)
+  _compareWithLocal:function(aFile, aLocalPath, aTemporalLocalPath, aProcess, aInternalCall)
   {
 	if(!aProcess.stopped())
 	{
-	  var aTemporalDestination = asynchRemote.s.getLocalPathFromRemotePath(aRemotePlacesPath, aTemporalLocalPath, aFile);
-	  var aLocalFileToCompare = asynchRemote.s.getLocalPathFromRemotePath(aRemotePlacesPath, aLocalPlacesPath, aFile);
 	  if(!asynchRemote.s.fileExists(aLocalFileToCompare))
 	  {
 		this.log('error', 'Can\'t compare the remote file "'+aFile+'" with the local version because the local version no exists.', aProcess.id);
@@ -901,26 +1073,24 @@ GardenInstances.prototype = {
 	  aProcess.reQueue(aProcess.lastRunnuable);
 	}
   },
-  editFile:function(aFile, aRemotePlacesPath, aLocalPlacesPath, aProcess, aInternalCall)
+  downloadAndEditFile:function(aFile, aLocalPath, aParentInstance, aProcess, aInternalCall)
   {
-	var aDestination = asynchRemote.s.getLocalPathFromRemotePath(aRemotePlacesPath, aLocalPlacesPath, aFile);
 	if(!aProcess)
 	{
 	  aProcess = new garden.s.process('edit "'+aFile+'" ', ++this.numProcesses);
 	  this.processes[this.processes.length] = aProcess;
 	}
 	var instance = this;
-	aProcess.queue(function(){instance._editFile(aFile, aRemotePlacesPath, aLocalPlacesPath, aProcess, aInternalCall);}, aInternalCall);
+	aProcess.queue(function(){instance._downloadAndEditFile(aFile, aLocalPath, aParentInstance, aProcess, aInternalCall);}, aInternalCall);
 	garden.s.runThread(function(){
 									instance.processController(aProcess);
 								  }, this.thread);
 	return aProcess;
   },
-  _editFile:function(aFile, aRemotePlacesPath, aLocalPlacesPath, aProcess, aInternalCall)
+  _downloadAndEditFile:function(aFile, aLocalPath, aParentInstance, aProcess, aInternalCall)
   {
 	if(!aProcess.stopped())
 	{
-	  var aDestination = asynchRemote.s.getLocalPathFromRemotePath(aRemotePlacesPath, aLocalPlacesPath, aFile);
 	  var connection = this.connect();
 	  this.log('progress', 'going to edit "'+aFile+'" …', aProcess.id);
 	  if(connection)
@@ -928,18 +1098,18 @@ GardenInstances.prototype = {
 		//download already ask for overWrite
 		//this.overWriteResolve(aProcess, null, null, aDestination, true);
 		
-		this._downloadFile(aFile, aRemotePlacesPath, aLocalPlacesPath, aProcess, true);
+		this._downloadFile(aFile, aLocalPath, aProcess, true);
 		//run in a thread and then back to main thread because we need to wait for the file to download
 		if(!aProcess.stopped())
 		{
 		  if(aProcess.overWriteLocal)
 		  {
 			garden.s.runThread(function(){
-								  if(asynchRemote.s.fileExists(aDestination))
-									garden.s.runMain(function(){asynchRemote.s.openURL(window, aDestination, true);});
+								  if(garden.s.fileExists(aLocalPath))
+									garden.s.runMain(function(){garden.s.openURL(window, aLocalPath, true);});
 								  }, this.thread);
-		  
-			this.log('sucess', 'opened file "'+aFile+'" ', aProcess.id);
+			this.cacheDirectoryItemAdd(aLocalPath, false, aParentInstance);
+			this.log('sucess', 'opened file "'+aLocalPath+'" ', aProcess.id);
 		  }
 		}
 		else if(!aInternalCall)
@@ -953,49 +1123,43 @@ GardenInstances.prototype = {
 	  aProcess.reQueue(aProcess.lastRunnuable);
 	}
   },
-  downloadFile:function(aFile, aRemotePlacesPath, aLocalPlacesPath, aProcess, overWrite, aInternalCall)
+  downloadFile:function(aFile, aLocalPath, aProcess, aInternalCall, overWrite)
   {
-	var aDestination = asynchRemote.s.getLocalPathFromRemotePath(aRemotePlacesPath, aLocalPlacesPath, aFile);
 	if(!aProcess)
 	{
-	  aProcess = new garden.s.process('download file "'+aFile+'" to "'+aDestination+'"  ', ++this.numProcesses);
+	  aProcess = new garden.s.process('download file "'+aFile+'" to "'+aLocalPath+'"  ', ++this.numProcesses);
 	  this.processes[this.processes.length] = aProcess;
 	}
 	var instance = this;
-	aProcess.queue(function(){instance._downloadFile(aFile, aRemotePlacesPath, aLocalPlacesPath, aProcess, overWrite, aInternalCall);}, aInternalCall);
+	aProcess.queue(function(){instance._downloadFile(aFile, aLocalPath, aProcess, aInternalCall, overWrite);}, aInternalCall);
 	garden.s.runThread(function(){
 									instance.processController(aProcess);
 								  }, this.thread);
 	return aProcess;
   },
-  _downloadFile:function(aFile, aRemotePlacesPath, aLocalPlacesPath, aProcess, overWrite, aInternalCall)
+  _downloadFile:function(aFile, aLocalPath, aProcess, aInternalCall, overWrite)
   {
 	if(!aProcess.stopped())
 	{
-	  var aDestination = asynchRemote.s.getLocalPathFromRemotePath(aRemotePlacesPath, aLocalPlacesPath, aFile);
 	  var connection = this.connect();
-	  this.log('progress', 'going to download file "'+aFile+'" to "'+aDestination+'" …', aProcess.id);
+	  this.log('progress', 'going to download file "'+aFile+'" to "'+aLocalPath+'" …', aProcess.id);
 	  
 	  if(connection)
 	  {
-		this.overWriteResolve(aProcess, null, null, aDestination, true, overWrite);
+		this.overWriteResolve(aProcess, null, null, aLocalPath, true, overWrite);
 		
 		if(aProcess.overWriteLocal)
 		{
-		  //reading file
-		  var aContent = connection.readFile(aFile, {});
-  
 		  //creating file or needed directories
-		  asynchRemote.s.fileCreate(aDestination);
-		  
-		  //writing file
-		  asynchRemote.s.fileWriteBinaryContentIsByteArray(aDestination, aContent);
-		  
-		  this.log('sucess', 'downloaded file "'+aFile+'" to "'+aDestination+'" ', aProcess.id);
+		  garden.s.fileCreate(aLocalPath+'.kup');
+		  //saving file
+		  this.object.saveFile(aFile, aLocalPath+'.kup');
+		  garden.s.fileRename(aLocalPath+'.kup', aLocalPath);
+		  this.log('sucess', 'downloaded file "'+aFile+'" to "'+aLocalPath+'" ', aProcess.id);
 		}
 		else
 		{
-		  this.log('canceled', 'download of file "'+aFile+'" to "'+aDestination+'" canceled by user', aProcess.id);
+		  this.log('canceled', 'download of file "'+aFile+'" to "'+aLocalPath+'" canceled by user', aProcess.id);
 		}
 	  }
 	}
@@ -1004,67 +1168,54 @@ GardenInstances.prototype = {
 	  aProcess.reQueue(aProcess.lastRunnuable);
 	}
   },
-  createFile:function(aFile, aRemotePlacesPath, aLocalPlacesPath, aProcess, aInternalCall)
+  createFile:function(aFile, aProcess, aInternalCall)
   {
-	var aDestination = asynchRemote.s.getLocalPathFromRemotePath(aRemotePlacesPath, aLocalPlacesPath, aFile);
 	if(!aProcess)
 	{
 	  aProcess = new garden.s.process('create file "'+aFile+'" ', ++this.numProcesses);
 	  this.processes[this.processes.length] = aProcess;
 	}
 	var instance = this;
-	aProcess.queue(function(){instance._createFile(aFile, aRemotePlacesPath, aLocalPlacesPath, aProcess, aInternalCall);}, aInternalCall);
+	aProcess.queue(function(){instance._createFile(aFile, aProcess, aInternalCall);}, aInternalCall);
 	garden.s.runThread(function(){
 									instance.processController(aProcess);
 								  }, this.thread);
 	return aProcess;
   },
-  _createFile:function(aFile, aRemotePlacesPath, aLocalPlacesPath, aProcess, aInternalCall)
+  _createFile:function(aFile, aProcess, aInternalCall)
   {
 	if(!aProcess.stopped())
 	{
-	  var aDestination = asynchRemote.s.getLocalPathFromRemotePath(aRemotePlacesPath, aLocalPlacesPath, aFile);
 	  var connection = this.connect();
 	  this.log('progress', 'going to create file "'+aFile+'" …', aProcess.id);
 	  if(connection)
 	  {
-
 		//check if the file exists on local
-		this.overWriteResolve(aProcess, null, null, aDestination, true);
+		this.overWriteResolve(aProcess, null, null, aFile, true);
 
 		if(aProcess.overWriteLocal)
 		{
-		  //check if the file exists on remote
-		  this.overWriteResolve(aProcess, aFile, false, null, false);
-
-		  if(aProcess.overWriteRemote)
+		  //creating file or needed directories
+		  garden.s.fileCreate(aFile);
+		  //writing local file
+		  garden.s.fileWrite(aFile, '');
+		  
+		  //writing remote file
+		  //this._uploadFile(aFile, aRemotePlacesPath, aLocalPlacesPath, aProcess, aProcess.overWriteRemote, true);
+		  if(!aProcess.stopped())
 		  {
-			//creating file or needed directories
-			asynchRemote.s.fileCreate(aDestination);
-			//writing local file
-			asynchRemote.s.koFileLocalWrite(aDestination, '');
-			
-			//writing remote file
-			//this._uploadFile(aFile, aRemotePlacesPath, aLocalPlacesPath, aProcess, aProcess.overWriteRemote, true);
-			if(!aProcess.stopped())
-			{
-			  //opening the file
-			  //run in a thread and then back to main thread because we need to wait for the file to download
-			  garden.s.runThread(function(){
-									if(asynchRemote.s.fileExists(aDestination))
-									  garden.s.runMain(function(){asynchRemote.s.openURL(window, aDestination, true);});
-									}, this.thread);
-			  
-			  this.log('sucess', 'created file "'+aFile+'" ', aProcess.id);
-			}
-			else if(!aInternalCall)
-			{
-			  aProcess.reQueue(aProcess.lastRunnuable);
-			}
+			//opening the file
+			//run in a thread and then back to main thread because we need to wait for the file to download
+			garden.s.runThread(function(){
+								  if(garden.s.fileExists(aFile))
+									garden.s.runMain(function(){garden.s.openURL(window, aFile, true);});
+								  }, this.thread);
+			this.cacheDirectoryItemAdd(aFile, false);
+			this.log('sucess', 'created file "'+aFile+'" ', aProcess.id);
 		  }
-		  else
+		  else if(!aInternalCall)
 		  {
-			this.log('canceled', 'creation of file "'+aFile+'" canceled by user', aProcess.id);
+			aProcess.reQueue(aProcess.lastRunnuable);
 		  }
 		}
 		else
@@ -1330,6 +1481,11 @@ GardenInstances.prototype = {
 	  aProcess.reQueue(aProcess.lastRunnuable);
 	}
   },
+  
+  
+  
+  
+  
   //ask for overwrite or skip
   overWrite:function(aProcess, aMsg, aFile)
   {
@@ -1475,153 +1631,177 @@ GardenInstances.prototype = {
 	this.log('status', 'Cleaned last modified cache', 0);
   },
 
-  cacheDirectoryItemAdd:function(aPath, isDirectory)
+  cacheDirectoryItemAdd:function(aPath, isDirectory, aInstance)
   {
-	var aDirs = aPath.replace(/^\/+/g, '').replace(/\/+/g, '/').replace(/\/+$/g, '/').split('/');
+	if(!aInstance)
+	  aInstance = this;
+	var aDirs = aPath.split(aInstance.__DS);
+	var aOriginalPath = aPath;
 	var aPath = '';
 	var aParentPath;
 	for(var i=0;i<aDirs.length;i++)
 	{
-	  aPath += '/'+aDirs[i];
-	  aParentPath = aPath.replace(/\/[^\/]+$/g, '');
+	  aPath += aDirs[i];
+	  aParentPath = aPath.split(aInstance.__DS);
+	  aParentPath.pop();
+	  aParentPath = aParentPath.join(aInstance.__DS);
+	  
 	  if(aParentPath == '')
-		aParentPath = '/';
+		aParentPath = aInstance.__DS;
+		
+	  if(aPath == '' || aPath == aParentPath)
+	  {
+		if(aPath != aInstance.__DS)
+		  aPath += aInstance.__DS;
+		continue;
+	  }
+	  
+	  if(aPath.indexOf(aParentPath) !== 0)
+	  {
+		aPath += aInstance.__DS;
+		continue;
+	  }
 	  //this.dump('buscando en '+aParentPath+' si esta '+aPath);
 	  
-	  if(this.listings[aParentPath] && this.listings[aParentPath].data)
+	  if(
+		 !aInstance.tree.isContainerOpenFromPathID(garden.s.sha1(aParentPath+'-'+aParentPath))
+		 && aInstance.tree.currentPath != aParentPath
+	  )
 	  {
-		var found = false;
-		for(var id in this.listings[aParentPath].data)
-		{
-		  if(this.listings[aParentPath].data[id].getFilepath == aPath)
-		  {
-			//this.dump(aPath+' esta en el cache de '+aParentPath);
-			found = true;
-			break;
-		  }
-		}
-		if(!found)
-		{
-		  //this.dump(aPath+' NO esta en el cache de '+aParentPath);
-		  //kgit.s.dump('parnet path es:'+aParentPath);
-		 // kgit.s.dump('insertando:'+aPath);
-		  var parentRowID = aParentPath.split('/');
-			  parentRowID.pop();
-			  parentRowID = parentRowID.join('/').replace(/\/$/, '');
-			  if(parentRowID == '')
-				parentRowID = '/';
+		//this.dump('el container de '+aParentPath+' esta..'+aInstance.tree.isContainerOpenFromPathID(garden.s.sha1(aParentPath+'-'+aParentPath)));
+		aPath += aInstance.__DS;
+		continue;
+	  }
+	  
+	  if(!aInstance.listings[aParentPath] || !aInstance.listings[aParentPath].data)
+	  {
+		aInstance.listings[aParentPath] = {}
+		aInstance.listings[aParentPath].data = []
+	  }
 
-		  var aParentRow = -1;
-		  if(this.listings[parentRowID] && this.listings[parentRowID].data)
-		  {
-			for(var id in this.listings[parentRowID].data)
-			{
-			  if(this.listings[parentRowID].data[id].getFilepath == aParentPath)
-			  {
-				aParentRow = this.listings[parentRowID].data[id];
-				break;
-			  }
-			}
-		  }
-		  if(aParentRow == -1)
-			aLevel = 0;
-		  else
-			aLevel = aParentRow.aLevel+1;
-		  
-		  var newItem = {
-						  'getFilename': aPath.split('/').pop(),
-						  'getFilepath': aPath,
-						  'getFileextension': (isDirectory ? '' : (aPath.split('.').pop().toLowerCase() || '')),
-						  'isFile': !isDirectory,
-						  'isDirectory': isDirectory,
-						  'isContainerOpen' : false,
-						  'isContainerEmpty' : false,
-						  'isBusy' : false,
-						  'isLoading' : false,
-						  'aLevel': aLevel,
-						  'getModifiedTime': 0,
-						  'getMode': 0,
-						  'getSize': 0,
-						  'aParentRow':aParentRow
-						}
-						
-		  //kgit.s.dump(newItem);
-		  
-		  aParentRow.isContainerEmpty = false;
-		  var a=0, added = false;
-		  for(var id in this.listings[aParentPath].data)
-		  {
-			if(asynchRemote.s.sortLocale(this.listings[aParentPath].data[id].getFilename.toLowerCase(), newItem.getFilename.toLowerCase())>0)
-			{
-			  this.listings[aParentPath].data.splice(a, 0, newItem);
-			  added = true;
-			  break;
-			}
-			a++;
-		  }
-		  if(!added)
-		  {
-			this.listings[aParentPath].data.push(newItem);
-		  }
-		  //asynchRemote.s.dump(this.listings);
-		  //insert the item into the tree
-		  var server = this.server;
-		  garden.s.runMain(function(){asynchRemote.trees[server].insertRow(newItem)});
+	  var found = false;
+	  for(var id in aInstance.listings[aParentPath].data)
+	  {
+		if(aInstance.listings[aParentPath].data[id].path == aPath)
+		{
+		  //this.dump(aPath+' esta en el cache de '+aParentPath);
+		  found = true;
+		  break;
 		}
 	  }
+	  if(!found)
+	  {
+		//this.dump(aPath+' NO esta en el cache de '+aParentPath);
+		
+		var newItem =	{
+			'name': aPath.split(aInstance.__DS).pop(),
+			'path': aPath,
+			'pathMapped': aPath,
+			'id': garden.s.sha1(aPath+'-'+aPath),
+			'extension': ((aOriginalPath != aPath ? true : isDirectory) ? '' : (aPath.split('.').pop().toLowerCase()  || '')),
+			'isFile': (aOriginalPath != aPath ? false : !isDirectory),
+			'isDirectory': (aOriginalPath != aPath ? true : isDirectory),
+			'isSymlink': false,
+			'isHidden': false,
+			'isWritable': true,
+			'isReadable': true,
+			'modifiedTime': (new Date()),
+			'permissions': 0,
+			'size': 0
+		}
+
+		var a=0, added = false;
+		for(var id in aInstance.listings[aParentPath].data)
+		{
+		  if(
+			 garden.s.sortLocale(aInstance.listings[aParentPath].data[id].name.toLowerCase(), newItem.name.toLowerCase())>0
+		  )
+		  {
+			aInstance.listings[aParentPath].data.splice(a, 0, newItem);
+			//this.dump('inserted on cache via splice');
+			added = true;
+			break;
+		  }
+		  a++;
+		}
+		if(!added)
+		{
+		  aInstance.listings[aParentPath].data.push(newItem);
+		  //this.dump('inserted on cache via push');
+		}
+		//insert the item into the tree
+		var tree = aInstance.tree;
+		//this.dump('insertaddo newItem', newItem);
+		//this.dump('en parent path', aParentPath);
+		this.cacheDirectoryItemAddToTree(aInstance.tree, newItem, aParentPath);
+		//garden.s.runMain(function(){tree.insertRow(newItem, aParentPath)});
+	  }
+	  
+	  aPath += aInstance.__DS;
 	}
+  },
+  cacheDirectoryItemAddToTree:function(tree, newItem, aParentPath)
+  {
+	garden.s.runMain(function(){tree.insertRow(newItem, aParentPath)});
   },
   cacheDirectoryItemRemove:function(aPath, isDirectory)
   {
-	var aParentDir = aPath.split('/');
+	var aParentDir = aPath.split(this.__DS);
 		aParentDir.pop();
-		aParentDir = aParentDir.join('/');
+		aParentDir = aParentDir.join(this.__DS);
 		if(aParentDir == '')
-		  aParentDir = '/';
+		  aParentDir = this.__DS;
+	
+	var emptyContainers = [];
+	
 	if(this.listings[aParentDir])
 	{
 	  var a=0;
 	  for(var id in this.listings[aParentDir].data)
 	  {
-		if(this.listings[aParentDir].data[id].getFilepath == aPath)
+		if(this.listings[aParentDir].data[id].path == aPath)
 		{
 		  //removing the item from the cache
 		  this.listings[aParentDir].data.splice(a, 1);
 		  //updating "isContainerEmpty" on parent if now is empty;
 		  if(this.listings[aParentDir].data.length === 0)
 		  {
-			var aParentParentDir = aParentDir.split('/');
+			var aParentParentDir = aParentDir.split(this.__DS);
 			aParentParentDir.pop();
-			aParentParentDir = aParentParentDir.join('/');
+			aParentParentDir = aParentParentDir.join(this.__DS);
 			if(aParentParentDir == '')
-			  aParentParentDir = '/';
+			  aParentParentDir = this.__DS;
 			if(this.listings[aParentParentDir])
 			{
 			  for(var id in this.listings[aParentParentDir].data)
 			  {
-				if(this.listings[aParentParentDir].data[id].getFilepath == aParentDir)
+				if(this.listings[aParentParentDir].data[id].path == aParentDir)
 				{
-				  this.listings[aParentParentDir].data[id].isContainerEmpty = true;
+				  emptyContainers[emptyContainers.length] = aParentDir;
+				  //this.listings[aParentParentDir].data[id].isContainerEmpty = true;
 				  break;
 				}
 			  }
 			}
 		  }
-		  if(isDirectory)
-			delete this.listings[aPath];
 		  break;
 		}
 		a++;
 	  }
+	  for(var id in this.listings)
+	  {
+		if(id == aPath || id.indexOf(aPath+this.__DS) === 0)
+		  delete this.listings[id];
+	  }
 	}
 	//remove the item from the tree
-	var server = this.server;
-	garden.s.runMain(function(){asynchRemote.trees[server].removeRowByPath(aPath);});
+	var tree = this.tree;
+	garden.s.runMain(function(){tree.removeRowByPath(aPath, emptyContainers);});
   },
   //holds logs of actions
   log:function(aType, aMsg, aProcessID)
   {
-	//garden.s.dump(aType+' : '+aMsg+' : '+aProcessID);
+	//this.dump(aType+' : '+aMsg+' : '+aProcessID);
 	if(aType == 'error')
 	  this.errorCount++;
 	this.logs[this.logs.length] = {
@@ -1631,8 +1811,8 @@ GardenInstances.prototype = {
 									'aProcessID':aProcessID
 								  };
 	//shorting the amount of log entries
-	if(this.logs.length > 1000)
-	  this.logs.splice(0, this.logs.length-1000);
+	if(this.logs.length > 300)
+	  this.logs.splice(0, this.logs.length-300);
 	this.notifyProgress();
   },
   //close the connection
@@ -1649,22 +1829,22 @@ GardenInstances.prototype = {
 	this.keepAliveOrCloseConnectionUninit();
 	
 	//queue the disconnect operation
-	var AsynchRemoteConnection = this;
+	var instance = this;
 	garden.s.runThread(function(){
 	  
-	  if(AsynchRemoteConnection.connected && AsynchRemoteConnection.connection && AsynchRemoteConnection.connection.close)
-		AsynchRemoteConnection.connection.close();
+	  if(instance.connected && instance.connection && instance.object.close)
+		instance.object.close();
 	  
-	  AsynchRemoteConnection.iterations = 0;
-	  AsynchRemoteConnection.connected = false;
+	  instance.iterations = 0;
+	  instance.connected = false;
 	  
-	  delete AsynchRemoteConnection.connection;
+	  delete instance.connection;
 	  
-	  AsynchRemoteConnection.log('status', 'Connection closed', 0);
+	  instance.log('status', 'Connection closed', 0);
 	  
-	  AsynchRemoteConnection.notifyProgress();
+	  instance.notifyProgress();
 	  
-	  AsynchRemoteConnection.closing = false;
+	  instance.closing = false;
 	  
 	}, this.thread);
   },

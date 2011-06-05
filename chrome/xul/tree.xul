@@ -29,8 +29,8 @@
 		
 		onselect="this.garden.selectionSave()"
 		 
-		onfocus="this.garden.focused = true;"
-		onblur="this.garden.focused = false;"
+		onfocus="if(event.originalTarget == this)window.garden.setTreeFocus(event.originalTarget);"
+		onblur="if(event.originalTarget == this)window.garden.setTreeBlur(event.originalTarget);"
 		
 		ondragstart="return this.garden.treeOnDragStart(event);"
 		ondragover="return this.garden.treeOnDragOver(event);"
@@ -39,7 +39,9 @@
 		ondragdrop="return this.garden.treeOnDragDrop(event);"
 		ondragexit="return this.garden.treeOnDragExit(event);"
 		
-		onkeypress="this.garden.treeOnKeyPress(event);"
+		onkeypress="return this.garden.treeOnKeyPress(event);"
+		
+		ondblclick="return this.garden.treeOnDblClick(event);"
 	  >
 		<treecols>
 		  <treecol primary="true" hideheader="true" flex="1"/>

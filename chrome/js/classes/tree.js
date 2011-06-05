@@ -96,12 +96,12 @@ gardenTree.prototype = {
 	}
 	return -1;
   },
-  findRowByPath : function(aRowPath)
+  findRowIDFromPath : function(aRowPath)
   {
-	//garden.s.dump('findRowByPath');
+	//garden.s.dump('findRowIDFromPath');
 	for(var i in this._rows)
 	{
-	  //garden.s.dump('findRowByPathFOR');
+	  //garden.s.dump('findRowIDFromPathFOR');
 	  if(this._rows[i].path  == aRowPath)
 		return parseInt(i);
 	}
@@ -280,6 +280,17 @@ gardenTree.prototype = {
 	this.treeOperationsQueue();
 	//garden.s.dump('onDataReceivedend');
   },
+  openContainerFromPath:function(aPath)
+  {
+	var aRow = this.findRowIDFromPath(aPath);
+	if(aRow != -1)
+	{
+	  var aRowState = this.getRowStateFromID(this._rows[aRow].id);
+	  
+	  if(!aRowState.isContainerOpen)
+		this.toggleOpenState(aRow);
+	}
+  },
   toggleOpenState : function(aParentRowI, aParentRow)
   {
 	//garden.s.dump('toggleOpenState');
@@ -363,7 +374,133 @@ gardenTree.prototype = {
 	  this.instance.directoryList(aData);
 	}
   },
+  toggleOpenStateContainers : function(selectedItems, selectedItem)
+  {
+	if(selectedItem.isDirectory)
+	  this.toggleOpenState(-1, selectedItem);
+	
+	var everyOneOpen = true;
+	var everyOneClosed = true;
+
+	for(var id in selectedItems)
+	{
+	  if(selectedItems[id].isDirectory)
+	  {
+		if(!this.getRowStateFromID(this._rows[
+											  this.findRowIDFromPath
+											  (
+												selectedItems[id].path
+											  )
+											].id
+								  ).isContainerOpen)
+		  everyOneOpen = false;
+		else
+		  everyOneClosed = false;
+	  }
+	}
+	
+	var toggledSelected = false;
+	for(var id in selectedItems)
+	{
+	  if(selectedItems[id].isDirectory)
+	  {
+		if(everyOneOpen)
+		{
+		  this.toggleOpenState(-1, selectedItems[id]);
+		}
+		else if(!this.getRowStateFromID(this._rows[
+											  this.findRowIDFromPath
+											  (
+												selectedItems[id].path
+											  )
+											].id
+								  ).isContainerOpen)
+		{
+		  this.toggleOpenState(-1, selectedItems[id]);
+		}
+	  }
+	}
+  },
+  insertRow : function(aRow, aParentRowPath)
+  {
+	//garden.s.dump('insertRow');
+	if(this.iterations != 0)//queue
+	{
+	  var tree = this;
+	  this.treeOperationsQueue(function(){tree.insertRow(aRow, aParentRowPath);});
+	  return;
+	}
+	
+	this.iterations++;
+	var aParentRowID = this.findRowIDFromPath(aParentRowPath)
+	//garden.s.dump('insertRow:insertando:'+aRow.path);
+	//garden.s.dump('insertRow:aParentRowID:'+aParentRowID);
+	//garden.s.dump('insertRow:aParentRowPath:'+aParentRowPath);
+	
+	if(aRow.path.indexOf(this.currentPath) !== 0)
+	{
+	 garden.s.dump('insertRow:pathNotInCurrentView:aRow.path'+aRow.path+':aParentRowPath:'+aParentRowPath);
+	  return;
+	}
+
+	//look if the parent is on the tree
+	if(aParentRowID != -1)
+	{
+	  var aParentRow = this._rows[aParentRowID];
+	  var aParentRowState = this.getRowStateFromID(aParentRow.id);
+		  aParentRowState.isContainerEmpty = false;
+	  var thisLevel = aParentRowState.aLevel+1;
+	}
+	else
+	{
+	  var thisLevel = 0;
+	  	  aParentRowID = 0;
+	}
+	
+	this.selectionGoingToChange++;
+	
+	try
+	{
+	  if(thisLevel > 0)
+		aParentRowID++;
+		
+	  //garden.s.dump('este nivel es '+thisLevel);
+	  //garden.s.dump('aParentRowID '+aParentRowID);
+	  //then where to insert the row?
+	  for (var t = aParentRowID; t < this._rows.length; t++)
+	  {
+		if (this.getLevel(t) > thisLevel){}//not in a subfolder
+		else if (this.getLevel(t) < thisLevel)//break if we are in a sibling folder
+		  break;
+		else if(!aRow.isDirectory && this._rows[t].isDirectory){}//for example: inserting a file and this is a directory
+		else if (
+		  aRow.isDirectory == this._rows[t].isDirectory &&
+		  garden.s.sortLocale(this._rows[t].name.toLowerCase(), aRow.name.toLowerCase()) > 0
+		)//found the position?
+		  break;
+		else if(aRow.isDirectory != this._rows[t].isDirectory)//for example: reach end of folder and the list of file is starting
+		  break;
+		aParentRowID++;
+	  }
+	  this.getRowStateFromID(aRow.id).aLevel = thisLevel;
+	  //insert the row
+	  this._rows.splice(aParentRowID, 0, aRow);
   
+	//keep scroll
+	this.scrollSave();
+	 
+	  this.tree.rowCountChanged(thisLevel, 1);
+	  
+	this.scrollRestore();
+	  
+	}catch(e) { garden.s.dump('onDataReceived:3:', e, true); }
+	
+	this.selectionGoingToChange--;
+	//reselect
+	this.selectionRestore();
+	this.iterations--;
+	this.treeOperationsQueue();
+  },
 
 /* removing rows */
 
@@ -426,14 +563,9 @@ gardenTree.prototype = {
 	this.iterations--;
 	this.treeOperationsQueue();
   },
-  
-  
-  
-  
-  /*asdasd*/
-  removeRowByPath : function(aPath)
+  removeRowByPath : function(aPath, emptyContainers)
   {
-	garden.s.dump('removeRowByPath');
+	//garden.s.dump('removeRowByPath');
 	if(this.iterations != 0)//queue
 	{
 	  var tree = this;
@@ -444,106 +576,39 @@ gardenTree.prototype = {
 	this.iterations++;
 	this.selectionGoingToChange++;
 	
-	  var aRowID = this.findRowByPath(aPath);
+	  var aRowID = this.findRowIDFromPath(aPath);
 	  if(aRowID != -1)
 	  {
-		aParentRowID = -1;
-		if(!this._rows[aRowID].aParentRow)
-		{
-		  //garden.s.dump(aRowID+' no tiene parent row');
-		}
-		else
-		{
-		  aParentRowID = this.findRowIDFromRow(this._rows[aRowID].aParentRow);
-		}
+		this.scrollSave();
 		
-		this.removeNextLevel(aRowID);
+		  for(var id in emptyContainers)
+		  {
+			var aEmptyContainerI = this.findRowIDFromPath(emptyContainers[id]);
+			if(aEmptyContainerI == -1)
+			  continue;
+			this.getRowStateFromID(this._rows[aEmptyContainerI].id).isContainerEmpty = true;
+			this.tree.invalidateRow(aEmptyContainerI);
+		  }
+		  
+		  this.removeNextLevel(aRowID);
+		  
+		  var aLevel = this.getRowStateFromID(this._rows[aRowID].id).aLevel;
+		  this._rows.splice(aRowID, 1);
+			
+		  this.tree.rowCountChanged(aLevel, -1);
+		 // garden.s.dump('removeRowByPath:aLevel:'+aLevel+':length:-1');
 		
-		var aLevel = this._rows[aRowID].aLevel;
-		this._rows.splice(aRowID, 1);
-		var firstVisible = this.tree.getFirstVisibleRow();
-	
-		if(aParentRowID != -1)
-		  this.tree.invalidateRow(aParentRowID);
-		this.tree.rowCountChanged(aLevel, -1);
-		garden.s.dump('removeRowByPath:thisLevel:'+aLevel+':length:-1');
-		this.tree.scrollToRow(firstVisible); 
+		this.scrollRestore();
+	  }
+	  else
+	  {
+		//garden.s.dump('aPath '+aPath+' was not found in the tree');
 	  }
 	  
 	this.selectionGoingToChange--;
-	this.selectionClear();
 	this.iterations--;
 	this.treeOperationsQueue();
   },
-  
-  insertRow : function(aRow)
-  {
-	garden.s.dump('insertRow');
-	if(this.iterations != 0)//queue
-	{
-	  var tree = this;
-	  this.treeOperationsQueue(function(){tree.insertRow(aRow);});
-	  return;
-	}
-	
-	this.iterations++;
-	
-	//look if the parent is on the tree
-	if(typeof(aRow.aParentRow) != 'undefined' && aRow.aParentRow != -1 )
-	{
-	  var row = this.findRowIDFromRow(aRow.aParentRow);
-	  //the parentRow was closed/removed
-	  if(row == -1)
-	  {
-		this.iterations--;
-		this.treeOperationsQueue();
-		return;
-	  }
-	}
-	else
-	{
-	  var row = 0;
-	}
-	
-	this.selectionGoingToChange++;
-	  
-	  try
-	  {
-		var thisLevel = aRow.aLevel;
-	
-		if(thisLevel > 0)
-		  row++;
-		//then where to insert the row?
-		for (var t = row; t < this._rows.length; t++)
-		{
-		  garden.s.dump('insertRowFOR');
-		  if (this._rows[t].aLevel > thisLevel){}//not in a subfolder
-		  else if (this._rows[t].aLevel < thisLevel)//break if we are in a sibling folder
-			break;
-		  else if (aRow.isDirectory == this._rows[t].isDirectory && garden.s.sortLocale(this._rows[t].name.toLowerCase(), aRow.name.toLowerCase()) > 0)//found the position?
-			break;
-		  row++;
-		}
-		
-		//insert the row
-		this._rows.splice(row, 0, aRow);
-	
-		//keep scroll
-		var visibleFirst = this.tree.getFirstVisibleRow();
-		this.tree.rowCountChanged(aRow.aLevel, +1);
-		garden.s.dump('insertRow:thisLevel:'+aRow.aLevel+':length:+1');
-
-		this.tree.scrollToRow(visibleFirst);
-		
-	  }catch(e) { garden.s.dump('onDataReceived:3:', e, true); }
-	
-	this.selectionGoingToChange--;
-	//reselect
-	this.selectionRestore();
-	this.iterations--;
-	this.treeOperationsQueue();
-  },
-  
 
 /* scolling */
 
@@ -555,7 +620,46 @@ gardenTree.prototype = {
   {
 	this.tree.scrollToRow(this.firstVisibleRow);
   },
-  
+  scrollFocusParent:function()
+  {
+	var aParent = this.getParentIndex(this.selection.currentIndex);
+	if(aParent != -1)
+	{
+	  //this.tree.scrollToRow(aParent);
+	  this.selection.select(aParent);
+	  this.tree.ensureRowIsVisible(aParent);
+	}
+	else
+	{
+	  var previousSibling = this.getPreviousSiblingIndex(this.selection.currentIndex);
+	  if(previousSibling != -1)
+	  {
+		//this.tree.scrollToRow(previousSibling);
+		this.selection.select(previousSibling);
+		this.tree.ensureRowIsVisible(previousSibling);
+	  }
+	}
+  },
+  scrollFocusParentNextSibling:function()
+  {
+	var aParentSibling = this.getParentNextSiblingIndex(this.selection.currentIndex);
+	if(aParentSibling != -1)
+	{
+	  //this.tree.scrollToRow(aParentSibling);
+	  this.selection.select(aParentSibling);
+	  this.tree.ensureRowIsVisible(aParentSibling);
+	}
+	else
+	{
+	  var nextSibling = this.getNextSiblingIndex(this.selection.currentIndex);
+	  if(nextSibling != -1)
+	  {
+		//this.tree.scrollToRow(nextSibling);
+		this.selection.select(nextSibling);
+		this.tree.ensureRowIsVisible(nextSibling);
+	  }
+	}
+  },
 /* selection */
 
   isSelectable : function(row, col){return true;},
@@ -584,7 +688,6 @@ gardenTree.prototype = {
 	//this.selection.selectEventsSuppressed = true;
 	  var selected = [];
 	  var rangeCount = this.selection.getRangeCount();
-	  var currentIndex = -1;
 	  for (var i = 0; i < rangeCount; i++)
 	  {
 		//garden.s.dump('selectionGetSelectedItemsFOR1');
@@ -594,17 +697,15 @@ gardenTree.prototype = {
 		 for(var c = start.value; c <= end.value; c++)
 		 {
 		  //garden.s.dump('selectionGetSelectedItemsFOR2');
-			if(currentIndex === -1)
-			  this.selection.currentIndex = c;
 			selected[selected.length] = this._rows[c];
 		 }
 	  }
-	//this.selection.selectEventsSuppressed = false;
+
+	//this.selection.currentIndex = currentIndex;
 	this.selectionGoingToChange--;
 	//garden.s.dump('selectionGetSelectedItemsend');
 	return selected;
   },
-  
   selectionGetSelectedItem : function()
   {
 	//garden.s.dump('selectionGetSelectedItem');
@@ -671,8 +772,13 @@ gardenTree.prototype = {
 
   childrenOnClick : function(event)
   {
-	//garden.s.dump('childrenOnClick');
+	//garden.s.dump('childrenOnClick'+event.button);
 	if(event.button == 2){}
+	else if(event.button == 1)
+	{
+	  document.popupNode = null;
+	  garden.gardenCommand('edit');
+	}
 	else
 	{
 	  if(this.editable && !this.getEventRowIsTwistyOrIsImage(event))
@@ -697,7 +803,7 @@ gardenTree.prototype = {
   childrenOnDblClick : function(event)
   {
 	//garden.s.dump('childrenOnDblClick');
-	if(event.button == 2){}
+	if(event.button == 2){ garden.s.stopEvent(event);return false; }
 	else
 	{
 	  if(this.editable)
@@ -716,30 +822,102 @@ gardenTree.prototype = {
 		}
 		else
 		{
+		  document.popupNode = null;
 		  garden.gardenCommand('open');
 		}
 	  }
 	}
 	return true;
   },
-  
+  treeOnDblClick :function(event)
+  {
+	if(event.button == 2){ garden.s.stopEvent(event);return false; }
+  },
   treeOnKeyPress : function(event)
   {
 	if(event.originalTarget.tagName == 'html:input'){}
 	else
 	{
-	  switch(garden.s.eventKeyCode(event))
+	  //garden.s.dump('keyCode:'+event.keyCode);
+	  //garden.s.dump('which:'+event.which);
+	
+	  switch(event.which)
+	  {
+		case 32://space bar ( focus parent next sibling or next sibling )
+		  {
+			this.scrollFocusParentNextSibling();
+			garden.s.stopEvent(event);
+			break;
+		  }
+		case 102://CTRL F find and replace
+		  {
+			if(event.ctrlKey)
+			{
+			  document.popupNode = null;
+			  garden.gardenCommand('find-replace');
+			  garden.s.stopEvent(event);
+			}
+			break;
+		  }
+		case 101://CTRL E edit with komodo
+		  {
+			if(event.ctrlKey)
+			{
+			  document.popupNode = null;
+			  garden.gardenCommand('edit');
+			  garden.s.stopEvent(event);
+			}
+			break;
+		  }
+		case 97://CTRL A select all
+		  {
+			if(event.ctrlKey)
+			{
+			   this.selection.selectAll()
+			   garden.s.stopEvent(event);
+			}
+			break;
+		  }
+		case 105://CTRL I select inverse
+		  {
+			if(event.ctrlKey)
+			{
+			   this.selection.invertSelection()
+			   garden.s.stopEvent(event);
+			}
+			break;
+		  }
+		case 110://CTRL N new file
+		  {
+			if(event.ctrlKey)
+			{
+			  document.popupNode = null;
+			  garden.gardenCommand('new-file');
+			  garden.s.stopEvent(event);
+			}
+			break;
+		  }
+		case 114://CTRL R soft refresh
+		  {
+			if(event.ctrlKey)
+			{
+			  document.popupNode = null;
+			  garden.gardenCommand('refresh');
+			  garden.s.stopEvent(event);
+			}
+			break;
+		  }
+		default:
+		  {
+			garden.s.dump('which:'+event.which);
+		  }
+	  }
+	  switch(event.keyCode)
 	  {
 		case 8://back on history <-- key
 		  {
 			if(!this.historyGoBack())
 			  this.baseGoUp();
-			garden.s.stopEvent(event);
-			break;
-		  }
-		case 27://escape ( this should focus previous folder )
-		  {
-			garden.gardenCommand('focusPreviousFolderParentLevel');
 			garden.s.stopEvent(event);
 			break;
 		  }
@@ -778,43 +956,63 @@ gardenTree.prototype = {
 			garden.s.stopEvent(event);
 			break;
 		  }
-		case 116://F5 refresh
+		case 116://F5 reload
 		  {
-			this.refreshHard();
-			break;
-		  }
-		case 13://open
-		  {
-			garden.gardenCommand('open-from-tree');
-			break;
-		  }
-		case 102://CTRL F
-		  {
-			if(event.ctrlKey)
-			{
-			 garden.gardenCommand('find');
-			 garden.s.stopEvent(event);
-			}
+			this.selectionGoingToChange++;
+			this.selectionSave();
+			  this.scrollSave();
+				this.reload();
+			  this.scrollRestore();
+			this.selectionGoingToChange--;
+			this.selectionRestore();
 			break;
 		  }
 		case 46://delete
 		  {
-			garden.gardenCommand('delete');
+			document.popupNode = null;
+			if(event.shiftKey)
+			  garden.gardenCommand('delete');
+			else
+			  garden.gardenCommand('trash');
 			break
 		  }
-		case 32://space bar ( focus next folder )
+		case 27://escape ( focus Parent folder or previous sibling )
 		  {
-			garden.gardenCommand('focusNextFolderSameLevel');
+			this.scrollFocusParent();
+			garden.s.stopEvent(event);
+			break;
+		  }
+		case 13://open
+		  {
+			if(event.ctrlKey)
+			{
+			  document.popupNode = null;
+			  garden.gardenCommand('show-in-folder');
+			}
+			else
+			{
+			  document.popupNode = null;
+			  garden.s.timerAdd(30, function(){ garden.gardenCommand('open-from-tree');});
+			  garden.s.stopEvent(event);
+			  return false;
+			}
+			break;
+		  }
+		case 114://F3
+		  {
+			document.popupNode = null;
+			garden.gardenCommand('find-replace');
+			garden.s.stopEvent(event);
 			break;
 		  }
 		default:
 		  {
-			garden.s.dump(garden.s.eventKeyCode(event));
+			garden.s.dump('keyCode:'+event.keyCode);
 		  }
 	  }
 	}
+	return true;
   },
-
 
   drop : function(row, orientation, dataTransfer){ garden.s.dump('drop');return false;},
   canDrop : function(index, orientation, dataTransfer){ garden.s.dump('canDrop');return false;},
@@ -864,6 +1062,7 @@ gardenTree.prototype = {
   },
 
 /* session */
+
   sessionSave:function()
   {
 	garden.s.serializedSessionSet(
@@ -895,7 +1094,8 @@ gardenTree.prototype = {
 		
 	  this.currentPath = aPath;
 	  	  
-	  this.removeChilds();
+	  if(this.tree)//if the tree was created
+		this.removeChilds();
 	  
 	  var aData = {}
 		  aData.aLevel = 0;
@@ -978,10 +1178,13 @@ gardenTree.prototype = {
   {
 	var currentPath = this.currentPath.split(this.instance.__DS).pop();
 		if(!currentPath || currentPath == '')
-		  currentPath = this.instance.name+''+this.instance.__DS;
+		  currentPath = this.instance.label+''+this.instance.__DS;
 	return currentPath;
   },
-  refreshHard :function()
+  
+/* refresh */
+
+  reload :function()
   {
 	this.instance.sessionRemove();
 	this.instance.cleanCacheListings();
@@ -991,7 +1194,32 @@ gardenTree.prototype = {
 	var currentPath = this.currentPath;
 	this.currentPath = '';
 	this.baseChange(currentPath);
-	//garden.s.dump('refreshHard:end');
+	//garden.s.dump('reload:end');
+  },
+  refreshPath:function(aPath)
+  {
+	var listings = this.instance.listings;
+	for(var id in listings)
+	{
+	  if(aPath == id || id.indexOf(aPath+this.instance.__DS) === 0)
+		this.instance.listings[id] = {};
+	}
+	
+	var aRow = this.findRowIDFromPath(aPath);
+	if(aRow != -1)
+	{
+	  var aRowState = this.getRowStateFromID(this._rows[aRow].id);
+	  
+	  if(aRowState.isContainerOpen)
+	  {
+		aRowState.isContainerOpen = false;
+		this.toggleOpenState(aRow);
+	  }
+	}
+	else
+	{
+	  this.reload();
+	}
   },
   
 /* editing */
@@ -1007,7 +1235,8 @@ gardenTree.prototype = {
 		  aData.path = this._rows[row].path;
 		  aData.newName = value;
 		  aData.isDirectory = this._rows[row].isDirectory;
-	  garden.gardenCommand('renameFromTree', aData);
+	  document.popupNode = null;
+	  garden.gardenCommand('rename', aData);
 	}
 	//garden.s.dump('setCellTextend');
   },
@@ -1031,7 +1260,7 @@ gardenTree.prototype = {
 	  //hack hack hack avoids tree autoresizing when editing
 	  //this.treeElement.setAttribute('height', height);
 	  //this.treeElement.setAttribute('width', width);
-	  
+
 	  this.event.renaming = false;
 	}
 	else if(selectedItems.length > 1)
@@ -1053,7 +1282,7 @@ gardenTree.prototype = {
   {
 	var rowObject = this._rows[i];
 	var rowState = this.getRowStateFromID(rowObject.id);
-	if(rowState.isBusy)
+	if(rowState.isBusy && this.instance.object.shouldShowLoading)
 	  properties.AppendElement(garden.s.mAtomIconBusy);
 	else if(!rowObject.isDirectory && rowObject.extension != '')
 	  properties.AppendElement(garden.s.getAtom('g'+rowObject.extension));
@@ -1093,6 +1322,35 @@ gardenTree.prototype = {
 	while(--i >= 0 && this.getLevel(i) >= aLevel){}
 	return i;
   },
+  getParentNextSiblingIndex : function(i)
+  {
+	var aParentI = this.getParentIndex(i);
+	if(aParentI == -1)
+	  return -1;
+	var aLevel = this.getLevel(aParentI);
+	var rowCount = this.rowCount;
+	while(++i < rowCount && this.getLevel(i) != aLevel){}
+	if(this._rows[i])
+		return i;
+	else
+	  return -1;
+  },
+  getPreviousSiblingIndex:function(i)
+  {
+	var aLevel = this.getLevel(i);
+	while(--i >= 0 && this.getLevel(i) != aLevel){}
+	return i;
+  },
+  getNextSiblingIndex:function(i)
+  {
+	var aLevel = this.getLevel(i);
+	var rowCount = this.rowCount;
+	while(++i < rowCount && this.getLevel(i) != aLevel){}
+	if(this._rows[i])
+		return i;
+	else
+	  return -1;
+  },
   hasNextSibling : function(i, afterIndex)
   {
 	var aLevel = this.getLevel(i);
@@ -1117,6 +1375,10 @@ gardenTree.prototype = {
   isSorted : function(){return true;},
   isContainer : function(i){return this._rows[i].isDirectory;},
   isContainerOpen : function(i){return this.getRowStateFromID(this._rows[i].id).isContainerOpen;},
+  isContainerOpenFromPathID : function(aPathID)
+  {
+	return this.getRowStateFromID(aPathID).isContainerOpen;
+  },
   isContainerEmpty : function(i){return this.getRowStateFromID(this._rows[i].id).isContainerEmpty;},
   
   cycleCell : function(row, col){garden.s.dump('cycleCell');},

@@ -45,6 +45,7 @@
 		<menuitem locked="true" action="rename-group" label="Rename group" class="menuitem-iconic g-group-rename"/>
 		<menuitem locked="true" action="delete-group" label="Remove group" class="menuitem-iconic g-group-delete"/>
 		<menuseparator locked="true"/>
+		<menuitem locked="true" type="checkbox" checked="true" action="sibling-tree" label="Is a sibling tree" class="menuitem-iconic g-group-tree-sibling"/>
 		<menuitem locked="true" action="delete-tree" label="Remove tree from group" class="menuitem-iconic g-group-tree-delete"/>
 	  </menupopup>
 	  

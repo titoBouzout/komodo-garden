@@ -1,4 +1,21 @@
 
+  #g-toolbar-top
+  {
+	background-image: url(chrome://asynchremote/content/icons/toolbar/background-toolbar.png);
+	background-repeat: repeat-x;
+	border-top:1px solid #868686;
+  }
+  #g-groups
+  {
+	background-image: url(chrome://asynchremote/content/icons/toolbar/background-box.png);
+	background-repeat: repeat-x;
+  }
+  #right_toolbox_tabpanels
+  {
+	margin:0px;
+	padding:0px;
+  }
+  
 /* navigation */
   
 	.g-toolbar-breadcrumb{
@@ -31,8 +48,8 @@
 	.g-toolbar-base-forward[disabled] {
 	  list-style-image : url("chrome://asynchremote/content/icons/toolbar/base-forward-disabled.png");
 	}
-	.g-toolbar-base-refresh {
-	  list-style-image : url("chrome://asynchremote/content/icons/toolbar/base-refresh.png");
+	.g-toolbar-reload {
+	  list-style-image : url("chrome://asynchremote/content/icons/toolbar/reload.png");
 	}
   
   	.g-toolbar-tools {

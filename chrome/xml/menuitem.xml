@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE bindings [
+
+]>
+
+<bindings xmlns="http://www.mozilla.org/xbl"
+          xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+          xmlns:xbl="http://www.mozilla.org/xbl">
+
+  <binding
+		id="g-menuitem-single-xbl"
+		extends="chrome://global/content/bindings/menu.xml#menuitem-base"
+  >
+	
+	<content class="g-menuitem-content">
+	  <xul:hbox class="g-menuitem-container" anonid="container" flex="1">
+		<xul:button
+		  xbl:inherits="label,action,class=class1,multiple,disableif" 
+		  allowevents="true"
+		  pack="left"
+		  flex="1"
+		/>
+	  </xul:hbox>
+	</content>
+		  
+  </binding>
+
+  <binding
+		id="g-menuitem-double-xbl"
+		extends="chrome://global/content/bindings/menu.xml#menuitem-base"
+  >
+	
+	<content class="g-menuitem-content">
+	  <xul:hbox class="g-menuitem-container" anonid="container" flex="1">
+		<xul:button
+		  xbl:inherits="label=label1,action=action1,class=class1,multiple,disableif=disableif1,tooltiptext=tooltiptext1" 
+		  allowevents="true"
+		  pack="left"
+		  flex="1"
+		/>
+		<xul:button
+		  xbl:inherits="label=label2,action=action2,class=class2,multiple,disableif=disableif2,tooltiptext=tooltiptext2" 
+		  allowevents="true"
+		  pack="left"
+		  flex="1"
+		/>
+	  </xul:hbox>
+	</content>
+		  
+  </binding>
+	
+  <binding
+	  id="g-menuitem-triple-xbl"
+	  extends="chrome://global/content/bindings/menu.xml#menuitem-base"
+  >
+	<content class="g-menuitem-content">
+	  <xul:hbox class="g-menuitem-container" anonid="container" flex="1">
+		<xul:button
+		  xbl:inherits="label=label1,action=action1,class=class1,multiple,disableif=disableif1,tooltiptext=tooltiptext1" 
+		  allowevents="true"
+		  pack="left"
+		  flex="1"
+		/>
+		<xul:button
+		  xbl:inherits="label=label2,action=action2,class=class2,multiple,disableif=disableif2,tooltiptext=tooltiptext2" 
+		  allowevents="true"
+		  pack="left"
+		  flex="1"
+		/>
+		<xul:button
+		  xbl:inherits="label=label3,action=action3,class=class3,multiple,disableif=disableif3,tooltiptext=tooltiptext3" 
+		  allowevents="true"
+		  pack="left"
+		  flex="1"
+		/>
+	  </xul:hbox>
+	</content>
+		
+  </binding>
+	
+</bindings>

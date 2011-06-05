@@ -105,9 +105,9 @@
 				  
 		  <toolbarbutton
 			buttonstyle="pictures" type="button" persist="buttonstyle" orient="horizontal"
-			class="g-toolbar-base-refresh"
-			tooltiptext="Refresh Hard"
-			oncommand="garden.focusedTree.refreshHard();"
+			class="g-toolbar-reload"
+			tooltiptext="Clean cache and reload"
+			oncommand="garden.focusedTree.reload();"
 		  />
 		  
 		  <toolbarbutton
@@ -125,9 +125,9 @@
 			  <menuseparator/>
 			  <menuitem oncommand="garden.toolsSaveOptions();" id="g-tools-upload-and-rename" type="checkbox" checked="false" label="Treat files as '.kup' and then rename the file"/>
 			  <menuseparator/>
-			  <menuitem disabled="true" type="checkbox" checked="true" label="Single tree view"/>
-			  <menuitem disabled="true" type="checkbox" checked="false" label="Multiples trees horizontal"/>
-			  <menuitem disabled="true" type="checkbox" checked="false" label="Multiples trees vertical"/>
+			  <menuitem type="radio" oncommand="garden.switchViewType();" id="g-tools-sidebar-view-single" checked="true" label="Single tree view"/>
+			  <menuitem type="radio" oncommand="garden.switchViewType();" id="g-tools-sidebar-view-multiple-horizontal" checked="false" label="Multiples trees horizontal"/>
+			  <menuitem type="radio" oncommand="garden.switchViewType();" id="g-tools-sidebar-view-multiple-vertical" checked="false" label="Multiples trees vertical"/>
 			  <menuseparator/>
 			  <menuitem oncommand="garden.toolsContribute();" label="Support extension author" class="menuitem-iconic" image="chrome://asynchremote/content/icons/toolbar/balance.png"/>
 

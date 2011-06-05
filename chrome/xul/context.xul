@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<overlay xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+ 
+	<!-- container -->		  
+	<popupset id="extensionPopupSet">
+	
+	  <!-- remote tree context menu
+	 -->
+	  <menupopup
+		id="g-tree-context"
+		onpopupshowing="return garden.treeContextPopupShowing(event)"
+		oncommand="garden.gardenCommand(event.originalTarget.getAttribute('action'))"
+		onmouseover="garden.treeContextMouseOver(event)"
+		onmouseout="garden.treeContextMouseOut(event)"
+		class="g-tree-context"
+	  >
+		<menuitem
+		  id="g-context-find-replace"
+		  label="Find &amp; Replace…"
+		  class="g-menuitem-single-xbl"
+		  class1="g-menuitem g-find-replace"
+		  action="find-replace"
+		  disableif="remote"
+		  tooltiptext="Find and replace on selected items - Ctrl+F or F3"
+		/>
+		<menuseparator/>
+		<menuitem
+		  id="g-context-new"
+		  class="g-menuitem-double-xbl"
+		  label1="File…"
+		  label2="Folder…"
+		  action1="new-file"
+		  action2="new-folder"
+		  class1="g-menuitem g-new-file"
+		  class2="g-menuitem g-new-folder"
+		  tooltiptext1="Create a new file - Ctrl+N"
+		  tooltiptext2="Create a new folder"
+        />
+		<menuseparator/>
+		<menuitem
+		  id="g-context-clipboard-1"
+		  class="g-menuitem-double-xbl"
+		  label1="Cut"
+		  label2="Copy"
+		  action1="cut"
+		  action2="copy"
+		  class1="g-menuitem g-cut"
+		  class2="g-menuitem g-copy"
+		  tooltiptext1="Cut selected items - Ctrl+X"
+		  tooltiptext2="Copy selected items - Ctrl+C"
+		  disableif1="remote root"
+		  disableif2="remote root"
+        />
+		<menuitem
+		  id="g-context-clipboard-2"
+		  class="g-menuitem-double-xbl"
+		  label1="Paste"
+		  label2="Duplicate"
+		  action1="paste"
+		  action2="duplicate"
+		  class1="g-menuitem g-paste"
+		  class2="g-menuitem g-duplicate"
+		  disableif1="remote"
+		  disableif2="root remote"
+		  tooltiptext1="Paste into - Ctrl+V"
+		  tooltiptext2="Duplicate selected items - Ctrl+D"
+        />
+
+		<menuseparator/>
+
+		<menuitem
+		  id="g-context-edit-open"
+		  class="g-menuitem-double-xbl"
+		  label1="Edit"
+		  label2="Open"
+		  action1="edit"
+		  action2="open"
+		  class1="g-menuitem g-edit"
+		  class2="g-menuitem g-open"
+		  disableif1="root onlyFolders"
+		  disableif2="root OnlyFoldersBrowserRemote"
+		  tooltiptext1="Edit with Komodo - Ctrl+E or Middle click (files only)"
+		  tooltiptext2="Open with the Operative System - Enter"
+        />
+		<menuseparator/>
+		
+		<menuitem
+		  id="g-context-refresh-reload"
+		  class="g-menuitem-double-xbl"
+		  label1="Refresh"
+		  label2="Reload"
+		  action1="refresh"
+		  action2="reload"
+		  class1="g-menuitem g-refresh"
+		  class2="g-menuitem g-reload"
+		  disableif1="browser"
+		  disableif2="browser"
+		  tooltiptext1="Clean cache of selected and reload - Ctrl+R"
+		  tooltiptext2="Clean cache and reload all - F5"
+        />
+		<menuseparator/>
+
+		<menuitem
+		  id="g-context-upload-download"
+		  class="g-menuitem-double-xbl"
+		  label1="Upload"
+		  label2="Download"
+		  action1="upload"
+		  action2="download"
+		  class1="g-menuitem g-upload"
+		  class2="g-menuitem g-download"
+        />
+
+		<menuitem
+		  id="g-context-download-to-folder"
+		  label="Download to…"
+		  class1="g-menuitem g-download-to-folder"
+		  class="g-menuitem-single-xbl"
+		  action="download-to-folder"
+        />
+		<menuseparator/>
+
+		<menuitem
+		  id="g-context-diff"
+		  label="Compare With Local"
+		  class1="g-menuitem g-diff"
+		  class="g-menuitem-single-xbl"
+		  action="diff"
+		  disableif="root onlyFolders"
+        />
+		<menuseparator/>
+		
+		<menuitem
+		  id="g-context-show-in-folder"
+		  label="Reveal in Folder…"
+		  class1="g-menuitem g-show-in-folder"
+		  class="g-menuitem-single-xbl"
+		  action="show-in-folder"
+		  disableif="remote"
+		  tooltiptext="Reveal in folder - Ctrl+Enter or Middle click (on folders only)"
+        />
+		<menuitem
+		  id="g-context-locate"
+		  label="Locate in Local"
+		  class1="g-menuitem g-locate"
+		  class="g-menuitem-single-xbl"
+		  disableif="multiple root file folder"
+		  action="locate-places"
+        />
+		<menuitem
+		  id="g-context-rebase"
+		  label="Make This Folder Root"
+		  class1="g-menuitem g-rebase"
+		  class="g-menuitem-single-xbl"
+		  disableif="root multiple parentIsRoot browser"
+		  action="rebase"
+		  tooltiptext="Rebase tree into this folder"
+        />
+		<menuseparator/>
+
+		<menuitem
+		  id="g-context-rename-move"
+		  class="g-menuitem-double-xbl"
+		  label1="Rename…"
+		  label2="Move…"
+		  action1="rename-from-tree"
+		  action2="move"
+		  class1="g-menuitem g-rename"
+		  class2="g-menuitem g-move"
+		  disableif1="multiple root"
+		  disableif2="multiple root"
+		  tooltiptext1="Rename selected - F2"
+		  tooltiptext2="Move selected"
+        />
+		<menuseparator/>
+
+		<menuitem
+		  id="g-context-trash-delete"
+		  class="g-menuitem-double-xbl"
+		  label1="Trash"
+		  label2="Delete"
+		  action1="trash"
+		  action2="delete"
+		  class1="g-menuitem g-trash"
+		  class2="g-menuitem g-delete"
+		  disableif1="root remote"
+		  disableif2="root"
+		  tooltiptext1="Send to trash - Supr"
+		  tooltiptext2="Delete permanently - Shift+Supr"
+        />
+		<menuseparator id="g-context-permissions-separator"/>
+		
+		<menuitem
+		  id="g-context-permissions"
+		  label="Permissions…"
+		  class1="g-menuitem g-permissions"
+		  class="g-menuitem-single-xbl"
+		  action="permissions"
+		  tooltiptext="Set permissions"
+        />
+	
+	  </menupopup>
+  </popupset>
+  
+</overlay>

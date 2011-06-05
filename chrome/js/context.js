@@ -18,7 +18,7 @@
 		)
 	)
 	{
-	  //this.s.dump('the mouse is over!');
+	  this.s.dump('the mouse is over!');
 	  this.s.timerAdd(50, function(){ garden.treeContextAllowMouseOut = true;});
 	}
   }
@@ -34,10 +34,14 @@
 	   this.treeContextAllowMouseOut &&
 	   aEvent.relatedTarget &&
 	   aEvent.relatedTarget.parentNode &&
-	   aEvent.relatedTarget.parentNode != this.element('g-tree-context')
+	   aEvent.relatedTarget.parentNode != this.element('g-tree-context') && 
+	   aEvent.relatedTarget.parentNode.parentNode &&
+	   aEvent.relatedTarget.parentNode.parentNode != this.element('g-tree-context') && 
+	   aEvent.relatedTarget.parentNode.parentNode.parentNode &&
+	   aEvent.relatedTarget.parentNode.parentNode.parentNode != this.element('g-tree-context')
 	)
 	{
-	  //this.s.dump('the mouse is out!');
+	  this.s.dump('the mouse is out!');
 	  this.treeContextAllowMouseOver = false;
 	  this.s.timerAdd(50, function(){ garden.treeContextAllowMouseOver = true;});
 	  this.treeContextAllowMouseOut = false;
@@ -56,32 +60,53 @@
 		numFiles = 0,
 		numFolders = 0,
 		parentIsRoot = false,
-		browser = false;
+		browser = false,
+		type = 'local';
 		
 	if(document.popupNode && document.popupNode == this.element('g-toolbar-breadcrumb'))//clicked root button..
 	{
-	  this.s.dump('the clicked element is the root button');
+	  //this.s.dump('the context menu is shown from the root button');
 	  
-	  multiple = false;
-	  file = false;
+	  var selectedTree = this.focusedTree;
+	  var selectedInstance = this.focusedInstance;
+	  
 	  folder = true;
 	  root = true;
+	  numFolders = 1;
+	  type = selectedInstance.type;
 	}
 	else if(document.popupNode && document.popupNode.hasAttribute('path'))
 	{
+	  //this.s.dump('the context menu is shown from the "browser" element');
+		  
+	  var selectedTree = this.trees[document.popupNode.getAttribute('treeID')];
+	  var selectedInstance = this.instances[document.popupNode.getAttribute('treeID')] ||  this										.gardenDrivers.getInstance(
+										  document.popupNode.getAttribute('treeID'),
+										  document.popupNode.getAttribute('aDriverTypeID'),
+										  document.popupNode.getAttribute('entryID')
+										);
+		  
 	  multiple = false;
-	  file = false;
-	  folder = true;
-	  root = false;
+	  file = !(document.popupNode.getAttribute('isDirectory') == 'true');
+	  if(file)
+		numFiles = 1;
+	  else
+		numFolders = 1;
+	  folder = (document.popupNode.getAttribute('isDirectory') == 'true');
 	  browser = true;
-	  this.s.dump('the clicked element is a menuitem from a "browser" element');
+	  type = selectedInstance.type;
 	}
 	else
 	{
-	  this.s.dump('the clicked element is a tree childreen');
-
+	  //this.s.dump('the context menu is shown from the tree');
+	  
+	  var selectedTree = this.focusedTree;
+	  var selectedInstance = this.focusedInstance;
+	  
+	  type = selectedInstance.type;
+	  
 	  //get tree selection and properties
-	  var selectedItems = this.focusedTree.selectionGetSelectedItems();
+	  var selectedItems = selectedTree.selectionGetSelectedItems();
 
 	  if(selectedItems.length > 1)
 		multiple = true;
@@ -102,8 +127,8 @@
 		  //resolve if parent is root
 		  if(
 			this.s.subStrCount(
-					  selectedItems[id].path.replace(this.focusedTree.currentPath, '')
-					  , this.focusedInstance.__DS
+					  selectedItems[id].path.replace(selectedTree.currentPath, '')
+					  , selectedInstance.__DS
 			) < 2
 		  )	  
 			parentIsRoot = true;
@@ -113,51 +138,90 @@
 	
 	var aContext = this.element('g-tree-context');
 	
-	//update the context menu
-	var items = aContext.childNodes;
-
+	//update the context menu disableif items
+	var items = aContext.childNodes, andSubItems = [], item;
 	for(var id =0;id<items.length;id++)
 	{
-	  var item = items[id];
-	  if(item.hasAttribute('testDisableIf'))
+	  andSubItems = [];
+	  var anonItems = document.getAnonymousElementByAttribute(items[id], 'anonid', 'container')
+	  if(!anonItems)
+		continue;
+	  anonItems = anonItems.childNodes;
+	  for(var i =0;i<anonItems.length;i++)
 	  {
-		if(!file && folder && item.getAttribute('testDisableIf').indexOf('onlyFolders') != -1)
-		  item.setAttribute('disabled', true);
-		else if(file && !folder && item.getAttribute('testDisableIf').indexOf('onlyFiles') != -1)
-		  item.setAttribute('disabled', true);
-		else if(numFiles != 2 && item.getAttribute('testDisableIf').indexOf('notTwoFiles') != -1)
-		  item.setAttribute('disabled', true);
-		else if(folder && item.getAttribute('testDisableIf').indexOf('folder') != -1)
-		  item.setAttribute('disabled', true);
-		else if(file && item.getAttribute('testDisableIf').indexOf('file') != -1)
-		  item.setAttribute('disabled', true);
-		else if(multiple && item.getAttribute('testDisableIf').indexOf('multiple') != -1)
-		  item.setAttribute('disabled', true);
-		else if(root && item.getAttribute('testDisableIf').indexOf('root') != -1)
-		  item.setAttribute('disabled', true);
-		else if(parentIsRoot && item.getAttribute('testDisableIf').indexOf('parentIsRoot') != -1)
-		  item.setAttribute('disabled', true);
-		else if(browser && item.getAttribute('testDisableIf').indexOf('browser') != -1)
-		  item.setAttribute('disabled', true);
-		else
-		  item.removeAttribute('disabled');
+		//this.s.dump('looking into '+anonItems[i].getAttribute('label'));
+		if(anonItems[i].hasAttribute('disableif'))
+		{
+		  andSubItems[andSubItems.length] = anonItems[i];
+		}
+	  }
+	  for(var a=0;a<andSubItems.length;a++)
+	  {
+		item = andSubItems[a];
+		
+		if(item.hasAttribute('disableif'))
+		{
+		  var disableif = item.getAttribute('disableif');
+		  if(!file && folder && disableif.indexOf('onlyFolders') != -1)
+			item.setAttribute('disabled', true);
+		  else if(!file && folder && browser && type == 'remote' && disableif.indexOf('OnlyFoldersBrowserRemote') != -1)
+			item.setAttribute('disabled', true);
+		  else if(file && !folder && disableif.indexOf('onlyFiles') != -1)
+			item.setAttribute('disabled', true);
+		  else if(numFiles != 2 && disableif.indexOf('notTwoFiles') != -1)
+			item.setAttribute('disabled', true);
+		  else if(folder && disableif.indexOf('folder') != -1)
+			item.setAttribute('disabled', true);
+		  else if(file && disableif.indexOf('file') != -1)
+			item.setAttribute('disabled', true);
+		  else if(multiple && disableif.indexOf('multiple') != -1)
+			item.setAttribute('disabled', true);
+		  else if(root && disableif.indexOf('root') != -1)
+			item.setAttribute('disabled', true);
+		  else if(parentIsRoot && disableif.indexOf('parentIsRoot') != -1)
+			item.setAttribute('disabled', true);
+		  else if(browser && disableif.indexOf('browser') != -1)
+			item.setAttribute('disabled', true);
+		  else if(type == 'remote' && disableif.indexOf('remote') != -1)
+			item.setAttribute('disabled', true);
+		  else if(type == 'local' && disableif.indexOf('local') != -1)
+			item.setAttribute('disabled', true);
+		  else
+			item.removeAttribute('disabled');
+		}
 	  }
 	}
   
+	//if multiples files are selected change icons to "multiple"
 	if(multiple)
+	  this.element('g-context-upload-download').setAttribute('multiple', true);
+	else
+	  this.element('g-context-upload-download').removeAttribute('multiple');
+	
+	//based on driver features hide or show these "features"
+	if(typeof(selectedInstance.object.chmod) == 'function')
 	{
-	  this.element('g-context-upload').setAttribute('multiple', true);
-	  this.element('g-context-download').setAttribute('multiple', true);
+	  this.element('g-context-permissions-separator').removeAttribute('hidden');
+	  this.element('g-context-permissions').removeAttribute('hidden');
 	}
 	else
 	{
-	  this.element('g-context-upload').removeAttribute('multiple');
-	  this.element('g-context-download').removeAttribute('multiple');
+	  this.element('g-context-permissions-separator').setAttribute('hidden', true);
+	  this.element('g-context-permissions').setAttribute('hidden', true);
 	}
+	
+	//based on "view type" tree or browser change some functions
+	
+	if(browser)
+	{
+	  this.element('g-context-rename-move').setAttribute('action1', 'rename-from-browser');
+	}
+	else
+	{
+	  this.element('g-context-rename-move').setAttribute('action1', 'rename-from-tree');
+	}
+	
 	return true;
   }
-    
-  
   
 }).apply(garden);
- 

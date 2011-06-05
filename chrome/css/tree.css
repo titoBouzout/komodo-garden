@@ -17,7 +17,17 @@
   border-bottom:0px !important;
   margin-left:16px !important;
   overflow:hidden !important;
-  margin-right:-20px !important;
+  margin-right:-9px !important;
+}
+
+/*save space by reducing width of scrollbars*/
+.g-tree > stack > treerows > scrollbar,
+.g-tree > stack > treerows > scrollbar > scrollbarbutton,
+.g-tree > stack > treerows > scrollbar > slider
+{
+  max-width:9px !important;
+  width:9px !important;
+  min-width:9px !important;
 }
 /*save space in the tree by reducing the margin and height of the rows */
 .g-tree treechildren::-moz-tree-row {
@@ -32,9 +42,23 @@
 .g-tree treechildren::-moz-tree-indentation {
   margin:0px;
   padding:0px;
-  width:15px;
+  width:9px;
 }
 /*the space bewten the image and the name of the file/folder*/
 .g-tree treechildren::-moz-tree-image {
   margin-right:3px;
+}
+/*remove the collapse and expand images*/
+.g-tree treechildren::-moz-tree-twisty {
+  -moz-appearance:none !important;
+  display:none !important;
+  list-style-type:none !important;
+  list-style-image:none !important;
+  margin:0px !important;
+  padding:0px !important;
+  border:0px !important;
+  width:0px !important;
+  height:0px !important;
+  min-height:0px !important;
+  min-width:0px !important;
 }

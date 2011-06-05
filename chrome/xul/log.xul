@@ -9,10 +9,6 @@
 	  id="g-log-panel"
 	  class="g-log-panel"
 	  resizable="true"
-	  onpopuphidden="
-		garden.logDontShowForAWhile = true;
-		garden.s.timerAdd(150, function(){ garden.logDontShowForAWhile = false;});
-	  "
 	>
 	  <vbox>
 		<richlistbox
@@ -29,14 +25,15 @@
 		<hbox style="padding-top:1px;padding-bottom:2px;">
 		  <description style="margin: 6px ! important;" value="Show the following messages:"/>
 		  <checkbox label="Progress" id="g-log-show-progress" oncommand="garden.logSaveOptions()"/>
+		  <checkbox label="Sucess" id="g-log-show-sucess" oncommand="garden.logSaveOptions()"/>
 		  <checkbox label="Warnings" id="g-log-show-warning" oncommand="garden.logSaveOptions()"/>	
 		  <checkbox label="Errors" id="g-log-show-error" oncommand="garden.logSaveOptions()"/>
-		  <checkbox label="Sucess" id="g-log-show-sucess" oncommand="garden.logSaveOptions()"/>
+
 		  <textbox id="g-log-search" emptytext="Search…" placeholder="Search…" flex="1" 
 				type="search" timeout="230"
 				oncommand="garden.logUpdate();"
 				onkeypress="
-				  if(garden.s.eventKeyCode(event) == 27)
+				  if(event.keyCode == 27)
 				  {
 					if(this.value=='')
 					{
@@ -46,7 +43,7 @@
 					  garden.s.stopEvent(event);
 					}
 				  }
-				  else if(garden.s.eventKeyCode(event) == 13)
+				  else if(event.keyCode == 13)
 					garden.logUpdate();
 				"
 				style="padding:0px;padding-left:2px;padding-right:2px;margin:0px;"

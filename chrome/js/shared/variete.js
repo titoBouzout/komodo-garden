@@ -1,47 +1,24 @@
-  this.serializerParser = function(aData)
+
+  this.resolveLocalPath = function(aRemotePath, aRemoteOriginalPath, aLocalOriginalPath, aRemoteDS, aLocalDS)
   {
-	for(var id in aData.server)
-	{
-	  aData.server[id].isBusy = false;
-	  aData.server[id].isLoading = false;
-	}
-	for(var id in aData.tree)
-	{
-	  aData.tree[id].isBusy = false;
-	  aData.tree[id].isLoading = false;
-	}
-	return aData;
-  }
-  this.getServerURIForPath = function(aPath, aConnection)
-  {
-	var aURI = '';
-	  aURI += aConnection.protocol.toLowerCase() + '://';
-	if(aConnection.username)
-	  aURI += this.encodeUTF8(aConnection.username);
-	if(aConnection.username && aConnection.password)
-	  aURI += ':' + this.encodeUTF8(aConnection.password);
-	if(aConnection.username)
-	  aURI += '@';
-	aURI += aConnection.server;
+	var aRemotePath2 = aRemotePath.replace(aRemoteDS+aRemoteOriginalPath+aRemoteDS, '');
 	
-	if(aConnection.port > 0)
-	  aURI += ':' + aConnection.port;
-	if(aPath)
-	  aURI += this.encodePath(aPath);
-	return aURI;
-  }
-  this.getLocalPathFromRemotePath = function(aRemotePlacesPath, aLocalPlacesPath, aRemoteFile)
-  {
-	aRemoteFile = aRemoteFile.replace(aRemotePlacesPath, '');
-	aRemoteFile = aLocalPlacesPath+'/'+aRemoteFile;
-	aRemoteFile = aRemoteFile
-					  .split(this.__DS).join('/')
-					  .split('\\').join('/')
-					  .split('//').join('/')
-					  .split('//').join('/')
-					  .split('//').join('/')
-					  .split('/').join(this.__DS);
-	return aRemoteFile;
+	if(aRemotePath2 != aRemotePath){}
+	else
+	{
+	  aRemotePath2 = aRemotePath.replace(aRemoteDS+aRemoteOriginalPath, '');
+	  if(aRemotePath2 != aRemotePath){}
+	  else
+		aRemotePath2 = aRemotePath.replace(aRemoteOriginalPath, '');
+	}
+	
+	var regexp = new RegExp('^'+aRemoteDS);
+	aRemotePath2 = aRemotePath2.replace(regexp, '');
+	var regexp = new RegExp(aRemoteDS+'$');
+	aRemotePath2 = aRemotePath2.replace(regexp, '');
+
+	aRemotePath2 = aRemotePath2.split(aRemoteDS).join(aLocalDS);
+	return aLocalOriginalPath+aLocalDS+aRemotePath2;
   }
   this.getRemotePathFromLocalPath = function(aRemotePlacesPath, aLocalPlacesPath, aLocalFile)
   {

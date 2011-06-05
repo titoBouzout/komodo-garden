@@ -138,6 +138,7 @@
 		menu.setAttribute('done', 'true');
 		menu.setAttribute('class', 'menu-iconic g-browser-container');
 		menu.setAttribute("crop", 'center');
+		menu.setAttribute("isDirectory", item.getAttribute('isDirectory'));
 		if(item.hasAttribute('action'))
 		  menu.setAttribute("action", item.getAttribute('action'));
 		if(item.hasAttribute('isContext'))
@@ -204,7 +205,6 @@
 	{
 	  var menuParents = this.s.create(document, 'menu');
 		  menuParents.setAttribute('label', 'Parents');
-		  menuParents.setAttribute('path', path);
 		  menuParents.setAttribute('tooltiptext', path);
 		  menuParents.setAttribute('done', 'true');
 		  menuParents.setAttribute('class', 'menu-iconic g-browser-parents');
@@ -315,11 +315,11 @@
 	  {
 		if(item.hasAttribute('id'))
 		{
-			menu.setAttribute('id', item.getAttribute('id'));
-			menu.setAttribute('style', item.getAttribute('style'));
+		  menu.setAttribute('id', item.getAttribute('id'));
+		  menu.setAttribute('style', item.getAttribute('style'));
 		}
 		if(item.hasAttribute('temporal'))
-			menu.setAttribute('temporal', item.getAttribute('temporal'));
+		  menu.setAttribute('temporal', item.getAttribute('temporal'));
 		try
 		{
 		  if(item && item.parentNode)
