@@ -40,17 +40,27 @@
 	)
 	{
 	  var aTagName = this.s.tagName(aEvent.originalTarget)
-	  if(aTagName != 'menu' && aTagName != 'menupopup' && aTagName != 'menuitem' && aTagName != 'menuseparator')
+	  if(
+		 aTagName != 'menu' &&
+		 aTagName != 'menupopup' &&
+		 aTagName != 'menuitem' &&
+		 aTagName != 'menuseparator' &&
+		 aTagName != 'xul:menu' &&
+		 aTagName != 'xul:menupopup' &&
+		 aTagName != 'xul:menuitem' &&
+		 aTagName != 'xul:menuseparator' 
+		 )
 	  {
 		//this.s.dump(aTagName);
 		this.s.hideChildrensPopupsOpened(this.element('g-tree-context'));
 	  }
-	  else if(aTagName == 'menu')
+	  else if(aTagName == 'menu' || aTagName == 'xul:menu')
 	  {
-		//this.s.dump(aTagName);
-		aEvent.originalTarget.focus()
-		aEvent.originalTarget.firstChild.focus()
-		aEvent.originalTarget.firstChild.openPopup(aEvent.originalTarget, 'end_before');
+		if(!aEvent.originalTarget.hasAttribute('disabled'))
+		{
+		  //this.s.dump(aTagName);
+		  aEvent.originalTarget.firstChild.openPopup(aEvent.originalTarget, 'end_before');
+		}
 	  }
 	}
   }
@@ -181,16 +191,19 @@
 	for(var id =0;id<items.length;id++)
 	{
 	  andSubItems = [];
+	  andSubItems[andSubItems.length] = items[id];
 	  var anonItems = document.getAnonymousElementByAttribute(items[id], 'anonid', 'container')
-	  if(!anonItems)
-		continue;
-	  anonItems = anonItems.childNodes;
-	  for(var i =0;i<anonItems.length;i++)
+	  if(!anonItems){}
+	  else
 	  {
-		//this.s.dump('looking into '+anonItems[i].getAttribute('label'));
-		if(anonItems[i].hasAttribute('disableif'))
+		anonItems = anonItems.childNodes;
+		for(var i =0;i<anonItems.length;i++)
 		{
-		  andSubItems[andSubItems.length] = anonItems[i];
+		  //this.s.dump('looking into '+anonItems[i].getAttribute('label'));
+		  if(anonItems[i].hasAttribute('disableif'))
+		  {
+			andSubItems[andSubItems.length] = anonItems[i];
+		  }
 		}
 	  }
 	  for(var a=0;a<andSubItems.length;a++)
