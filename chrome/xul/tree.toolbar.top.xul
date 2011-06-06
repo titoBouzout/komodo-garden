@@ -53,6 +53,7 @@
 			tooltiptext=""
 			context="g-tree-context"
 			oncommand="if(event.originalTarget == this)this.firstChild.openPopup(this, 'after_start');"
+			onclick="if(event.button == 1){garden.s.launch(garden.focusedTree.currentPath);}"
 		  >
 			<menupopup
 			  id="g-toolbar-group-menupopup"
