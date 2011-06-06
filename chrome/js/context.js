@@ -21,6 +21,40 @@
 	  //this.s.dump('the mouse is over!');
 	  this.s.timerAdd(50, function(){ garden.treeContextAllowMouseOut = true;});
 	}
+
+	  
+	if(
+	  aEvent.originalTarget &&
+	  (
+		(
+		  aEvent.originalTarget.parentNode &&
+		  aEvent.originalTarget.parentNode == this.element('g-tree-context')
+		  ||
+		  aEvent.originalTarget.parentNode.parentNode &&
+		  aEvent.originalTarget.parentNode.parentNode == this.element('g-tree-context')
+		  ||
+		  aEvent.originalTarget.parentNode.parentNode.parentNode &&
+		  aEvent.originalTarget.parentNode.parentNode.parentNode == this.element('g-tree-context')
+		)
+	  )
+	)
+	{
+	  var aTagName = this.s.tagName(aEvent.originalTarget)
+	  if(aTagName != 'menu' && aTagName != 'menupopup' && aTagName != 'menuitem')
+	  {
+		//this.s.dump(aTagName);
+		this.s.hideChildrensPopupsOpened(this.element('g-tree-context'));
+	  }
+	  else if(aTagName == 'menu')
+	  {
+		//this.s.dump(aTagName);
+		aEvent.originalTarget.focus()
+		aEvent.originalTarget.firstChild.focus()
+		aEvent.originalTarget.firstChild.openPopup(aEvent.originalTarget, 'end_before');
+	  }
+	}
+	if(aEvent.originalTarget && this.s.tagName(aEvent.originalTarget) == 'menuseparator')
+	  aEvent.originalTarget.focus();
   }
   
   /*
