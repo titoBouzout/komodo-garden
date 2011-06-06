@@ -40,7 +40,7 @@
 	)
 	{
 	  var aTagName = this.s.tagName(aEvent.originalTarget)
-	  if(aTagName != 'menu' && aTagName != 'menupopup' && aTagName != 'menuitem')
+	  if(aTagName != 'menu' && aTagName != 'menupopup' && aTagName != 'menuitem' && aTagName != 'menuseparator')
 	  {
 		//this.s.dump(aTagName);
 		this.s.hideChildrensPopupsOpened(this.element('g-tree-context'));
@@ -53,8 +53,6 @@
 		aEvent.originalTarget.firstChild.openPopup(aEvent.originalTarget, 'end_before');
 	  }
 	}
-	if(aEvent.originalTarget && this.s.tagName(aEvent.originalTarget) == 'menuseparator')
-	  aEvent.originalTarget.focus();
   }
   
   /*

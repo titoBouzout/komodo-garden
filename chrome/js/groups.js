@@ -341,10 +341,11 @@
 					{
 					  if(this.element('g-groups').childNodes[i].firstChild)
 					  {
-						this.element('g-groups').childNodes[i].removeAttribute('collapsed');
-						this.element('g-groups').childNodes[i].firstChild.removeAttribute('collapsed');
-						this.element('g-toolbar-top').setAttribute('collapsed', false);
-						this.setTreeFocus(this.element('g-groups').childNodes[i].firstChild);
+						this.switchToTreeData(
+						  this.element('g-groups').childNodes[i].firstChild.getAttribute('groupID'),
+						  this.element('g-groups').childNodes[i].firstChild.getAttribute('treeID'),
+						  this.trees[this.element('g-groups').childNodes[i].firstChild.getAttribute('treeID')].currentPath
+						);
 						break;
 					  }
 					}
@@ -455,14 +456,7 @@
 				  groups[id].trees.push(newTree);
 				}
 				this.groupsSet(groups);
-				//simulating click
-				var aElement = this.s.create(document, 'menuitem');
-					aElement.setAttribute('groupID', groupID);
-					aElement.setAttribute('treeID', newTree.id);
-					aElement.setAttribute('path', path);
-				var aEvent = {};
-					aEvent.type = 'adding.tree';
-				this.switchToTree(aEvent, aElement);
+				this.switchToTreeData(groupID, newTree.id, path);
 				break;
 			  }
 			}
@@ -504,8 +498,11 @@
 					  //if there is another tree into this group
 					  if(this.element('g-group-'+groupID) && this.element('g-group-'+groupID).firstChild)
 					  {
-						this.element('g-group-'+groupID).firstChild.removeAttribute('collapsed');
-						this.setTreeFocus(this.element('g-group-'+groupID).firstChild);
+						this.switchToTreeData(
+						  this.element('g-group-'+groupID).firstChild.getAttribute('groupID'),
+						  this.element('g-group-'+groupID).firstChild.getAttribute('treeID'),
+						  this.trees[this.element('g-group-'+groupID).firstChild.getAttribute('treeID')].currentPath
+						);
 					  }
 					  //there is no tree into this group, delete the group and try to focus another tree
 					  else if(this.element('g-group-'+groupID))
@@ -521,15 +518,17 @@
 						  {
 							if(this.element('g-groups').childNodes[i].firstChild)
 							{
-							  this.element('g-groups').childNodes[i].removeAttribute('collapsed');
-							  this.element('g-groups').childNodes[i].firstChild.removeAttribute('collapsed');
-							  this.element('g-toolbar-top').setAttribute('collapsed', false);
-							  this.setTreeFocus(this.element('g-groups').childNodes[i].firstChild);
+							  this.switchToTreeData(
+								this.element('g-groups').childNodes[i].firstChild.getAttribute('groupID'),
+								this.element('g-groups').childNodes[i].firstChild.getAttribute('treeID'),
+								this.trees[this.element('g-groups').childNodes[i].firstChild.getAttribute('treeID')].currentPath
+							  );
 							  break;
 							}
 						  }
 						}
 					  }
+					  break;
 					}
 				  }
 				  a++;

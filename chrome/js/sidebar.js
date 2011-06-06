@@ -249,6 +249,18 @@
 	this.s.pref('last.focused.groupID', groupID);
 	this.s.pref('last.focused.path', path);
   }
+  //simulates a switchToTreeData
+  this.switchToTreeData = function(groupID, treeID, path)
+  {
+	//simulating click
+	var aElement = this.s.create(document, 'menuitem');
+		aElement.setAttribute('groupID', groupID);
+		aElement.setAttribute('treeID', treeID);
+		aElement.setAttribute('path', path);
+	var aEvent = {};
+		aEvent.type = 'switchToTreeData';
+	this.switchToTree(aEvent, aElement);
+  }
   this.setTreeFocus = function(treeElement)
   {
 	this.focusedTree = this.trees[treeElement.getAttribute('treeID')]
@@ -272,15 +284,7 @@
 	this.s.pref('sidebar.view.type.multiple.horizontal', this.element('g-tools-sidebar-view-multiple-horizontal').getAttribute('checked') == 'true');
 	this.s.pref('sidebar.view.type.multiple.vertical', this.element('g-tools-sidebar-view-multiple-vertical').getAttribute('checked') == 'true');
 	
-	//simulating click
-	var aElement = this.s.create(document, 'menuitem');
-		aElement.setAttribute('groupID', this.focusedTree.groupID);
-		aElement.setAttribute('treeID', this.focusedTree.treeID);
-		aElement.setAttribute('path', this.focusedTree.currentPath);
-	var aEvent = {};
-		aEvent.type = 'switch.view';
-		  
-	this.switchToTree(aEvent, aElement);
+	this.switchToTreeData(this.focusedTree.groupID, this.focusedTree.treeID, this.focusedTree.currentPath);
   }
   
   this.toolbarUpdate = function()

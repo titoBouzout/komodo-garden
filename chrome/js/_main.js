@@ -51,22 +51,16 @@ function AsynchRemote()
 	   this.s.pref('last.focused.path') != ''   
 	)
 	{
-	  //simulating click
-	  var aElement = this.s.create(document, 'menuitem');
-		  aElement.setAttribute('groupID', this.s.pref('last.focused.groupID'));
-		  aElement.setAttribute('treeID', this.s.pref('last.focused.treeID'));
-		  aElement.setAttribute('path', this.s.pref('last.focused.path'));
-	  var aEvent = {};
-		  aEvent.type = 'startup';
-	  
 	  //this.s.dump('initExtension:switchToTree');
 	  if(this.groupTreeExists(
 							  this.s.pref('last.focused.groupID'),
 							  this.s.pref('last.focused.treeID')
 							  ))
 	  {
-		this.switchToTree(aEvent, aElement);
-		this.element('g-toolbar-top').setAttribute('collapsed', 'false');
+		this.switchToTreeData(
+							  this.s.pref('last.focused.groupID'),
+							  this.s.pref('last.focused.treeID'),
+							  this.s.pref('last.focused.path'));
 	  }
 	}
   }
