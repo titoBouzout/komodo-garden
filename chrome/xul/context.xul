@@ -161,8 +161,8 @@
         />
 		
 		
-		<menuseparator/>
-		<menu label="Tools">
+		<menuseparator id="g-context-tools-separator"/>
+		<menu id="g-context-tools" label="Tools">
 		  <menupopup>
 					<menuseparator/>
 					<menuitem
