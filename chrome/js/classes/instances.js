@@ -686,6 +686,193 @@ GardenInstances.prototype = {
 	  aProcess.reQueue(aProcess.lastRunnuable);
 	}
   },
+  copyFile:function(aSource, aDestination, aProcess, aInternalCall)
+  {
+	if(!aProcess)
+	{
+	  aProcess = new garden.s.process('copy file "'+aSource+'" to "'+aDestination+'" ', ++this.numProcesses);
+	  this.processes[this.processes.length] = aProcess;
+	}
+
+	var instance = this;
+	aProcess.queue(function(){instance._copyFile(aSource, aDestination, aProcess, aInternalCall);}, aInternalCall);
+	garden.s.runThread(function(){
+									instance.processController(aProcess);
+								  }, this.thread);
+	return aProcess;
+  },
+  _copyFile:function(aSource, aDestination, aProcess, aInternalCall)
+  {
+	if(!aProcess.stopped())
+	{
+	  var connection = this.connect();
+	  this.log('progress', 'going to copy file "'+aSource+'" to "'+aDestination+'"…', aProcess.id);
+	  if(connection)
+	  {
+		this.object.copyFile(aSource, aDestination);
+		this.cacheDirectoryItemAdd(aDestination, false);
+		this.log('sucess', 'copied file "'+aSource+'" to "'+aDestination+'"', aProcess.id);
+	  }
+	}
+	else if(!aInternalCall)
+	{
+	  aProcess.reQueue(aProcess.lastRunnuable);
+	}
+  },
+  copyDirectory:function(aSource, aDestination, aProcess, aInternalCall)
+  {
+	if(!aProcess)
+	{
+	  aProcess = new garden.s.process('copy directory "'+aSource+'" to "'+aDestination+'" ', ++this.numProcesses);
+	  this.processes[this.processes.length] = aProcess;
+	}
+
+	var instance = this;
+	aProcess.queue(function(){instance._copyDirectory(aSource, aDestination, aProcess, aInternalCall);}, aInternalCall);
+	garden.s.runThread(function(){
+									instance.processController(aProcess);
+								  }, this.thread);
+	return aProcess;
+  },
+  _copyDirectory:function(aSource, aDestination, aProcess, aInternalCall)
+  {
+	if(!aProcess.stopped())
+	{
+	  var connection = this.connect();
+	  this.log('progress', 'going to copy directory "'+aSource+'" to "'+aDestination+'"…', aProcess.id);
+	  if(connection)
+	  {
+		this.object.copyDirectory(aSource, aDestination);
+		this.cacheDirectoryItemAdd(aDestination, true);
+		this.log('sucess', 'copied directory "'+aSource+'" to "'+aDestination+'"', aProcess.id);
+	  }
+	}
+	else if(!aInternalCall)
+	{
+	  aProcess.reQueue(aProcess.lastRunnuable);
+	}
+  },
+  _duplicateFileRX1 : /.*(\..{1,4}\..{1,4})$/,
+  _duplicateFileRX2 : /.*(\..{1,4})$/,
+  _duplicateFileRX3 : /( [0-9]{13,16})$/,
+  duplicateFile:function(aFile, aProcess, aInternalCall)
+  {
+	if(!aProcess)
+	{
+	  aProcess = new garden.s.process('duplicate file "'+aFile+'"', ++this.numProcesses);
+	  this.processes[this.processes.length] = aProcess;
+	}
+
+	var instance = this;
+	aProcess.queue(function(){instance._duplicateFile(aFile, aProcess, aInternalCall);}, aInternalCall);
+	garden.s.runThread(function(){
+									instance.processController(aProcess);
+								  }, this.thread);
+	return aProcess;
+  },
+  _duplicateFile:function(aFile, aProcess, aInternalCall)
+  {
+	if(!aProcess.stopped())
+	{
+	  var connection = this.connect();
+	  this.log('progress', 'going to duplicate file "'+aFile+'" …', aProcess.id);
+	  if(connection)
+	  {
+		var now = garden.s.nowVersionTime();
+		var aFileName, aName, aDir, extension;
+		
+		if(aFile.indexOf(this.__DS) != -1)
+		{
+		  aDir = aFile.split(this.__DS);
+		  aFileName = aDir.pop();
+		  aDir = aDir.join(this.__DS);
+
+		  if(!aFileName || aFileName == '')
+		  {
+			aDir = aFile.split(this.__DS);
+			aDir.pop();
+			aFileName = aDir.pop();
+			aDir = aDir.join(this.__DS);
+		  }
+		  if(!aFileName || aFileName == '')
+		  {
+			aDir = '';
+			aFileName = aFile;
+		  }
+		}
+		else
+		{
+		  aDir = '';
+		  aFileName = aFile;
+		}
+		
+		extension = aFileName.replace(this._duplicateFileRX1, '$1');
+		if(extension == '' || aFileName == extension)
+		  extension = aFileName.replace(this._duplicateFileRX2, '$1');
+		if(extension == '' || aFileName == extension)
+		  extension = '';
+		//this.dump('extension is '+extension);
+		//this.dump('name is '+aFileName);
+		if(extension != '')
+		{
+		  aFileName = aFileName.split(extension);
+		  aFileName.pop();
+		  aFileName = aFileName.join(extension);
+		}
+		
+		aFileName = aFileName.replace(this._duplicateFileRX3, '');
+		//this.dump('name is '+aFileName);
+			
+		aFileName = aFileName+' '+now+extension;
+		//this.dump('name is '+aFileName);
+		
+		var aDestination = aDir+this.__DS+aFileName;
+		this.object.copyFile(aFile, aDestination);
+		this.cacheDirectoryItemAdd(aDestination, false);
+		this.log('sucess', 'duplicated file "'+aFile+'" as "'+aDestination+'"', aProcess.id);
+	  }
+	}
+	else if(!aInternalCall)
+	{
+	  aProcess.reQueue(aProcess.lastRunnuable);
+	}
+  },
+  duplicateDirectory:function(aDirectory, aProcess, aInternalCall)
+  {
+	if(!aProcess)
+	{
+	  aProcess = new garden.s.process('duplicate directory "'+aDirectory+'"', ++this.numProcesses);
+	  this.processes[this.processes.length] = aProcess;
+	}
+
+	var instance = this;
+	aProcess.queue(function(){instance._duplicateDirectory(aDirectory, aProcess, aInternalCall);}, aInternalCall);
+	garden.s.runThread(function(){
+									instance.processController(aProcess);
+								  }, this.thread);
+	return aProcess;
+  
+  },
+  _duplicateDirectory:function(aDirectory, aProcess, aInternalCall)
+  {
+	if(!aProcess.stopped())
+	{
+	  var connection = this.connect();
+	  this.log('progress', 'going to duplicate directory "'+aDirectory+'" …', aProcess.id);
+	  if(connection)
+	  {
+		var now = garden.s.nowVersionTime();
+		var aDestination = aDirectory.replace(this._duplicateFileRX3, '')+' '+now;
+		this.object.copyDirectory(aDirectory, aDestination);
+		this.cacheDirectoryItemAdd(aDestination, true);
+		this.log('sucess', 'duplicated directory "'+aDirectory+'" as "'+aDestination+'"', aProcess.id);
+	  }
+	}
+	else if(!aInternalCall)
+	{
+	  aProcess.reQueue(aProcess.lastRunnuable);
+	}
+  },
   chmodFile:function(aFile, aPermissions, aProcess, aInternalCall)
   {
 	if(!aProcess)
@@ -1011,68 +1198,6 @@ GardenInstances.prototype = {
 	  aProcess.reQueue(aProcess.lastRunnuable);
 	}
   },
-  
-  
-  compareWithLocal:function(aFile, aLocalPath, aTemporalLocalPath, aProcess, aInternalCall)
-  {
-	if(!aProcess)
-	{
-	  aProcess = new garden.s.process('compare file "'+aFile+'" with local version', ++this.numProcesses);
-	  this.processes[this.processes.length] = aProcess;
-	}
-	var instance = this;
-	aProcess.queue(function(){instance._compareWithLocal(aFile, aLocalPath, aTemporalLocalPath, aProcess, aInternalCall);}, aInternalCall);
-	garden.s.runThread(function(){
-									instance.processController(aProcess);
-								  }, this.thread);
-	return aProcess;
-  },
-  _compareWithLocal:function(aFile, aLocalPath, aTemporalLocalPath, aProcess, aInternalCall)
-  {
-	if(!aProcess.stopped())
-	{
-	  if(!asynchRemote.s.fileExists(aLocalFileToCompare))
-	  {
-		this.log('error', 'Can\'t compare the remote file "'+aFile+'" with the local version because the local version no exists.', aProcess.id);
-	  }
-	  else
-	  {
-		var connection = this.connect();
-		this.log('progress', 'going to download the remote file "'+aFile+'" to a temporal folder to compare with the local version …', aProcess.id);
-		if(connection)
-		{
-		  this._downloadFile(aFile, aRemotePlacesPath, aTemporalLocalPath, aProcess, true);
-		  //run in a thread and then back to main thread because we need to wait for the file to download
-		  if(!aProcess.stopped())
-		  {
-			var AsynchRemoteConnection = this;
-			garden.s.runThread(function(){
-								  if(asynchRemote.s.fileExists(aTemporalDestination))
-									garden.s.runMain(function(){
-									  if(
-										 asynchRemote.s.fileRead(aLocalFileToCompare) ==
-										 asynchRemote.s.fileRead(aTemporalDestination)
-										)
-										 AsynchRemoteConnection.log('sucess', 'The local and remote file "'+aFile+'" are identical', aProcess.id);
-										 else
-										  ko.fileutils.showDiffs(aLocalFileToCompare, aTemporalDestination);
-									  });
-								  }, this.thread);
-		  
-			this.log('sucess', 'checked differences of remote file "'+aFile+'" with the local version', aProcess.id);
-		  }
-		  else if(!aInternalCall)
-		  {
-			aProcess.reQueue(aProcess.lastRunnuable);
-		  }
-		}
-	  }
-	}
-	else if(!aInternalCall)
-	{
-	  aProcess.reQueue(aProcess.lastRunnuable);
-	}
-  },
   downloadAndEditFile:function(aFile, aLocalPath, aParentInstance, aProcess, aInternalCall)
   {
 	if(!aProcess)
@@ -1160,6 +1285,128 @@ GardenInstances.prototype = {
 		else
 		{
 		  this.log('canceled', 'download of file "'+aFile+'" to "'+aLocalPath+'" canceled by user', aProcess.id);
+		}
+	  }
+	}
+	else if(!aInternalCall)
+	{
+	  aProcess.reQueue(aProcess.lastRunnuable);
+	}
+  },
+  downloadDirectory:function(aDirectory, aRemotePlacesPath, aLocalPlacesPath, aProcess, overWrite, aInternalCall)
+  {
+	var aDestination = asynchRemote.s.getLocalPathFromRemotePath(aRemotePlacesPath, aLocalPlacesPath, aDirectory);
+	if(!aProcess)
+	{
+	  aProcess = new garden.s.process('download directory "'+aDirectory+'" to "'+aDestination+'"  ', ++this.numProcesses);
+	  this.processes[this.processes.length] = aProcess;
+	}
+	var instance = this;
+	aProcess.queue(function(){instance._downloadDirectory(aDirectory, aRemotePlacesPath, aLocalPlacesPath, aProcess, overWrite, aInternalCall);}, aInternalCall);
+	garden.s.runThread(function(){
+									instance.processController(aProcess);
+								  }, this.thread);
+	return aProcess;
+  },
+  _downloadDirectory:function(aDirectory, aRemotePlacesPath, aLocalPlacesPath, aProcess, overWrite, aInternalCall)
+  {
+	if(!aProcess.stopped())
+	{
+	  var aDestination = asynchRemote.s.getLocalPathFromRemotePath(aRemotePlacesPath, aLocalPlacesPath, aDirectory);
+	  var connection = this.connect();
+	  this.log('progress', 'going to download directory "'+aDirectory+'" to "'+aDestination+'" …', aProcess.id);
+	  
+	  if(connection)
+	  {
+		//check if the file exist on local
+		this.overWriteResolve(aProcess, null, true, aDestination, true, overWrite);
+		
+		if(aProcess.overWriteLocal)
+		{
+		  asynchRemote.s.folderCreate(aDestination);
+		  
+		  var entries = this.connect().list(('/'+aDirectory).replace(/^\/+/, '/'), 1).getChildren({});
+		  for(var i=0;i<entries.length;i++)
+		  {
+			if(entries[i].isDirectory())
+			  this._downloadDirectory(entries[i].getFilepath(), aRemotePlacesPath, aLocalPlacesPath, aProcess, aProcess.overWriteLocal, true);
+			else
+			  this._downloadFile(entries[i].getFilepath(), aRemotePlacesPath, aLocalPlacesPath, aProcess, aProcess.overWriteLocal, true);
+		  }
+		  if(!aProcess.stopped())
+		  {
+			this.log('sucess', 'downloaded directory "'+aDirectory+'" to "'+aDestination+'" ', aProcess.id);
+		  }
+		  else if(!aInternalCall)
+		  {
+			aProcess.reQueue(aProcess.lastRunnuable);
+		  }
+		}
+		else
+		{
+		  this.log('canceled', 'download of directory "'+aDirectory+'" to "'+aDestination+'" canceled by user', aProcess.id);
+		}
+	  }
+	}
+	else if(!aInternalCall)
+	{
+	  aProcess.reQueue(aProcess.lastRunnuable);
+	}
+  },
+  
+  
+  compareWithLocal:function(aFile, aLocalPath, aTemporalLocalPath, aProcess, aInternalCall)
+  {
+	if(!aProcess)
+	{
+	  aProcess = new garden.s.process('compare file "'+aFile+'" with local version', ++this.numProcesses);
+	  this.processes[this.processes.length] = aProcess;
+	}
+	var instance = this;
+	aProcess.queue(function(){instance._compareWithLocal(aFile, aLocalPath, aTemporalLocalPath, aProcess, aInternalCall);}, aInternalCall);
+	garden.s.runThread(function(){
+									instance.processController(aProcess);
+								  }, this.thread);
+	return aProcess;
+  },
+  _compareWithLocal:function(aFile, aLocalPath, aTemporalLocalPath, aProcess, aInternalCall)
+  {
+	if(!aProcess.stopped())
+	{
+	  if(!asynchRemote.s.fileExists(aLocalFileToCompare))
+	  {
+		this.log('error', 'Can\'t compare the remote file "'+aFile+'" with the local version because the local version no exists.', aProcess.id);
+	  }
+	  else
+	  {
+		var connection = this.connect();
+		this.log('progress', 'going to download the remote file "'+aFile+'" to a temporal folder to compare with the local version …', aProcess.id);
+		if(connection)
+		{
+		  this._downloadFile(aFile, aRemotePlacesPath, aTemporalLocalPath, aProcess, true);
+		  //run in a thread and then back to main thread because we need to wait for the file to download
+		  if(!aProcess.stopped())
+		  {
+			var AsynchRemoteConnection = this;
+			garden.s.runThread(function(){
+								  if(asynchRemote.s.fileExists(aTemporalDestination))
+									garden.s.runMain(function(){
+									  if(
+										 asynchRemote.s.fileRead(aLocalFileToCompare) ==
+										 asynchRemote.s.fileRead(aTemporalDestination)
+										)
+										 AsynchRemoteConnection.log('sucess', 'The local and remote file "'+aFile+'" are identical', aProcess.id);
+										 else
+										  ko.fileutils.showDiffs(aLocalFileToCompare, aTemporalDestination);
+									  });
+								  }, this.thread);
+		  
+			this.log('sucess', 'checked differences of remote file "'+aFile+'" with the local version', aProcess.id);
+		  }
+		  else if(!aInternalCall)
+		  {
+			aProcess.reQueue(aProcess.lastRunnuable);
+		  }
 		}
 	  }
 	}
@@ -1421,68 +1668,7 @@ GardenInstances.prototype = {
 	  aProcess.reQueue(aProcess.lastRunnuable);
 	}
   },
-  downloadDirectory:function(aDirectory, aRemotePlacesPath, aLocalPlacesPath, aProcess, overWrite, aInternalCall)
-  {
-	var aDestination = asynchRemote.s.getLocalPathFromRemotePath(aRemotePlacesPath, aLocalPlacesPath, aDirectory);
-	if(!aProcess)
-	{
-	  aProcess = new garden.s.process('download directory "'+aDirectory+'" to "'+aDestination+'"  ', ++this.numProcesses);
-	  this.processes[this.processes.length] = aProcess;
-	}
-	var instance = this;
-	aProcess.queue(function(){instance._downloadDirectory(aDirectory, aRemotePlacesPath, aLocalPlacesPath, aProcess, overWrite, aInternalCall);}, aInternalCall);
-	garden.s.runThread(function(){
-									instance.processController(aProcess);
-								  }, this.thread);
-	return aProcess;
-  },
-  _downloadDirectory:function(aDirectory, aRemotePlacesPath, aLocalPlacesPath, aProcess, overWrite, aInternalCall)
-  {
-	if(!aProcess.stopped())
-	{
-	  var aDestination = asynchRemote.s.getLocalPathFromRemotePath(aRemotePlacesPath, aLocalPlacesPath, aDirectory);
-	  var connection = this.connect();
-	  this.log('progress', 'going to download directory "'+aDirectory+'" to "'+aDestination+'" …', aProcess.id);
-	  
-	  if(connection)
-	  {
-		//check if the file exist on local
-		this.overWriteResolve(aProcess, null, true, aDestination, true, overWrite);
-		
-		if(aProcess.overWriteLocal)
-		{
-		  asynchRemote.s.folderCreate(aDestination);
-		  
-		  var entries = this.connect().list(('/'+aDirectory).replace(/^\/+/, '/'), 1).getChildren({});
-		  for(var i=0;i<entries.length;i++)
-		  {
-			if(entries[i].isDirectory())
-			  this._downloadDirectory(entries[i].getFilepath(), aRemotePlacesPath, aLocalPlacesPath, aProcess, aProcess.overWriteLocal, true);
-			else
-			  this._downloadFile(entries[i].getFilepath(), aRemotePlacesPath, aLocalPlacesPath, aProcess, aProcess.overWriteLocal, true);
-		  }
-		  if(!aProcess.stopped())
-		  {
-			this.log('sucess', 'downloaded directory "'+aDirectory+'" to "'+aDestination+'" ', aProcess.id);
-		  }
-		  else if(!aInternalCall)
-		  {
-			aProcess.reQueue(aProcess.lastRunnuable);
-		  }
-		}
-		else
-		{
-		  this.log('canceled', 'download of directory "'+aDirectory+'" to "'+aDestination+'" canceled by user', aProcess.id);
-		}
-	  }
-	}
-	else if(!aInternalCall)
-	{
-	  aProcess.reQueue(aProcess.lastRunnuable);
-	}
-  },
-  
-  
+ 
   
   
   
