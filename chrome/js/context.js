@@ -18,7 +18,7 @@
 		)
 	)
 	{
-	  this.s.dump('the mouse is over!');
+	  //this.s.dump('the mouse is over!');
 	  this.s.timerAdd(50, function(){ garden.treeContextAllowMouseOut = true;});
 	}
   }
@@ -41,11 +41,17 @@
 	   aEvent.relatedTarget.parentNode.parentNode.parentNode != this.element('g-tree-context')
 	)
 	{
-	  this.s.dump('the mouse is out!');
+	  //this.s.dump('the mouse is out!');
 	  this.treeContextAllowMouseOver = false;
 	  this.s.timerAdd(50, function(){ garden.treeContextAllowMouseOver = true;});
 	  this.treeContextAllowMouseOut = false;
-	  this.element('g-tree-context').hidePopup();
+	  
+	  //dont auto-hide the context menu if the clicked element if from the tree
+	  if(
+		document.popupNode && document.popupNode.hasAttribute('path') && 
+		document.popupNode != this.element('g-toolbar-breadcrumb')
+	  )
+		this.element('g-tree-context').hidePopup();
 	}
   }
 
@@ -186,6 +192,9 @@
 			item.setAttribute('disabled', true);
 		  else if(type == 'local' && disableif.indexOf('local') != -1)
 			item.setAttribute('disabled', true);
+		  else if(disableif.indexOf('noClipboard') != -1 && this.s.clipboardGetFilesPaths().length < 1)
+			item.setAttribute('disabled', true);
+			
 		  else
 			item.removeAttribute('disabled');
 		}
