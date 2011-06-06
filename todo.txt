@@ -14,6 +14,7 @@ tree:
 la seleccion esta mutando
 una imagen de fondo para el tree
 cuando crea un nuevo archivo o carpeta insertar el coso en el tree y luego llamar a renombrar
+el orden del cache!!!
 
 general:
 usar preferencias propias y no las del browser
