@@ -91,8 +91,8 @@
   }
   .g-tree treechildren::-moz-tree-cell-text{
 	background-repeat:no-repeat;
-	margin-left:-19px !important;
-	padding-left:19px !important;
+	margin-left:-20px !important;
+	padding-left:20px !important;
   }
 
   .g-browser-leaf[symlink] > label,
@@ -110,21 +110,7 @@
   .g-tree treechildren::-moz-tree-cell-text(unreadable) {
 	background-image:url(chrome://asynchremote/content/icons/files/tree/labels/unreadable.png) !important;
   }
-  .g-browser-leaf[added] > label,
-  .g-browser-container[added] > label,
-  .g-tree treechildren::-moz-tree-cell-text(added) {
-	background-image:url(chrome://asynchremote/content/icons/files/tree/labels/added.png) !important;
-  }
-  .g-browser-leaf[deleted] > label,
-  .g-browser-container[deleted] > label,
-  .g-tree treechildren::-moz-tree-cell-text(deleted) {
-	background-image:url(chrome://asynchremote/content/icons/files/tree/labels/deleted.png) !important;
-  }
-  .g-browser-leaf[modified] > label,
-  .g-browser-container[modified] > label,
-  .g-tree treechildren::-moz-tree-cell-text(modified) {
-	background-image:url(chrome://asynchremote/content/icons/files/tree/labels/modified.png) !important;
-  }
+/*version control*/
   .g-browser-leaf[unknow] > label,
   .g-browser-container[unknow] > label,
   .g-tree treechildren::-moz-tree-cell-text(unknow) {
@@ -135,6 +121,27 @@
   .g-tree treechildren::-moz-tree-cell-text(ignored) {
 	background-image:url(chrome://asynchremote/content/icons/files/tree/labels/ignored.png) !important;
   }
+  .g-browser-leaf[deleted] > label,
+  .g-browser-container[deleted] > label,
+  .g-tree treechildren::-moz-tree-cell-text(deleted) {
+	background-image:url(chrome://asynchremote/content/icons/files/tree/labels/deleted.png) !important;
+  }
+  .g-browser-leaf[added] > label,
+  .g-browser-container[added] > label,
+  .g-tree treechildren::-moz-tree-cell-text(added) {
+	background-image:url(chrome://asynchremote/content/icons/files/tree/labels/added.png) !important;
+  }
+  .g-browser-leaf[conflict] > label,
+  .g-browser-container[conflict] > label,
+  .g-tree treechildren::-moz-tree-cell-text(conflict) {
+	background-image:url(chrome://asynchremote/content/icons/files/tree/labels/conflict.png) !important;
+  }
+  .g-browser-leaf[modified] > label,
+  .g-browser-container[modified] > label,
+  .g-tree treechildren::-moz-tree-cell-text(modified) {
+	background-image:url(chrome://asynchremote/content/icons/files/tree/labels/modified.png) !important;
+  }
+  
   .g-browser-leaf[new] > label,
   .g-browser-container[new] > label,
   .g-tree treechildren::-moz-tree-cell-text(new) {
