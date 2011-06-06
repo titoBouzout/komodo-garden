@@ -106,7 +106,7 @@
 		  <toolbarbutton
 			buttonstyle="pictures" type="button" persist="buttonstyle" orient="horizontal"
 			class="g-toolbar-reload"
-			tooltiptext="Clean cache and reload"
+			tooltiptext="Clean cache and reload all"
 			oncommand="garden.focusedTree.reload();"
 		  />
 		  
