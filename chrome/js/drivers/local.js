@@ -137,6 +137,14 @@ GardenLocal.prototype = {
   {
 	garden.s.folderCreate(aDirectory, aPermissions);
   },
+  copyFile:function(aFile, aDestination)
+  {
+	garden.s.fileCopy(aFile, aDestination);
+  },
+  copyDirectory:function(aFile, aDestination)
+  {
+	garden.s.fileCopy(aFile, aDestination);
+  }
 };
 
 garden.registerDriverClass(GardenLocal);
