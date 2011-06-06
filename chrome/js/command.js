@@ -221,6 +221,8 @@
 	
 	var currentPath = selectedTree.currentPath
 	
+	this.element('g-tree-context').hidePopup();
+	
 	switch(aCommand)
 	{
 	  case 'rebase':
@@ -465,14 +467,16 @@
 		}
 	  case 'find-replace':
 		{
-		  ko.launch.findInFiles.apply(ko.launch, ['', selectedPaths.join(';')]);
+		  if(selectedInstance.type == 'local')
+			ko.launch.findInFiles.apply(ko.launch, ['', selectedPaths.join(';')]);
 		  break;
 		}
 	  case 'show-in-folder':
 		{
 		  for(var id in selectedPaths)
 		  {
-			this.s.reveal(selectedPaths[id]);
+			if(selectedInstance.type == 'local')
+			  this.s.reveal(selectedPaths[id]);
 		  }
 		  break;
 		}
@@ -574,7 +578,7 @@
 			if(selectedItems[id].isDirectory)
 			{
 			  //middle click on tree is edit on komodo but if middle click on a folder open the folder.
-			  if(selectedInstance.type != 'remote')
+			  if(selectedInstance.type == 'local')
 				this.s.launch(selectedItems[id].path);
 			}
 			else
@@ -612,14 +616,75 @@
 		  }
 		  break;
 		}
-	  
-	  
 	  case 'duplicate':
 		{
 		  var aProcess = false;//group the processes into one process object
-		  if(selectedInstance.type != 'remote')
+		  if(selectedInstance.type == 'local')
 		  {
-			
+			for(var id in selectedItems)
+			{
+			  if(selectedItems[id].isDirectory)
+			  {
+				aProcess = selectedInstance.duplicateDirectory(selectedItems[id].path, aProcess);
+			  }
+			  else
+			  {
+				aProcess = selectedInstance.duplicateFile(selectedItems[id].path, aProcess);
+			  }
+			}
+		  }
+		  break;
+		}
+	  case 'paste':
+		{
+		  var aProcess = false;//group the processes into one process object
+		  if(selectedInstance.type == 'local')
+		  {
+			var pathsToCopy = this.s.clipboardGetFilesPaths();
+			//alert(pathsToCopy.toSource());
+			for(var i in pathsToCopy)
+			{
+			  var isDirectory = this.s.pathIsFolder(pathsToCopy[i]);
+			  var aName = this.s.file(pathsToCopy[i]).leafName;
+			  for(var id in selectedItems)
+			  {
+				if(selectedItems[id].isDirectory)
+				{
+				  var aDestination = selectedItems[id].path;
+				}
+				else
+				{
+				  var aDestination = selectedItems[id].path.split(selectedInstance.__DS);
+					  aDestination.pop();
+					  aDestination = aDestination.join(selectedInstance.__DS);
+					  if(!aDestination || aDestination == '')
+						aDestination = selectedInstance.__DS;
+				}
+				aDestination = aDestination+selectedInstance.__DS+aName;
+				if(isDirectory)
+				{
+				  aProcess = selectedInstance.copyDirectory(pathsToCopy[i], aDestination, aProcess);
+				}
+				else
+				{
+				  aProcess = selectedInstance.copyFile(pathsToCopy[i], aDestination, aProcess);
+				}
+			  }
+			}
+		  }
+		  break;
+		}
+	  case 'copy':
+		{
+		  var aProcess = false;//group the processes into one process object
+		  if(selectedInstance.type == 'local')
+		  {
+			var pathsToCopy = [];
+			for(var id in selectedItems)
+			{
+			  pathsToCopy[pathsToCopy.length] =  selectedItems[id].path;
+			}
+			this.s.clipboardSetFilesPaths(pathsToCopy);
 		  }
 		  break;
 		}
