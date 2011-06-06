@@ -888,6 +888,7 @@ gardenTree.prototype = {
 			break;
 		  }
 		case 110://CTRL N new file
+		case 116://CTRL T new file
 		  {
 			if(event.ctrlKey)
 			{
@@ -903,6 +904,46 @@ gardenTree.prototype = {
 			{
 			  document.popupNode = null;
 			  garden.gardenCommand('refresh');
+			  garden.s.stopEvent(event);
+			}
+			break;
+		  }
+		case 100://CTRL D duplicate
+		  {
+			if(event.ctrlKey)
+			{
+			  document.popupNode = null;
+			  garden.gardenCommand('duplicate');
+			  garden.s.stopEvent(event);
+			}
+			break;
+		  }
+		case 118://CTRL V paste
+		  {
+			if(event.ctrlKey)
+			{
+			  document.popupNode = null;
+			  garden.gardenCommand('paste');
+			  garden.s.stopEvent(event);
+			}
+			break;
+		  }
+		case 99://CTRL C copy
+		  {
+			if(event.ctrlKey)
+			{
+			  document.popupNode = null;
+			  garden.gardenCommand('copy');
+			  garden.s.stopEvent(event);
+			}
+			break;
+		  }
+		case 120://CTRL X cut
+		  {
+			if(event.ctrlKey)
+			{
+			  document.popupNode = null;
+			  garden.gardenCommand('cut');
 			  garden.s.stopEvent(event);
 			}
 			break;
