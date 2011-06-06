@@ -79,8 +79,8 @@
 		  class2="g-menuitem g-open"
 		  disableif1="root onlyFolders"
 		  disableif2="root OnlyFoldersBrowserRemote"
-		  tooltiptext1="Edit with Komodo - Ctrl+E or Middle click (files only)"
-		  tooltiptext2="Open with your Operative System - Enter"
+		  tooltiptext1="Edit with Komodo - Enter or Double click"
+		  tooltiptext2="Open with your Operative System - Ctrl+Enter or Ctrl+O"
         />
 		<menuseparator/>
 		
@@ -118,34 +118,21 @@
 		  class="g-menuitem-single-xbl"
 		  action="download-to-folder"
         />
-		<menuseparator/>
 
-		<menuitem
-		  id="g-context-diff"
-		  label="Compare With Local"
-		  class1="g-menuitem g-diff"
-		  class="g-menuitem-single-xbl"
-		  action="diff"
-		  disableif="root onlyFolders"
-        />
 		<menuseparator/>
-		
 		<menuitem
-		  id="g-context-show-in-folder"
-		  label="Reveal in Folder…"
+		  id="g-show-in-folder-locate"
+		  class="g-menuitem-double-xbl"
+		  label1="Reveal…"
+		  label2="Locate"
+		  action1="show-in-folder"
+		  action2="locate-places"
 		  class1="g-menuitem g-show-in-folder"
-		  class="g-menuitem-single-xbl"
-		  action="show-in-folder"
-		  disableif="remote"
-		  tooltiptext="Reveal in folder - Ctrl+Enter or Middle click (on folders only)"
-        />
-		<menuitem
-		  id="g-context-locate"
-		  label="Locate in Local"
-		  class1="g-menuitem g-locate"
-		  class="g-menuitem-single-xbl"
-		  disableif="multiple root file folder"
-		  action="locate-places"
+		  class2="g-menuitem g-locate"
+		  disableif1="remote"
+		  disableif2="multiple root file folder"
+		  tooltiptext1="Reveal on system - Ctrl+E or Middle click"
+		  tooltiptext2="Find on sibling tree"
         />
 		<menuitem
 		  id="g-context-rebase"
@@ -172,6 +159,31 @@
 		  tooltiptext1="Rename selected - F2"
 		  tooltiptext2="Move selected"
         />
+		
+		
+		<menuseparator/>
+		<menu label="Tools">
+		  <menupopup>
+					<menuseparator/>
+					<menuitem
+					  id="g-context-diff"
+					  label="Compare With Local"
+					  class1="g-menuitem g-diff"
+					  class="g-menuitem-single-xbl"
+					  action="diff"
+					  disableif="root onlyFolders"
+					/>
+					<menuitem
+					  id="g-context-diff"
+					  label="Compress to zip"
+					  class1="g-menuitem g-diff"
+					  class="g-menuitem-single-xbl"
+					  action="diff"
+					  disableif="root onlyFolders"
+					/>
+			<menuitem label="lala2"/>
+		  </menupopup>
+		</menu>
 		<menuseparator/>
 
 		<menuitem

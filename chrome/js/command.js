@@ -528,6 +528,48 @@
 		  }
 		  break;
 		}
+	  case 'edit-from-tree':
+		{
+		  var aProcess = false;//group the processes into one process object
+		  
+		  for(var id in selectedItems)
+		  {
+			if(!selectedItems[id].isDirectory)
+			{
+			  if(selectedInstance.type == 'remote')
+			  {
+				var aSibling;
+				if(aSibling = this.groupTreeGetSiblingLocal(selectedTree.treeElement))
+				{
+				  var aLocalPath = this.s.resolveLocalPath(
+														  selectedItems[id].path,
+														  selectedTree.originalPath,
+														  aSibling[0],
+														  selectedInstance.__DS,
+														  aSibling[1]
+														);
+				  aProcess = selectedInstance.downloadAndEditFile(
+								selectedItems[id].path,
+								aLocalPath,
+								aSibling[2],
+								aProcess
+							);
+				}
+				else
+				{
+				  this.s.alert('There is no local sibling tree for the remote tree "'+selectedInstance.label+'"');
+				  break;
+				}
+			  }
+			  else
+			  {
+				this.s.openURL(window, selectedItems[id].path, true);
+			  }
+			}
+		  }
+		  selectedTree.toggleOpenStateContainers(selectedItems, selectedItems[selectedItems.length-1]);
+		  break;
+		}
 	  case 'open-from-tree':
 		{
 		  var aProcess = false;//group the processes into one process object
@@ -566,8 +608,13 @@
 				this.s.launch(selectedItems[id].path);
 			  }
 			}
+			else
+			{
+			  if(selectedInstance.type == 'remote'){}
+			  else
+				this.s.launch(selectedItems[id].path);
+			}
 		  }
-		  selectedTree.toggleOpenStateContainers(selectedItems, selectedItems[selectedItems.length-1]);
 		  break;
 		}
 	  case 'edit':
@@ -954,6 +1001,7 @@
 		throw new Error('the switch of actions cant match the action:'+aCommand);
 	  }
 	}
+	this.element('g-toolbar-group-menupopup').hidePopup();
 	this.toolbarUpdate();
   }
   

@@ -599,13 +599,15 @@ gardenTree.prototype = {
 		 // garden.s.dump('removeRowByPath:aLevel:'+aLevel+':length:-1');
 		
 		this.scrollRestore();
+		
 	  }
 	  else
 	  {
 		//garden.s.dump('aPath '+aPath+' was not found in the tree');
 	  }
-	  
+	
 	this.selectionGoingToChange--;
+	this.selectionRestore();
 	this.iterations--;
 	this.treeOperationsQueue();
   },
@@ -777,7 +779,8 @@ gardenTree.prototype = {
 	else if(event.button == 1)
 	{
 	  document.popupNode = null;
-	  garden.gardenCommand('edit');
+	  garden.gardenCommand('show-in-folder');
+	  garden.s.stopEvent(event);
 	}
 	else
 	{
@@ -823,7 +826,7 @@ gardenTree.prototype = {
 		else
 		{
 		  document.popupNode = null;
-		  garden.gardenCommand('open');
+		  garden.gardenCommand('edit');
 		}
 	  }
 	}
@@ -864,7 +867,7 @@ gardenTree.prototype = {
 			if(event.ctrlKey)
 			{
 			  document.popupNode = null;
-			  garden.gardenCommand('edit');
+			  garden.gardenCommand('show-in-folder');
 			  garden.s.stopEvent(event);
 			}
 			break;
@@ -948,6 +951,16 @@ gardenTree.prototype = {
 			}
 			break;
 		  }
+		case 111://CTRL O open
+		  {
+			if(event.ctrlKey)
+			{
+			  document.popupNode = null;
+			  garden.gardenCommand('open-from-tree');
+			  garden.s.stopEvent(event);
+			}
+			break;
+		  }
 		default:
 		  {
 			garden.s.dump('which:'+event.which);
@@ -1023,17 +1036,19 @@ gardenTree.prototype = {
 			garden.s.stopEvent(event);
 			break;
 		  }
-		case 13://open
+		case 13://enter
 		  {
 			if(event.ctrlKey)
 			{
 			  document.popupNode = null;
-			  garden.gardenCommand('show-in-folder');
+			  garden.s.timerAdd(30, function(){ garden.gardenCommand('open-from-tree');});
+			  garden.s.stopEvent(event);
+			  return false;
 			}
 			else
 			{
 			  document.popupNode = null;
-			  garden.s.timerAdd(30, function(){ garden.gardenCommand('open-from-tree');});
+			  garden.s.timerAdd(30, function(){ garden.gardenCommand('edit-from-tree');});
 			  garden.s.stopEvent(event);
 			  return false;
 			}
