@@ -6,9 +6,6 @@ que los procesos se puedan borrar
 que se puedan borrar todos los procesos
 hay que hacerlos expirar despues de un tiempo
 
-transfers:
-cuanto te bajas un document lo tiene que bajar como .kup
-
 drivers:
 validar el driver que tenga todo lo que se precisa
 cuando un servidor que ya estaba guardado no esta mas disponible muta
