@@ -161,6 +161,8 @@
   //if no selection exists then the command shoul't be here
   this.gardenCommand = function(aCommand, aData)
   {
+	if(!aCommand || aCommand == '')
+	  return false;
 	var fromBrowser = false;
 	if(document.popupNode && document.popupNode == this.element('g-toolbar-breadcrumb'))//clicked root button..
 	{
