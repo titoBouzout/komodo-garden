@@ -21,7 +21,7 @@
 		  class1="g-menuitem g-find-replace"
 		  action="find-replace"
 		  disableif="remote"
-		  tooltiptext="Find and replace on selected items - Ctrl+F or F3"
+		  tooltiptext="Find and replace on selected - Ctrl+F or F3"
 		/>
 		<menuseparator/>
 		<menuitem
@@ -33,23 +33,23 @@
 		  action2="new-folder"
 		  class1="g-menuitem g-new-file"
 		  class2="g-menuitem g-new-folder"
-		  tooltiptext1="Create a new file - Ctrl+N"
+		  tooltiptext1="Create a new file - Ctrl+N or Ctrl+T"
 		  tooltiptext2="Create a new folder"
         />
 		<menuseparator/>
 		<menuitem
 		  id="g-context-clipboard-1"
 		  class="g-menuitem-double-xbl"
-		  label1="Cut"
-		  label2="Copy"
-		  action1="cut"
-		  action2="copy"
-		  class1="g-menuitem g-cut"
-		  class2="g-menuitem g-copy"
-		  tooltiptext1="Cut selected items - Ctrl+X"
-		  tooltiptext2="Copy selected items - Ctrl+C"
-		  disableif1="remote root"
+		  label2="Cut"
+		  label1="Copy"
+		  action2="cut"
+		  action1="copy"
+		  class2="g-menuitem g-cut"
+		  class1="g-menuitem g-copy"
+		  tooltiptext2="Cut selected - Ctrl+X"
+		  tooltiptext1="Copy selected - Ctrl+C"
 		  disableif2="remote root"
+		  disableif1="remote root"
         />
 		<menuitem
 		  id="g-context-clipboard-2"
@@ -60,10 +60,10 @@
 		  action2="duplicate"
 		  class1="g-menuitem g-paste"
 		  class2="g-menuitem g-duplicate"
-		  disableif1="remote"
+		  disableif1="remote noClipboard"
 		  disableif2="root remote"
-		  tooltiptext1="Paste into - Ctrl+V"
-		  tooltiptext2="Duplicate selected items - Ctrl+D"
+		  tooltiptext1="Paste into folder - Ctrl+V"
+		  tooltiptext2="Duplicate selected - Ctrl+D"
         />
 
 		<menuseparator/>
@@ -80,7 +80,7 @@
 		  disableif1="root onlyFolders"
 		  disableif2="root OnlyFoldersBrowserRemote"
 		  tooltiptext1="Edit with Komodo - Ctrl+E or Middle click (files only)"
-		  tooltiptext2="Open with the Operative System - Enter"
+		  tooltiptext2="Open with your Operative System - Enter"
         />
 		<menuseparator/>
 		
@@ -96,7 +96,7 @@
 		  disableif1="browser"
 		  disableif2="browser"
 		  tooltiptext1="Clean cache of selected and reload - Ctrl+R"
-		  tooltiptext2="Clean cache and reload all - F5"
+		  tooltiptext2="Clean cache of all and reload - F5"
         />
 		<menuseparator/>
 
