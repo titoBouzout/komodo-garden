@@ -14,7 +14,7 @@ gardenTree.prototype = {
 	  this._rowsStates = {};
 	  this.currentPath = '';
 	  this.focused = false;
-	  this._listeners = [];
+
 	  this.tree = null;
 	
 	/* navigation */
@@ -41,47 +41,12 @@ gardenTree.prototype = {
 	  this.selection = null;
 	  this.selectionGoingToChange = 0;//holds if it is appropiated to save the selection
 	  this.selectionSelectedItems = [];//save selected items for restoring when they are unselected
+	
+	/* scroll */
+	this.scrollGoingToChange = 0;//holds if it is appropiated to save the scroll
   },
   
-/* listeners */
 
-  addEventListener : function(aEvent, aFunction)
-  {
-	//garden.s.dump('addEventListener:aEvent:'+aEvent);
-	//garden.s.dump('addEventListener:aFunction:', aFunction);
-	if(!this._listeners[aEvent])
-	  this._listeners[aEvent] = [];
-	this._listeners[aEvent][this._listeners[aEvent].length] = aFunction;
-  },
-  removeEventListener : function(aEvent, aFunction)
-  {
-	//garden.s.dump('removeEventListener:aEvent:'+aEvent);
-	//garden.s.dump('removeEventListener:aFunction:', aFunction);
-	aFunction = aFunction.toSource();
-	if(this._listeners[aEvent])
-	{
-	  for(var id in this._listeners[aEvent])
-	  {
-		if(this._listeners[aEvent][id].toSource() == aFunction.toSource())
-		{
-		  delete this._listeners[aEvent][id];
-		  break;
-		}
-	  }
-	}
-  },
-  dispatchEvent : function(aEvent, aData)
-  {
-	//garden.s.dump('dispatchEvent:aEvent:'+aEvent);
-	//garden.s.dump('dispatchEvent:aData:', aData);
-	if(this._listeners[aEvent])
-	{
-	  for(var id in this._listeners[aEvent])
-	  {
-		this._listeners[aEvent][id](aData);
-	  }
-	}
-  },
   
 /*find rows and rows data*/
 
@@ -616,11 +581,15 @@ gardenTree.prototype = {
 
   scrollSave :function()
   {
-	this.firstVisibleRow = this.tree.getFirstVisibleRow();
+	this.scrollGoingToChange++;
+	if(this.scrollGoingToChange == 1)
+	  this.firstVisibleRow = this.tree.getFirstVisibleRow();
   },
   scrollRestore :function()
   {
-	this.tree.scrollToRow(this.firstVisibleRow);
+	this.scrollGoingToChange--;
+	if(this.scrollGoingToChange==0)
+	  this.tree.scrollToRow(this.firstVisibleRow);
   },
   scrollFocusParent:function()
   {
@@ -1327,10 +1296,9 @@ gardenTree.prototype = {
   
 /* properties */
 
-
   getImageSrc : function(i, col){
 	if(!this._rows[i].isDirectory && !garden.s.hasCustomIcon(this._rows[i].extension))
-	  return "moz-icon://name." + this._rows[i].extension + "?size=16";
+	  return "moz-icon://n." + this._rows[i].extension + "?size=16";
   },
   getColumnProperties : function(col,properties){},
   getRowProperties : function(row,properties){},
@@ -1338,36 +1306,47 @@ gardenTree.prototype = {
   {
 	var rowObject = this._rows[i];
 	var rowState = this.getRowStateFromID(rowObject.id);
-	if(rowState.isBusy && this.instance.object.shouldShowLoading)
-	  properties.AppendElement(garden.s.mAtomIconBusy);
-	else if(!rowObject.isDirectory && rowObject.extension != '')
-	  properties.AppendElement(garden.s.getAtom('g'+rowObject.extension));
-	if(rowObject.isHidden)
-	  properties.AppendElement(garden.s.mAtomIconHidden);
-	if(rowObject.isSymlink)
-	  properties.AppendElement(garden.s.mAtomIconSymlink);
-	if(!rowObject.isWritable)
-	  properties.AppendElement(garden.s.mAtomIconUnWritable);
-	if(!rowObject.isReadable || rowState.unreadable)
-	  properties.AppendElement(garden.s.mAtomIconUnReadable);
+	
+	//loading
+	  if(rowState.isBusy && this.instance.object.shouldShowLoading)
+		properties.AppendElement(garden.s.mAtomIconBusy);
 	  
-	if(rowObject.isDirectory)
-	{
-	  
-	}
-	else
-	{
-	  switch(rowObject.name)
+	//nice extension icon
+	  else if(!rowObject.isDirectory && rowObject.extension != '')
+		properties.AppendElement(garden.s.getAtom('g'+rowObject.extension));
+		
+	/*icons based on item name*/
+	  if(rowObject.isDirectory){}
+	  else
 	  {
-		case 'todo.txt':
-		case 'todo':
-		case 'TODO':
+		switch(rowObject.name)
 		{
-		  properties.AppendElement(garden.s.getAtom('todo'));
-		  break;
+		  case 'todo.txt':
+		  case 'todo':
+		  case 'TODO':
+		  {
+			properties.AppendElement(garden.s.getAtom('todo'));
+			break;
+		  }
 		}
 	  }
-	}
+	  
+	/*labels*/
+	  if(rowObject.isHidden)
+		properties.AppendElement(garden.s.mAtomIconHidden);
+	  if(rowObject.isSymlink)
+		properties.AppendElement(garden.s.mAtomIconSymlink);
+	  if(!rowObject.isWritable)
+		properties.AppendElement(garden.s.mAtomIconUnWritable);
+	  if(!rowObject.isReadable || rowState.unreadable)
+		properties.AppendElement(garden.s.mAtomIconUnReadable);
+	
+	/* Extensible getCellProperties */
+	  var aData = {};
+		  aData.originalTarget = rowObject;
+		  aData.properties = properties;
+		  aData.appendAtom = function(aProperty){ this.properties.AppendElement(garden.s.getAtom(aProperty)); };
+	  gardenAPI.dispatchEvent('onPropertiesRequired', aData);
   },
   
 /* something */

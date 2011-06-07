@@ -11,6 +11,7 @@ function AsynchRemote()
 	event.currentTarget.removeEventListener('unload', garden.unloadExtension, false);
 	garden.uninitExtension();
   }
+
   this.initExtension = function()
   {
 	//global singleton object
@@ -93,6 +94,7 @@ function AsynchRemote()
 	  this.element('g-toolbar-local-download').removeAttribute('disabled');
 	}*/
   }
+
   this.onApplicationClose = function(aSubject)
   {
 	var processesRunning = 0;
