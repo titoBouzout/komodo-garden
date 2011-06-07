@@ -8,6 +8,7 @@
 		id="g-tab"
 		label="Garden"
 		linkedpanel="g-box"
+		persist="selected"
 	  />
 	</tabs>
 	<tabpanels id="right_toolbox_tabpanels">
