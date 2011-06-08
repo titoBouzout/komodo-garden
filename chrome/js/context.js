@@ -22,7 +22,8 @@
 	  this.s.timerAdd(50, function(){ garden.treeContextAllowMouseOut = true;});
 	}
 
-	  
+	this.s.hideSiblingsPopupsOpened(aEvent.originalTarget);
+	
 	if(
 	  aEvent.originalTarget &&
 	  (
@@ -99,6 +100,9 @@
 
   this.treeContextPopupShowing = function(aEvent)
   {
+	if(aEvent.originalTarget.parentNode)
+	  this.s.hideSiblingsPopupsOpened(aEvent.originalTarget.parentNode);
+	  
 	//this.s.dump(aEvent.relatedTarget.tagName);
 	//init selection properties
 	var multiple = false,
@@ -239,7 +243,8 @@
 			item.setAttribute('disabled', true);
 		  else if(disableif.indexOf('noClipboard') != -1 && this.s.clipboardGetFilesPaths().length < 1)
 			item.setAttribute('disabled', true);
-			
+		  else if(disableif.indexOf('disabled') != -1)
+			item.setAttribute('disabled', true);
 		  else
 			item.removeAttribute('disabled');
 		}
