@@ -104,8 +104,11 @@ function GardenAPI()
 	  var trees = groups[i].childNodes;
 	  for(var a=0;a < trees.length;a++)
 	  {
-		trees[a].garden.tree.clearStyleAndImageCaches();
-		trees[a].garden.tree.invalidate();
+		if(trees[a].garden.tree)
+		{
+		  trees[a].garden.tree.clearStyleAndImageCaches();
+		  trees[a].garden.tree.invalidate();
+		}
 	  }
 	}
   }
