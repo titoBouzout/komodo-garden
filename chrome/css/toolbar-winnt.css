@@ -1,0 +1,17 @@
+  
+  #g-toolbar-top
+  {
+	background-image: url(chrome://asynchremote/content/icons/toolbar/background-toolbar.png);
+	background-repeat: repeat-x;
+	border-top:1px solid #868686;
+  }
+  #g-groups
+  {
+	background-image: url(chrome://asynchremote/content/icons/toolbar/background-box.png);
+	background-repeat: repeat-x;
+  }
+  #right_toolbox_tabpanels
+  {
+	margin:0px;
+	padding:0px;
+  }

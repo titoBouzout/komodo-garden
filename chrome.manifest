@@ -19,3 +19,6 @@ style chrome://komodo/content/komodo.xul chrome://asynchremote/content/css/group
 style chrome://komodo/content/komodo.xul chrome://asynchremote/content/css/log.css
 style chrome://komodo/content/komodo.xul chrome://asynchremote/content/css/toolbar.css
 style chrome://komodo/content/komodo.xul chrome://asynchremote/content/css/tree.css
+
+#Windows Styles https://developer.mozilla.org/en/OS_TARGET
+style chrome://komodo/content/komodo.xul chrome://asynchremote/content/css/toolbar-winnt.css os=winnt
