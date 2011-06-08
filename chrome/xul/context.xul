@@ -48,7 +48,7 @@
 		  class1="g-menuitem g-copy"
 		  tooltiptext2="Cut selected - Ctrl+X"
 		  tooltiptext1="Copy selected - Ctrl+C"
-		  disableif2="remote root"
+		  disableif2="remote root disabled"
 		  disableif1="remote root"
         />
 		<menuitem
@@ -109,6 +109,8 @@
 		  action2="download"
 		  class1="g-menuitem g-upload"
 		  class2="g-menuitem g-download"
+		  disableif1="disabled"
+		  disableif2="disabled"
         />
 
 		<menuitem
@@ -117,6 +119,7 @@
 		  class1="g-menuitem g-download-to-folder"
 		  class="g-menuitem-single-xbl"
 		  action="download-to-folder"
+		  disableif="disabled"
         />
 
 		<menuseparator/>
@@ -162,26 +165,17 @@
 		
 		
 		<menuseparator id="g-context-tools-separator"/>
-		<menu id="g-context-tools" label="Tools">
+		<menu id="g-context-tools" label="Tools" class="g-tools menu-iconic" disabled="true">
 		  <menupopup>
-					<menuseparator/>
-					<menuitem
-					  id="g-context-diff"
-					  label="Compare With Local"
-					  class1="g-menuitem g-diff"
-					  class="g-menuitem-single-xbl"
-					  action="diff"
-					  disableif="root onlyFolders"
-					/>
-					<menuitem
-					  id="g-context-diff"
-					  label="Compress to zip"
-					  class1="g-menuitem g-diff"
-					  class="g-menuitem-single-xbl"
-					  action="diff"
-					  disableif="root onlyFolders"
-					/>
-			<menuitem label="lala2"/>
+			<menuitem
+			  id="g-context-diff"
+			  label="Compare With Local"
+			  class1="g-menuitem g-diff"
+			  class="g-menuitem-single-xbl"
+			  action="diff"
+			  disableif="root onlyFolders"
+			  disabled="true"
+			/>
 		  </menupopup>
 		</menu>
 		<menuseparator/>
