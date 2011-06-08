@@ -124,8 +124,6 @@
 			  <menuitem oncommand="garden.focusedInstance.cleanCacheOverWrite()" label="Forget overwrite settings"/>
 			  <menuitem oncommand="garden.toolsSaveOptions();" id="g-tools-overwrite-no-ask" type="checkbox" checked="false" label="Overwrite without asking"/>
 			  <menuseparator/>
-			  <menuitem oncommand="garden.toolsSaveOptions();" id="g-tools-upload-and-rename" type="checkbox" checked="false" label="Treat files as '.kup' and then rename the file"/>
-			  <menuseparator/>
 			  <menuitem type="radio" oncommand="garden.switchViewType();" id="g-tools-sidebar-view-single" checked="true" label="Single tree view"/>
 			  <menuitem type="radio" oncommand="garden.switchViewType();" id="g-tools-sidebar-view-multiple-horizontal" checked="false" label="Multiples trees horizontal"/>
 			  <menuitem type="radio" oncommand="garden.switchViewType();" id="g-tools-sidebar-view-multiple-vertical" checked="false" label="Multiples trees vertical"/>

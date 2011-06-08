@@ -7,8 +7,6 @@ pref('extensions.asynchremote.overwrite.no.ask', false);
 
 pref('extensions.asynchremote.dont.cache.last.modified', false);
 
-pref('extensions.asynchremote.upload.and.rename', true);
-
 pref('extensions.asynchremote.save.before.upload', false);
 
 pref('extensions.asynchremote.last.focused.treeID', '0');

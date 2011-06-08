@@ -1523,7 +1523,7 @@ GardenInstances.prototype = {
 			
 			if(aProcess.overWriteRemote)
 			{
-			  var uploadAndRename = asynchRemote.s.pref('upload.and.rename');
+			  var uploadAndRename = true;
 			  if(uploadAndRename)
 				var extension = '.kup';
 			  else
