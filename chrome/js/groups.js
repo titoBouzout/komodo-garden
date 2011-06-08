@@ -318,10 +318,14 @@
 				  for(var a in groups[id].trees)
 				  {
 					var treeID =  groups[id].trees[a].id;
-					this.element('g-tree-'+treeID).parentNode.removeChild(this.element('g-tree-'+treeID));
-					this.trees[treeID].sessionRemove();
-					this.trees[treeID] = null;
-					this.instances[treeID] = null;
+					if(this.element('g-tree-'+treeID))
+					  this.element('g-tree-'+treeID).parentNode.removeChild(this.element('g-tree-'+treeID));
+					if(this.trees[treeID])
+					{
+					  this.trees[treeID].sessionRemove();
+					  this.trees[treeID] = null;
+					  this.instances[treeID] = null;
+					}
 				  }
 				  
 				  groups.splice(i, 1);
@@ -569,14 +573,7 @@
 		  }
 		  break;
 		}
-	  case 'tree-selection':
-		{
-		  this.s.timerAdd(10, function(){
-		  garden.element('g-groups-menupopup').openPopup(garden.element('g-groups-menupopup').parentNode, 'before_start');
-		  //garden.element('g-group-context').openPopupAtScreen(aEvent.screenX, aEvent.screenY, true);
-		  });
-		  return;
-		}
+
 	}
 	
 	var popup = document.popupNode.parentNode;
