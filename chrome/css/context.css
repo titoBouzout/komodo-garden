@@ -74,8 +74,14 @@
   .g-download-to-folder{
 	list-style-image : url("chrome://asynchremote/content/icons/context/download-to-folder.png");
   }
+  .g-download-to-folder[disabled]{
+	list-style-image : url("chrome://asynchremote/content/icons/context/download-to-folder-disabled.png");
+  }
   .g-download-this-to-folder{
 	list-style-image : url("chrome://asynchremote/content/icons/context/download-this-to-folder.png");
+  }
+  .g-download-this-to-folder[disabled]{
+	list-style-image : url("chrome://asynchremote/content/icons/context/download-this-to-folder-disabled.png");
   }
   
   .g-diff{
@@ -175,7 +181,14 @@
   {
 	list-style-image : url("chrome://asynchremote/content/icons/context/refresh-disabled.png");
   }
-  
+  .g-tools
+  {
+	list-style-image : url("chrome://asynchremote/content/icons/context/tools.png");
+  }
+  .g-tools[disabled]
+  {
+	list-style-image : url("chrome://asynchremote/content/icons/context/tools-disabled.png");
+  }
 
 /*binding*/
 
