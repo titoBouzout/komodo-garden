@@ -243,11 +243,12 @@
 	//show the top toolbar if it is collapsed
 	this.element('g-toolbar-top').setAttribute('collapsed', false);
 	
-	this.onLocationChange(this.s.tabGetFocused(window));
-	
 	this.s.pref('last.focused.treeID', treeID);
 	this.s.pref('last.focused.groupID', groupID);
 	this.s.pref('last.focused.path', path);
+	
+	if(window && this.s.tabGetFocused(window))
+	  this.onLocationChange(this.s.tabGetFocused(window));
   }
   //simulates a switchToTreeData
   this.switchToTreeData = function(groupID, treeID, path)
