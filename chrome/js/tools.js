@@ -7,7 +7,7 @@
 	var oldHiddenItems = this.s.pref('no.hidden.items');
 	this.s.pref('no.hidden.items', !(this.element('g-tools-show-hidden-items').getAttribute('checked') == 'true'));
 	if(oldHiddenItems != this.s.pref('no.hidden.items'))
-	  this.focusedTree.reload();
+	  gardenAPI.treesReloadAll();
   }
   
   this.toolsContribute = function()
