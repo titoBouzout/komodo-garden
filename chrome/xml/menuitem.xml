@@ -10,7 +10,6 @@
 
   <binding
 		id="g-menuitem-single-xbl"
-		extends="chrome://global/content/bindings/menu.xml#menuitem-base"
   >
 	
 	<content class="g-menuitem-content">
@@ -28,7 +27,6 @@
 
   <binding
 		id="g-menuitem-double-xbl"
-		extends="chrome://global/content/bindings/menu.xml#menuitem-base"
   >
 	
 	<content class="g-menuitem-content">
@@ -52,7 +50,6 @@
 	
   <binding
 	  id="g-menuitem-triple-xbl"
-	  extends="chrome://global/content/bindings/menu.xml#menuitem-base"
   >
 	<content class="g-menuitem-content">
 	  <xul:hbox class="g-menuitem-container" anonid="container" flex="1">
