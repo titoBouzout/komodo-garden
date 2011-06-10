@@ -49,7 +49,7 @@
 		  class1="g-menuitem g-copy"
 		  tooltiptext2="Cut selected - Ctrl+X"
 		  tooltiptext1="Copy selected - Ctrl+C"
-		  disableif2="remote root disabled"
+		  disableif2="remote root"
 		  disableif1="remote root"
         />
 		<menuitem

@@ -696,6 +696,7 @@
 		  if(selectedInstance.type == 'local')
 		  {
 			var pathsToCopy = this.s.clipboardGetFilesPaths();
+			var isCuting = this.s.clipboardGetFilesPathsIsCuting();
 			//alert(pathsToCopy.toSource());
 			for(var i in pathsToCopy)
 			{
@@ -717,11 +718,35 @@
 				}
 				aDestination = aDestination+selectedInstance.__DS+aName;
 				if(isDirectory)
-				  aProcess = selectedInstance.copyDirectory(pathsToCopy[i], aDestination, aProcess);
+				{
+				  if(!isCuting)
+					aProcess = selectedInstance.copyDirectory(pathsToCopy[i], aDestination, aProcess);
+				  else
+					aProcess = selectedInstance.rename(pathsToCopy[i], aDestination, true, aProcess);
+				}
 				else
-				  aProcess = selectedInstance.copyFile(pathsToCopy[i], aDestination, aProcess);
+				{
+				  if(!isCuting)
+					aProcess = selectedInstance.copyFile(pathsToCopy[i], aDestination, aProcess);
+				  else
+					aProcess = selectedInstance.rename(pathsToCopy[i], aDestination, false, aProcess);
+				}
 			  }
 			}
+		  }
+		  break;
+		}
+	  case 'cut':
+		{
+		  var aProcess = false;//group the processes into one process object
+		  if(selectedInstance.type == 'local')
+		  {
+			var pathsToCopy = [];
+			for(var id in selectedItems)
+			{
+			  pathsToCopy[pathsToCopy.length] =  selectedItems[id].path;
+			}
+			this.s.clipboardSetFilesPaths(pathsToCopy, true);
 		  }
 		  break;
 		}
