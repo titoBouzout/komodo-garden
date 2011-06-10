@@ -74,7 +74,7 @@
 		  aData.path = item.getAttribute('path');
 		  aData.aFunction = function(aData){ garden.browserRequest(item, aData); }
 	 
-	  instance.directoryList(aData);
+	  instance.directoryList(aData, this.s.pref('no.hidden.items'));
 	  return;
 	}
 	if(!aData.aEntries)

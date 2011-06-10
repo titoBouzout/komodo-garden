@@ -77,14 +77,17 @@ GardenLocal.prototype = {
   {
 	
   },
-  directoryList:function(aDirectory)
+  directoryList:function(aDirectory, noHiddenItems)
   {
 	//garden.s.dump('object:directoryList');
-	var entries = [], entry;
+	var entries = [], entry, isHidden;
 	var fileSystemEntries = garden.s.folderListContentData(aDirectory);
 	for(var i in fileSystemEntries)
 	{
 	  entry = fileSystemEntries[i];
+	  isHidden = entry.isHidden();
+	  if(isHidden && noHiddenItems)
+		continue;
 	  entries[entries.length] =
 	  {
 		'name': entry.leafName,
@@ -93,7 +96,7 @@ GardenLocal.prototype = {
 		'isFile': !entry.isDirectory(),
 		'isDirectory': entry.isDirectory(),
 		'isSymlink': entry.isSymlink(),
-		'isHidden': entry.isHidden(),
+		'isHidden': isHidden,
 		'isWritable': entry.isWritable(),
 		'isReadable': entry.isReadable(),
 		'modifiedTime': entry.lastModifiedTime,

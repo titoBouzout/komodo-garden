@@ -63,10 +63,10 @@ AsynchRemoteConnection.prototype = {
   {
 	this.connect().changeDirectory('/');
   },
-  directoryList:function(aDirectory)
+  directoryList:function(aDirectory, noHiddenItems)
   {
 	var entries = this.connect().list(('/'+aDirectory).replace(/^\/+/, '/'), 1).getChildren({});
-	var child, rows = [], path = '', isDirectory;
+	var child, rows = [], path = '', isDirectory, isHidden;
 
 	for(var i=0;i<entries.length;i++)
 	{
@@ -74,7 +74,9 @@ AsynchRemoteConnection.prototype = {
 	  
 	  path = child.getFilepath();
 	  isDirectory = child.isDirectory();
-
+	  isHidden = child.isHidden();
+	  if(isHidden && noHiddenItems)
+		continue;
 	  rows[rows.length] = 
 	  {
 		'name': child.getFilename(),
@@ -83,7 +85,7 @@ AsynchRemoteConnection.prototype = {
 		'isFile': !isDirectory,
 		'isDirectory': isDirectory,
 		'isSymlink': child.isSymlink(),
-		'isHidden': child.isHidden(),
+		'isHidden': isHidden,
 		'isWritable': child.isWriteable(),
 		'isReadable': child.isReadable(),
 		'modifiedTime': child.mtime,

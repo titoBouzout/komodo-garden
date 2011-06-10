@@ -254,7 +254,7 @@ GardenInstances.prototype = {
   /*
 	directory listing is outside of process controller
   */
-  directoryList: function(aData)
+  directoryList: function(aData, noHiddenItems)
   {
 	//this.dump('instance:directoryList');
 	if(this.listings[aData.path] && this.listings[aData.path].data)
@@ -276,7 +276,7 @@ GardenInstances.prototype = {
 		//run threaded only if no cached
 		var instance = this;
 		garden.s.runThread(function(){
-		  instance._directoryList(aData);
+		  instance._directoryList(aData, noHiddenItems);
 		}, this.thread);
 	  }
 	  else
@@ -294,12 +294,12 @@ GardenInstances.prototype = {
 		  instance.logs = this.logs;
 		  instance.treeID = this.treeID;
 		
-		instance.directoryList(aData);
+		instance.directoryList(aData, noHiddenItems);
 	  }
 	}
   },
   //threaded directory listing for tree view
-  _directoryList:function(aData, aNumTry)
+  _directoryList:function(aData, noHiddenItems, aNumTry)
   {
 	//this.dump('instance:_directoryList');
 	var aDirectory = aData.path;
@@ -331,7 +331,7 @@ GardenInstances.prototype = {
 		  
 		  this.log('progress', 'Getting "'+aDirectory+'" list from host', 0);
 		  
-		  var entries = this.object.directoryList(aDirectory);
+		  var entries = this.object.directoryList(aDirectory, noHiddenItems);
 		  
 		  var rowsDirectories = [], rowsFiles = [], rows = [], rowsSorted = [], nameSorting;
 		  //this.dump('instance:_directoryList:startParsing');
@@ -400,7 +400,7 @@ GardenInstances.prototype = {
 		if(aNumTry<this.numMaxTrysDirectoryListing)
 		{
 		  //Trying again…
-		  this._directoryList(aData, aNumTry);
+		  this._directoryList(aData, noHiddenItems, aNumTry);
 		}
 		else
 		{

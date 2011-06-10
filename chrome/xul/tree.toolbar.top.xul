@@ -124,6 +124,8 @@
 			  <menuitem oncommand="garden.focusedInstance.cleanCacheOverWrite()" label="Forget overwrite settings"/>
 			  <menuitem oncommand="garden.toolsSaveOptions();" id="g-tools-overwrite-no-ask" type="checkbox" checked="false" label="Overwrite without asking"/>
 			  <menuseparator/>
+			  <menuitem oncommand="garden.toolsSaveOptions();" id="g-tools-show-hidden-items" type="checkbox" checked="false" label="Show hidden Items"/>
+			  <menuseparator/>
 			  <menuitem type="radio" oncommand="garden.switchViewType();" id="g-tools-sidebar-view-single" checked="true" label="Single tree view"/>
 			  <menuitem type="radio" oncommand="garden.switchViewType();" id="g-tools-sidebar-view-multiple-horizontal" checked="false" label="Multiples trees horizontal"/>
 			  <menuitem type="radio" oncommand="garden.switchViewType();" id="g-tools-sidebar-view-multiple-vertical" checked="false" label="Multiples trees vertical"/>

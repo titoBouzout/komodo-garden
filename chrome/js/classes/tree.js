@@ -336,7 +336,7 @@ gardenTree.prototype = {
 	  var treeView = this;
 		  aData.aFunction = function(aData){ treeView.onDataReceived(aData);};
 		  
-	  this.instance.directoryList(aData);
+	  this.instance.directoryList(aData, garden.s.pref('no.hidden.items'));
 	}
   },
   toggleOpenStateContainers : function(selectedItems, selectedItem)
@@ -1130,7 +1130,7 @@ gardenTree.prototype = {
 	  var treeView = this;
 		  aData.aFunction = function(aData){ treeView.onDataReceived(aData);};
 		  
-	  this.instance.directoryList(aData);
+	  this.instance.directoryList(aData, garden.s.pref('no.hidden.items'));
 	  return true;
 	}
 	return false;
