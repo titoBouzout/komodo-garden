@@ -404,7 +404,7 @@ gardenTree.prototype = {
 	
 	if(aRow.path.indexOf(this.currentPath) !== 0)
 	{
-	 garden.s.dump('insertRow:pathNotInCurrentView:aRow.path'+aRow.path+':aParentRowPath:'+aParentRowPath);
+	 garden.s.dump('insertRow:pathNotInCurrentView:aRow.path:'+aRow.path+':aParentRowPath:'+this.currentPath);
 	  return;
 	}
 
