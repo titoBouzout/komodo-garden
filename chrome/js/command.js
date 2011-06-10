@@ -260,16 +260,19 @@
 		}
 	  case 'trash':
 		{
-		  if(selectedPaths.join('') != '' && this.s.confirm('Are you sure you want to send to the trash the following items?\n\n\t'+selectedPaths.join('\n\t')+'\n'))
+		  if(selectedInstance.type == 'local')
 		  {
-			var aProcess = false;//group the processes into one process object
-			for(var id in selectedItems)
+			if(selectedPaths.join('') != '' && this.s.confirm('Are you sure you want to send to the trash the following items?\n\n\t'+selectedPaths.join('\n\t')+'\n'))
 			{
-			  if(selectedItems[id].isDirectory)
-				aProcess = selectedInstance.trashDirectory(selectedItems[id].path, aProcess);
-			  else
-				aProcess = selectedInstance.trashFile(selectedItems[id].path, aProcess);
-			  
+			  var aProcess = false;//group the processes into one process object
+			  for(var id in selectedItems)
+			  {
+				if(selectedItems[id].isDirectory)
+				  aProcess = selectedInstance.trashDirectory(selectedItems[id].path, aProcess);
+				else
+				  aProcess = selectedInstance.trashFile(selectedItems[id].path, aProcess);
+				
+			  }
 			}
 		  }
 		  break;
@@ -419,22 +422,25 @@
 		}
 	  case 'new-file':
 		{
-		  var newName = this.s.prompt('Enter file name…', '');
-		  if(newName != '')
+		  if(selectedInstance.type == 'local')
 		  {
-			if(!selectedItem.isDirectory)
+			var newName = this.s.prompt('Enter file name…', '');
+			if(newName != '')
 			{
-			  var selectedPath = selectedPath.split(selectedInstance.__DS);
-				  selectedPath.pop();
-				  selectedPath = selectedPath.join(selectedInstance.__DS);
+			  if(!selectedItem.isDirectory)
+			  {
+				var selectedPath = selectedPath.split(selectedInstance.__DS);
+					selectedPath.pop();
+					selectedPath = selectedPath.join(selectedInstance.__DS);
+			  }
+			  newName = newName
+								  .replace(/^\/+/g, '').replace(/\/+$/g, '')
+								  .replace(/^\\+/g, '').replace(/\\+$/g, '')
+								  .replace(/\\+/g, '\\').replace(/\/+/g, '/')
+								  .split('/').join(selectedInstance.__DS);
+			  if(newName != '' && newName != selectedInstance.__DS)
+				selectedInstance.createFile(selectedPath+selectedInstance.__DS+newName);
 			}
-			newName = newName
-								.replace(/^\/+/g, '').replace(/\/+$/g, '')
-								.replace(/^\\+/g, '').replace(/\\+$/g, '')
-								.replace(/\\+/g, '\\').replace(/\/+/g, '/')
-								.split('/').join(selectedInstance.__DS);
-			if(newName != '' && newName != selectedInstance.__DS)
-			  selectedInstance.createFile(selectedPath+selectedInstance.__DS+newName);
 		  }
 		  break;
 		}
@@ -475,9 +481,9 @@
 		}
 	  case 'show-in-folder':
 		{
-		  for(var id in selectedPaths)
+		  if(selectedInstance.type == 'local')
 		  {
-			if(selectedInstance.type == 'local')
+			for(var id in selectedPaths)
 			  this.s.reveal(selectedPaths[id]);
 		  }
 		  break;
@@ -711,13 +717,9 @@
 				}
 				aDestination = aDestination+selectedInstance.__DS+aName;
 				if(isDirectory)
-				{
 				  aProcess = selectedInstance.copyDirectory(pathsToCopy[i], aDestination, aProcess);
-				}
 				else
-				{
 				  aProcess = selectedInstance.copyFile(pathsToCopy[i], aDestination, aProcess);
-				}
 			  }
 			}
 		  }
