@@ -112,6 +112,23 @@ function GardenAPI()
 	  }
 	}
   }
+  this.treeReloadFocused = function()
+  {
+	garden.focusedTree.reload();
+  }
+  this.treesReloadAll = function()
+  {
+	var groups = garden.element('g-groups').childNodes;
+	for(var i=0;i<groups.length;i++)
+	{
+	  var trees = groups[i].childNodes;
+	  for(var a=0;a < trees.length;a++)
+	  {
+		if(trees[a].garden.tree)
+		  trees[a].garden.reload();
+	  }
+	}
+  }
 }
 
 var gardenAPI = new GardenAPI();
