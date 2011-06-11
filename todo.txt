@@ -1,24 +1,3 @@
-olvidar la seleccion cuando se remueven o mueven elementos del tree
-comproba q los elementos no existan antes de insertarlos !!
-
-process:
-que los procesos se puedan borrar
-que se puedan borrar todos los procesos
-hay que hacerlos expirar despues de un tiempo
-
-drivers:
-validar el driver que tenga todo lo que se precisa
-cuando un servidor que ya estaba guardado no esta mas disponible muta
-
-tree:
-la seleccion esta mutando
-una imagen de fondo para el tree
-cuando crea un nuevo archivo o carpeta insertar el coso en el tree y luego llamar a renombrar
-el orden del cache!!!
-
-general:
-usar preferencias propias y no las del browser
-
 BUGS
 
   1) I dont know how to tell to koRemoteConnectionService to use 8bits on the connection, for example,  when creating a folder with filezilla called "Русский" the folder gets created, when trying with koRemoteConnectionService I get a folder created with name: "???????". I want to give the option to use utf8.
@@ -27,8 +6,6 @@ BUGS
   
   2.1) the overwrite function looks for the files in the server instead of comparing the modifiedtime and size
   
-  3) there is no queue of files on transfers yet.. wait what!?
-
 TODO (in no special order)
     
   context menu items:
@@ -49,8 +26,7 @@ TODO (in no special order)
 
   tree
 	give option to enable or disable horizontal scrolling
-	show a mark on modified not uploaded/downloaded files
-	when a item is renamed from the tree: instead of removing the element and appending again we should rename the item sort that item
+	when a item is renamed from the tree: instead of removing the element and appending again we should rename the item and sort that item
 	icons should be into one image
 	  
   servers
@@ -59,3 +35,22 @@ TODO (in no special order)
   chmod:
 	show old permissions for each selected file when requesting a chmod change command
 	chmod dialog should contain nice checkbox about permissino,group,owner,public,read,write,execute etc
+
+Personal TODO List:
+
+process:
+que los procesos se puedan borrar
+que se puedan borrar todos los procesos
+hay que hacerlos expirar despues de un tiempo
+
+drivers:
+validar el driver que tenga todo lo que se precisa
+cuando un servidor que ya estaba guardado no esta mas disponible muta
+
+tree:
+una imagen de fondo para el tree
+cuando crea un nuevo archivo o carpeta insertar el coso en el tree y luego llamar a renombrar
+el orden del cache!!!
+
+general:
+usar preferencias propias y no las del browser
