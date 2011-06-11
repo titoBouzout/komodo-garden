@@ -59,12 +59,13 @@ GardenLocal.prototype = {
 	i++;
 	
 	//TODO add networks "folders"?? how can I get a list of shared folders of the network?
-	entries[i] = {};
+	/*entries[i] = {};
 	entries[i].labelWithPath = '\\\\Titook\\Documentos';
 	entries[i].labelWithoutPath = '';
 	entries[i].path = '\\\\Titook\\Documentos';
 	entries[i].aData = '\\\\Titook\\Documentos';
 	i++;
+	*/
 	
 	return entries;
   },
