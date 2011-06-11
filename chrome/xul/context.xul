@@ -5,13 +5,15 @@
 	<popupset id="extensionPopupSet">
 	
 	  <!-- remote tree context menu
+	  
+		
 	 -->
 	  <menupopup
 		id="g-tree-context"
 		onpopupshowing="return garden.treeContextPopupShowing(event)"
 		oncommand="garden.gardenCommand(event.originalTarget.getAttribute('action'))"
-		onmouseover="garden.treeContextMouseOver(event)"
-		onmouseout="garden.treeContextMouseOut(event)"
+		onmouseover="return garden.treeContextMouseOver(event)"
+		onmouseout="return garden.treeContextMouseOut(event)"
 		class="g-tree-context"
 	  >
 		<menuitem

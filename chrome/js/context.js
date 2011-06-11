@@ -55,15 +55,16 @@
 		//this.s.dump(aTagName);
 		this.s.hideChildrensPopupsOpened(this.element('g-tree-context'));
 	  }
-	  else if(aTagName == 'menu' || aTagName == 'xul:menu')
+	  /*else if(aTagName == 'menu' || aTagName == 'xul:menu')
 	  {
 		if(!aEvent.originalTarget.hasAttribute('disabled'))
 		{
 		  //this.s.dump(aTagName);
-		  aEvent.originalTarget.firstChild.openPopup(aEvent.originalTarget, 'end_before');
+		  //aEvent.originalTarget.firstChild.openPopup(aEvent.originalTarget, 'end_before');
 		}
-	  }
+	  }*/
 	}
+	return true;
   }
   
   /*
