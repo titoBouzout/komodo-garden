@@ -17,13 +17,13 @@ Home-page:<br/>
 http://community.activestate.com/xpi/xxx
 
 Todo & know bugs:<br/>
-https://github.com/titoBouzout/komodo-asynch-remotes/blob/master/todo.txt
+https://github.com/titoBouzout/komodo-garden/blob/master/todo.txt
 
 Source-Code:<br/>
-https://github.com/titoBouzout/komodo-asynch-remotes
+https://github.com/titoBouzout/komodo-garden
 
 All versions Changes:<br/>
-https://github.com/titoBouzout/komodo-asynch-remotes/blob/master/changes.html
+https://github.com/titoBouzout/komodo-garden/blob/master/changes.html
 
 Changes From Latest Version:
 
