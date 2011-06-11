@@ -1,16 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
-<!DOCTYPE bindings [
-
-]>
-
+<!DOCTYPE bindings []>
 <bindings xmlns="http://www.mozilla.org/xbl"
           xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
           xmlns:xbl="http://www.mozilla.org/xbl">
 
-  <binding
-		id="g-menuitem-single-xbl"
-  >
+  <binding id="g-menuitem-single-xbl">
 	
 	<content class="g-menuitem-content">
 	  <xul:hbox class="g-menuitem-container" anonid="container" flex="1">
@@ -22,12 +16,9 @@
 		/>
 	  </xul:hbox>
 	</content>
-		  
   </binding>
 
-  <binding
-		id="g-menuitem-double-xbl"
-  >
+  <binding id="g-menuitem-double-xbl">
 	
 	<content class="g-menuitem-content">
 	  <xul:hbox class="g-menuitem-container" anonid="container" flex="1">
@@ -45,12 +36,9 @@
 		/>
 	  </xul:hbox>
 	</content>
-		  
   </binding>
 	
-  <binding
-	  id="g-menuitem-triple-xbl"
-  >
+  <binding id="g-menuitem-triple-xbl">
 	<content class="g-menuitem-content">
 	  <xul:hbox class="g-menuitem-container" anonid="container" flex="1">
 		<xul:button
@@ -73,7 +61,6 @@
 		/>
 	  </xul:hbox>
 	</content>
-		
   </binding>
 	
 </bindings>
