@@ -111,10 +111,10 @@
 	background-image:url(chrome://asynchremote/content/icons/files/tree/labels/unreadable.png) !important;
   }
 /*version control*/
-  .g-browser-leaf[unknow] > label,
-  .g-browser-container[unknow] > label,
-  .g-tree treechildren::-moz-tree-cell-text(unknow) {
-	background-image:url(chrome://asynchremote/content/icons/files/tree/labels/unknow.png) !important;
+  .g-browser-leaf[unknown] > label,
+  .g-browser-container[unknown] > label,
+  .g-tree treechildren::-moz-tree-cell-text(unknown) {
+	background-image:url(chrome://asynchremote/content/icons/files/tree/labels/unknown.png) !important;
   }
   .g-browser-leaf[ignored] > label,
   .g-browser-container[ignored] > label,
