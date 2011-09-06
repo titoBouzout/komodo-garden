@@ -130,7 +130,7 @@
 	  text += selected[id].firstChild.firstChild.nodeValue;
 	  text += this.s.__NL;
 	}
-	this.s.copyToClipboard(text);
+	myAPI.clipboard().copy(text);
   }
   
   this.logCopyAll = function()
@@ -143,7 +143,7 @@
 	  text += log.getItemAtIndex(i).firstChild.firstChild.nodeValue;
 	  text += this.s.__NL;
 	}
-	this.s.copyToClipboard(text);
+	myAPI.clipboard().copy(text);
   }
   
   this.logUpdateIfOpened = function()

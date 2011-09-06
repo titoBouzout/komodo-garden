@@ -242,7 +242,7 @@
 			item.setAttribute('disabled', true);
 		  else if(type == 'local' && disableif.indexOf('local') != -1)
 			item.setAttribute('disabled', true);
-		  else if(disableif.indexOf('noClipboard') != -1 && this.s.clipboardGetFilesPaths().length < 1)
+		  else if(disableif.indexOf('noClipboard') != -1 && myAPI.clipboard().filesGet().length < 1)
 			item.setAttribute('disabled', true);
 		  else if(disableif.indexOf('disabled') != -1)
 			item.setAttribute('disabled', true);

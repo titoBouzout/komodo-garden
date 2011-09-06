@@ -465,7 +465,7 @@
 			  pathsToRefresh[pathsToRefresh.length] = selectedPath;	  
 			}
 		  }
-		  pathsToRefresh = this.s.arrayUnique(pathsToRefresh);
+		  pathsToRefresh = myAPI.array().unique(pathsToRefresh);
 		  //this.s.dump('paths to refresh ', pathsToRefresh);
 			 
 		  for(var id in pathsToRefresh)
@@ -695,8 +695,8 @@
 		  var aProcess = false;//group the processes into one process object
 		  if(selectedInstance.type == 'local')
 		  {
-			var pathsToCopy = this.s.clipboardGetFilesPaths();
-			var isCuting = this.s.clipboardGetFilesPathsIsCuting();
+			var pathsToCopy = myAPI.clipboard().filesGet();
+			var isCuting = myAPI.clipboard().isCuting();
 			//alert(pathsToCopy.toSource());
 			for(var i in pathsToCopy)
 			{
@@ -746,7 +746,7 @@
 			{
 			  pathsToCopy[pathsToCopy.length] =  selectedItems[id].path;
 			}
-			this.s.clipboardSetFilesPaths(pathsToCopy, true);
+			myAPI.clipboard().filesCut(pathsToCopy);
 		  }
 		  break;
 		}
@@ -760,7 +760,7 @@
 			{
 			  pathsToCopy[pathsToCopy.length] =  selectedItems[id].path;
 			}
-			this.s.clipboardSetFilesPaths(pathsToCopy);
+			myAPI.clipboard().filesCopy(pathsToCopy);
 		  }
 		  break;
 		}
