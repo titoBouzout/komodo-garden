@@ -19,7 +19,7 @@
 	  {
 		item.setAttribute('isFocused', true);
 		if(tagName == 'xul:menu' || tagName == 'menu')
-		  item.firstChild.timer = this.s.timerAdd(220, function(){garden.browserOpenpopupFix(item.firstChild);});
+		  item.firstChild.timer = myAPI.timer().setTimeout(function(){garden.browserOpenpopupFix(item.firstChild);}, 220);
 	  }
 	  else if(aEvent.type == 'mouseout')
 	  {
@@ -30,7 +30,7 @@
 		if(aEvent.type == 'mouseover' && !item.hasAttribute('busy'))
 		{
 		  item.setAttribute('busy', true);
-		  item.interval = this.s.timerAdd(190, function(){garden.browserRequest(item);});
+		  item.interval = myAPI.timer().setTimeout(function(){garden.browserRequest(item);}, 190);
 		}
 		else if(aEvent.type == 'mouseout')
 		{
@@ -74,7 +74,7 @@
 		  aData.path = item.getAttribute('path');
 		  aData.aFunction = function(aData){ garden.browserRequest(item, aData); }
 	 
-	  instance.directoryList(aData, this.s.pref('no.hidden.items'));
+	  instance.directoryList(aData, this.shared.pref('no.hidden.items'));
 	  return;
 	}
 	if(!aData.aEntries)

@@ -1,4 +1,4 @@
-<?xml version="1.0"?>
+<?xml version="1.0" encoding="UTF-8"?>
 
 <RDF xmlns="http://www.w3.org/1999/02/22-rdf-syntax-ns#" 
      xmlns:em="http://www.mozilla.org/2004/em-rdf#">
@@ -8,7 +8,7 @@
 	  <em:name>Garden</em:name>
 	  <em:version>0</em:version>
 	  <em:description>A garden full of trees.</em:description>
-	  <em:creator>Tito Bouzout</em:creator>
+	  <em:creator>Tito</em:creator>
 	  <em:iconURL>chrome://asynchremote/content/icons/icon.png</em:iconURL>
 	  <em:homepageURL>https://github.com/titoBouzout/komodo-garden</em:homepageURL>
 	  <em:targetApplication>

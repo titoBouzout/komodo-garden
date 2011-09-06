@@ -3,10 +3,10 @@
   
   this.logOpen = function()
   {
-	this.element('g-log-show-progress').checked = this.s.pref('log.show.progress');
-	this.element('g-log-show-warning').checked = this.s.pref('log.show.warning');
-	this.element('g-log-show-error').checked = this.s.pref('log.show.error');
-	this.element('g-log-show-sucess').checked = this.s.pref('log.show.sucess');
+	this.element('g-log-show-progress').checked = this.shared.pref('log.show.progress');
+	this.element('g-log-show-warning').checked = this.shared.pref('log.show.warning');
+	this.element('g-log-show-error').checked = this.shared.pref('log.show.error');
+	this.element('g-log-show-sucess').checked = this.shared.pref('log.show.sucess');
 
 	this.logUpdate();
 	
@@ -29,10 +29,10 @@
 	{
 	  var log = '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd"><html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><style>div{font-size:11px;font-family:arial, tahoma, sans-serif;} .sucess{ color:#45a44e; }  .status{color:#5d61af;}.error{ color:#d73d3d; } .warning{ color:#666666;}.canceled{ color:#876F71;}.progress{ color:#999999;}.process{ color:#45a44e;font-weight:bold;}</style></head><body>';
 	  
-	  var showErrors = this.s.pref('log.show.error');
-	  var showWarnings = this.s.pref('log.show.warning');
-	  var showProgress = this.s.pref('log.show.progress');
-	  var showSucess = this.s.pref('log.show.sucess');
+	  var showErrors = this.shared.pref('log.show.error');
+	  var showWarnings = this.shared.pref('log.show.warning');
+	  var showProgress = this.shared.pref('log.show.progress');
+	  var showSucess = this.shared.pref('log.show.sucess');
 	  
 	  var searchString = this.element('g-log-search').value;
 	  for(var id in this.focusedInstance.logs)
@@ -73,10 +73,10 @@
 	var log = this.element('g-log');
 	var childrens = [];
 	
-	var showErrors = this.s.pref('log.show.error');
-	var showWarnings = this.s.pref('log.show.warning');
-	var showProgress = this.s.pref('log.show.progress');
-	var showSucess = this.s.pref('log.show.sucess');
+	var showErrors = this.shared.pref('log.show.error');
+	var showWarnings = this.shared.pref('log.show.warning');
+	var showProgress = this.shared.pref('log.show.progress');
+	var showSucess = this.shared.pref('log.show.sucess');
 	
 	var searchString = this.element('g-log-search').value;
 	var i = this.focusedInstance.logs.length-1;
@@ -154,10 +154,10 @@
   
   this.logSaveOptions = function()
   {
-	this.s.pref('log.show.progress', this.element('g-log-show-progress').checked);
-	this.s.pref('log.show.warning', this.element('g-log-show-warning').checked);
-	this.s.pref('log.show.error', this.element('g-log-show-error').checked);
-	this.s.pref('log.show.sucess', this.element('g-log-show-sucess').checked);
+	this.shared.pref('log.show.progress', this.element('g-log-show-progress').checked);
+	this.shared.pref('log.show.warning', this.element('g-log-show-warning').checked);
+	this.shared.pref('log.show.error', this.element('g-log-show-error').checked);
+	this.shared.pref('log.show.sucess', this.element('g-log-show-sucess').checked);
 	this.logUpdateIfOpened();
   }
   

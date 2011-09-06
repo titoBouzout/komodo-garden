@@ -4,6 +4,7 @@ function AsynchRemote()
   this.loadExtension = function(event)
   {
 	event.currentTarget.removeEventListener('load', garden.loadExtension, false);
+	event.currentTarget.addEventListener('unload', garden.unloadExtension, false);
 	garden.initExtension();
   }
   this.unloadExtension = function(event)
@@ -11,7 +12,6 @@ function AsynchRemote()
 	event.currentTarget.removeEventListener('unload', garden.unloadExtension, false);
 	garden.uninitExtension();
   }
-
   this.initExtension = function()
   {
 	//global singleton object
@@ -19,11 +19,18 @@ function AsynchRemote()
 	this.s.extensionID = 'tito@garden';
 	this.s.extensionName = 'Garden';
 	this.s.extensionChromeName = 'asynchremote';
-	this.s.include('observer','preference','file','history','string','thread','serialize','sharedMemory','DOM','prompt','process','search','search','places','window','listener','application','tab','document','urls','clipboard', 'notification','tree','timer','hash','array','date');
+	this.s.include('observer','file','string','thread','serialize','sharedMemory','DOM','prompt','process','search','search','places','window','listener','application','tab','document','urls','clipboard', 'notification','tree','hash','array','date');
 	this.s.includeShared('prompt', 'variete');
 	this.windowID = this.s.getWindowID();
 	//end global singleton object
-		
+	
+	if(!myAPI.shared.garden()) {
+	  this.shared = myAPI.shared.garden();
+	  this.shared.include('chrome://asynchremote/content/js/shared/preferences.js');
+	} else {
+	  this.shared = myAPI.shared.garden();
+	}
+	
 	this.gardenDrivers = gardenDrivers;
 	this.trees = [];
 	this.instances = [];
@@ -47,21 +54,21 @@ function AsynchRemote()
 						  garden.onApplicationClose(aSubject);
 						});
 	if(
-	   this.s.pref('last.focused.groupID') != '0' &&
-	   this.s.pref('last.focused.treeID') != '0' &&
-	   this.s.pref('last.focused.path') != ''   
+	   this.shared.pref('last.focused.groupID') != '0' &&
+	   this.shared.pref('last.focused.treeID') != '0' &&
+	   this.shared.pref('last.focused.path') != ''   
 	)
 	{
 	  //this.s.dump('initExtension:switchToTree');
 	  if(this.groupTreeExists(
-							  this.s.pref('last.focused.groupID'),
-							  this.s.pref('last.focused.treeID')
+							  this.shared.pref('last.focused.groupID'),
+							  this.shared.pref('last.focused.treeID')
 							  ))
 	  {
 		this.switchToTreeData(
-							  this.s.pref('last.focused.groupID'),
-							  this.s.pref('last.focused.treeID'),
-							  this.s.pref('last.focused.path'));
+							  this.shared.pref('last.focused.groupID'),
+							  this.shared.pref('last.focused.treeID'),
+							  this.shared.pref('last.focused.path'));
 	  }
 	}
   }
@@ -71,8 +78,7 @@ function AsynchRemote()
 	  this.drivers = [];
 	this.drivers[this.drivers.length] = aClass
   }
-  
- 
+
   //disable or enable the toolbarbuttons for current document
   this.onLocationChange = function(aTab)
   {
@@ -142,14 +148,12 @@ function AsynchRemote()
   }
   this.dump = function(aName, aString)
   {
-	this.s.dump(aName+':'+aString);
+	myAPI.debug().dump(aName, aString);
   }
-
   return this;
 }
 
 var asynchRemote = new AsynchRemote();
 var garden = asynchRemote;
 
-addEventListener('load', garden.loadExtension, false);
-addEventListener('unload', garden.unloadExtension, false);
+window.addEventListener('load', garden.loadExtension, false);

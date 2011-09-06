@@ -19,7 +19,7 @@
 	)
 	{
 	  //this.s.dump('the mouse is over!');
-	  this.s.timerAdd(50, function(){ garden.treeContextAllowMouseOut = true;});
+	  myAPI.timer().setTimeout(function(){ garden.treeContextAllowMouseOut = true;}, 50);
 	}
 
 	this.s.hideSiblingsPopupsOpened(aEvent.originalTarget);
@@ -87,7 +87,7 @@
 	{
 	  //this.s.dump('the mouse is out!');
 	  this.treeContextAllowMouseOver = false;
-	  this.s.timerAdd(50, function(){ garden.treeContextAllowMouseOver = true;});
+	  myAPI.timer().setTimeout(function(){ garden.treeContextAllowMouseOver = true;}, 50);
 	  this.treeContextAllowMouseOut = false;
 	  
 	  //dont auto-hide the context menu if the clicked element if from the tree

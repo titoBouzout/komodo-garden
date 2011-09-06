@@ -219,7 +219,7 @@
 		treeElement.focus();
 	  }
 	  //if there is a single view hide the non-selected
-	  else if(this.s.pref('sidebar.view.type.single'))
+	  else if(this.shared.pref('sidebar.view.type.single'))
 	  {
 		treeElement.setAttribute('collapsed', true);
 	  }
@@ -230,7 +230,7 @@
 	  }
 	}
 	
-	if(this.s.pref('sidebar.view.type.multiple.horizontal'))
+	if(this.shared.pref('sidebar.view.type.multiple.horizontal'))
 	  groupContainer.removeAttribute('orient');
 	else
 	  groupContainer.setAttribute('orient', 'vertical');
@@ -243,9 +243,9 @@
 	//show the top toolbar if it is collapsed
 	this.element('g-toolbar-top').setAttribute('collapsed', false);
 	
-	this.s.pref('last.focused.treeID', treeID);
-	this.s.pref('last.focused.groupID', groupID);
-	this.s.pref('last.focused.path', path);
+	this.shared.pref('last.focused.treeID', treeID);
+	this.shared.pref('last.focused.groupID', groupID);
+	this.shared.pref('last.focused.path', path);
 	
 	if(window && this.s.tabGetFocused(window))
 	  this.onLocationChange(this.s.tabGetFocused(window));
@@ -268,9 +268,9 @@
 	this.focusedInstance = this.instances[treeElement.getAttribute('treeID')]
 	this.focusedTree.focused = true;
 	
-	this.s.pref('last.focused.treeID', treeElement.getAttribute('treeID'));
-	this.s.pref('last.focused.groupID', treeElement.getAttribute('groupID'));
-	this.s.pref('last.focused.path', this.focusedTree.currentPath);
+	this.shared.pref('last.focused.treeID', treeElement.getAttribute('treeID'));
+	this.shared.pref('last.focused.groupID', treeElement.getAttribute('groupID'));
+	this.shared.pref('last.focused.path', this.focusedTree.currentPath);
 	//this.s.dump('setTreeFocus:toolbarUpdate');
 	this.toolbarUpdate();
   }
@@ -281,9 +281,9 @@
   }
   this.switchViewType = function()
   {
-	this.s.pref('sidebar.view.type.single', this.element('g-tools-sidebar-view-single').getAttribute('checked') == 'true');
-	this.s.pref('sidebar.view.type.multiple.horizontal', this.element('g-tools-sidebar-view-multiple-horizontal').getAttribute('checked') == 'true');
-	this.s.pref('sidebar.view.type.multiple.vertical', this.element('g-tools-sidebar-view-multiple-vertical').getAttribute('checked') == 'true');
+	this.shared.pref('sidebar.view.type.single', this.element('g-tools-sidebar-view-single').getAttribute('checked') == 'true');
+	this.shared.pref('sidebar.view.type.multiple.horizontal', this.element('g-tools-sidebar-view-multiple-horizontal').getAttribute('checked') == 'true');
+	this.shared.pref('sidebar.view.type.multiple.vertical', this.element('g-tools-sidebar-view-multiple-vertical').getAttribute('checked') == 'true');
 	
 	this.switchToTreeData(this.focusedTree.groupID, this.focusedTree.treeID, this.focusedTree.currentPath);
   }

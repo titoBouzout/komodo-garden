@@ -102,12 +102,12 @@
 		  {
 			if(this.s.documentGetFocused(window).isDirty)
 			{
-			  var saveBeforeUpload = this.s.pref('save.before.upload');
+			  var saveBeforeUpload = this.shared.pref('save.before.upload');
 			  var prompt;
 			  if(saveBeforeUpload || (prompt = this.s.confirmWithCheckbox('The document was not saved, do you want to save the document before uploading?', 'Save my preference')).value)
 			  {
 				if(prompt && prompt.check)
-				  this.s.pref('save.before.upload', true);
+				  this.shared.pref('save.before.upload', true);
 				this.s.tabGetFocused(window).save();
 			  }
 			  else

@@ -580,10 +580,10 @@
 	
 	if(popup && popup.id == 'g-groups-menupopup')
 	{
-	  this.s.timerAdd(210, function(){
+	  myAPI.timer().setTimeout(function(){
 		if(popup.state == 'closed')
 		  popup.openPopup(popup.parentNode, 'before_start');
-	  });
+	  }, 210);
 	}
 
 	this.element('g-group-context').hidePopup();

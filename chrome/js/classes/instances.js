@@ -1515,7 +1515,7 @@ GardenInstances.prototype = {
 		  {
 			this.log('sucess', 'skiping upload of file "'+aSource+'" to "'+aFile+'" because file size is 0', aProcess.id);
 		  }
-		  else if(asynchRemote.s.pref('dont.cache.last.modified') || !this.lastModified[aSource] || this.lastModified[aSource] != checkModified.lastModifiedTime+'_'+checkModified.fileSize)
+		  else if(asynchRemote.shared.pref('dont.cache.last.modified') || !this.lastModified[aSource] || this.lastModified[aSource] != checkModified.lastModifiedTime+'_'+checkModified.fileSize)
 		  {
 			this.lastModified[aSource] = checkModified.lastModifiedTime+'_'+checkModified.fileSize;
 			//check if the file exists on remote
@@ -1702,7 +1702,7 @@ GardenInstances.prototype = {
 	  else
 	  {
 		aProcess.overWriteLocal = false;
-		if(!asynchRemote.s.pref('overwrite.no.ask') && (!aProcess.p.l.overWrite || !aProcess.p.l.overWrite.YesToAll) && asynchRemote.s.fileExists(aLocal))
+		if(!asynchRemote.shared.pref('overwrite.no.ask') && (!aProcess.p.l.overWrite || !aProcess.p.l.overWrite.YesToAll) && asynchRemote.s.fileExists(aLocal))
 		{
 		  if(aIsDirectory)
 			this.overWrite(aProcess.p.l, 'Directory "'+aLocal+'" exists.\n\nDo you want to overwrite the local directory?\n');
@@ -1735,7 +1735,7 @@ GardenInstances.prototype = {
 	  else
 	  {
 		aProcess.overWriteRemote = false;
-		if(!asynchRemote.s.pref('overwrite.no.ask') && (!aProcess.p.r.overWrite || !aProcess.p.r.overWrite.YesToAll))
+		if(!asynchRemote.shared.pref('overwrite.no.ask') && (!aProcess.p.r.overWrite || !aProcess.p.r.overWrite.YesToAll))
 		{
 		  var aDirectory = aRemote.split('/');
 			  aDirectory.pop();
@@ -2052,11 +2052,11 @@ GardenInstances.prototype = {
 	  this.notifyProgressShotTime = new Date();
 	  if(this.notifyProgressTimer)
 		this.notifyProgressTimer.cancel();
-	  this.notifyProgressTimer = garden.s.timerAdd(200, function(){
+	  this.notifyProgressTimer = myAPI.timer().setTimeout(function(){
 		garden.s.runMain(function(){
 		  garden.notifyProgress(treeID);
 		});
-	  });
+	  }, 200);
 	}
   },
   //dumps a message into the main thread

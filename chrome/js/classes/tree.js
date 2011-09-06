@@ -19,7 +19,7 @@ gardenTree.prototype = {
 	
 	/* navigation */
 	
-	  this.history = new garden.s.history();
+	  this.history = new myAPI.historyNavigator(true);
 	  
 	/* selection */
 	
@@ -336,7 +336,7 @@ gardenTree.prototype = {
 	  var treeView = this;
 		  aData.aFunction = function(aData){ treeView.onDataReceived(aData);};
 		  
-	  this.instance.directoryList(aData, garden.s.pref('no.hidden.items'));
+	  this.instance.directoryList(aData, garden.shared.pref('no.hidden.items'));
 	}
   },
   toggleOpenStateContainers : function(selectedItems, selectedItem)
@@ -760,7 +760,7 @@ gardenTree.prototype = {
 		{
 		  try{this.event.renameTimeout.cancel();/*yeah!*/}catch(e){}
 		  var tree = this;
-		  this.event.renameTimeout = garden.s.timerAdd(180, function(){tree.startEditing();});
+		  this.event.renameTimeout = myAPI.timer().setTimeout(function(){tree.startEditing();}, 180);
 		}
 		else
 		{
@@ -1010,14 +1010,14 @@ gardenTree.prototype = {
 			if(event.ctrlKey)
 			{
 			  document.popupNode = null;
-			  garden.s.timerAdd(30, function(){ garden.gardenCommand('open-from-tree');});
+			  myAPI.timer().setTimeout(function(){ garden.gardenCommand('open-from-tree');}, 30);
 			  garden.s.stopEvent(event);
 			  return false;
 			}
 			else
 			{
 			  document.popupNode = null;
-			  garden.s.timerAdd(30, function(){ garden.gardenCommand('edit-from-tree');});
+			  myAPI.timer().setTimeout(function(){ garden.gardenCommand('edit-from-tree');}, 30);
 			  garden.s.stopEvent(event);
 			  return false;
 			}
@@ -1072,11 +1072,11 @@ gardenTree.prototype = {
 		  this.serializedSessionSetTimer.cancel();
 		
 		var tree = this;
-		this.serializedSessionSetTimer = garden.s.timerAdd(200,
+		this.serializedSessionSetTimer = myAPI.timer().setTimeout(
 												  function(){
 													tree.sessionSave();
 													tree.instance.sessionSave();
-		});
+		}, 200);
 	  }
 	}
 	else
@@ -1130,7 +1130,7 @@ gardenTree.prototype = {
 	  var treeView = this;
 		  aData.aFunction = function(aData){ treeView.onDataReceived(aData);};
 		  
-	  this.instance.directoryList(aData, garden.s.pref('no.hidden.items'));
+	  this.instance.directoryList(aData, garden.shared.pref('no.hidden.items'));
 	  return true;
 	}
 	return false;
@@ -1199,7 +1199,7 @@ gardenTree.prototype = {
 	else
 	  return false;
   },
-  get currentPathTitle function()
+  get currentPathTitle()
   {
 	var currentPath = this.currentPath.split(this.instance.__DS).pop();
 		if(!currentPath || currentPath == '')
@@ -1423,5 +1423,5 @@ gardenTree.prototype = {
   performActionOnCell : function(action, row, col){garden.s.dump('performActionOnCell');},
   performActionOnRow : function(action, row){garden.s.dump('performActionOnRow');},
   
-  get rowCount function(){/*garden.s.dump('rowCount:'+this._rows.length);*/return this._rows.length;}
+  get rowCount(){/*garden.s.dump('rowCount:'+this._rows.length);*/return this._rows.length;}
 }
