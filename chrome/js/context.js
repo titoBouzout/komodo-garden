@@ -179,7 +179,7 @@
 		  numFiles++;
 		  //resolve if parent is root
 		  if(
-			this.s.subStrCount(
+			myAPI.string().subStrCount(
 					  selectedItems[id].path.replace(selectedTree.currentPath, '')
 					  , selectedInstance.__DS
 			) < 2

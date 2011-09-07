@@ -31,13 +31,13 @@ function GardenInstances(aName, instanceID, serverID, object, entry, aEntryID, a
 	//cache of directory listings
 	this.listings = garden.s.sharedObjectGet(
 						'server.'+serverID+'.listings',
-						garden.s.serializedSessionGet('server.'+serverID+'.listings', {})
+						garden.shared.session.get('server.'+serverID+'.listings', {})
 					);
 	this.listingsCounter = 0;
 	//holds the sizes and modified times of files to not upload the same file again
 	this.lastModified = garden.s.sharedObjectGet(
 						'server.'+serverID+'.lastModified',
-						garden.s.serializedSessionGet('server.'+serverID+'.lastModified', {})
+						garden.shared.session.get('server.'+serverID+'.lastModified', {})
 					);
 	
   /* LOGS */
@@ -344,7 +344,7 @@ GardenInstances.prototype = {
 			  'name': entries[i].name,
 			  'path': entries[i].path,
 			  'pathMapped': entries[i].pathMapped,
-			  'id': garden.s.sha1(entries[i].path+'-'+entries[i].pathMapped),
+			  'id': myAPI.crypto().sha1(entries[i].path+'-'+entries[i].pathMapped),
 			  'extension': (entries[i].isDirectory ? '' : (entries[i].name.split('.').pop().toLowerCase()  || '')),
 			  'isFile': !entries[i].isDirectory,
 			  'isDirectory': entries[i].isDirectory,
@@ -362,8 +362,8 @@ GardenInstances.prototype = {
 			  rowsFiles[rowsFiles.length] = nameSorting;
 		  }
 		  //sorting names
-		  rowsDirectories.sort(garden.s.sortLocale);
-		  rowsFiles.sort(garden.s.sortLocale);
+		  rowsDirectories.sort(myAPI.string().sortLocale);
+		  rowsFiles.sort(myAPI.string().sortLocale);
 		  for(var id in rowsDirectories)
 			rowsSorted[rowsSorted.length] = rows[rowsDirectories[id]]
 		  for(var id in rowsFiles)
@@ -778,7 +778,7 @@ GardenInstances.prototype = {
 	  this.log('progress', 'going to duplicate file "'+aFile+'" …', aProcess.id);
 	  if(connection)
 	  {
-		var now = garden.s.nowVersionTime();
+		var now = myAPI.dateTime().nowVersionTime();
 		var aFileName, aName, aDir, extension;
 		
 		if(aFile.indexOf(this.__DS) != -1)
@@ -861,7 +861,7 @@ GardenInstances.prototype = {
 	  this.log('progress', 'going to duplicate directory "'+aDirectory+'" …', aProcess.id);
 	  if(connection)
 	  {
-		var now = garden.s.nowVersionTime();
+		var now = myAPI.dateTime().nowVersionTime();
 		var aDestination = aDirectory.replace(this._duplicateFileRX3, '')+' '+now;
 		this.object.copyDirectory(aDirectory, aDestination);
 		this.cacheDirectoryItemAdd(aDestination, true);
@@ -1641,9 +1641,9 @@ GardenInstances.prototype = {
 			  entry = entries.getNext();
 				entry.QueryInterface(Components.interfaces.nsIFile);
 			  if(entry.isDirectory())
-				this._uploadDirectory(asynchRemote.s.getRemotePathFromLocalPath(aRemotePlacesPath, aLocalPlacesPath, entry.path), aRemotePlacesPath, aLocalPlacesPath, aProcess, aProcess.overWriteRemote, true)
+				this._uploadDirectory(asynchRemote.shared.getRemotePathFromLocalPath(aRemotePlacesPath, aLocalPlacesPath, entry.path), aRemotePlacesPath, aLocalPlacesPath, aProcess, aProcess.overWriteRemote, true)
 			  else
-				this._uploadFile(asynchRemote.s.getRemotePathFromLocalPath(aRemotePlacesPath, aLocalPlacesPath, entry.path), aRemotePlacesPath, aLocalPlacesPath, aProcess, aProcess.overWriteRemote, true)
+				this._uploadFile(asynchRemote.shared.getRemotePathFromLocalPath(aRemotePlacesPath, aLocalPlacesPath, entry.path), aRemotePlacesPath, aLocalPlacesPath, aProcess, aProcess.overWriteRemote, true)
 			}
 			if(!aProcess.stopped())
 			{
@@ -1850,11 +1850,11 @@ GardenInstances.prototype = {
 	  //this.dump('buscando en '+aParentPath+' si esta '+aPath);
 	  
 	  if(
-		 !aInstance.tree.isContainerOpenFromPathID(garden.s.sha1(aParentPath+'-'+aParentPath))
+		 !aInstance.tree.isContainerOpenFromPathID(myAPI.crypto().sha1(aParentPath+'-'+aParentPath))
 		 && aInstance.tree.currentPath != aParentPath
 	  )
 	  {
-		//this.dump('el container de '+aParentPath+' esta..'+aInstance.tree.isContainerOpenFromPathID(garden.s.sha1(aParentPath+'-'+aParentPath)));
+		//this.dump('el container de '+aParentPath+' esta..'+aInstance.tree.isContainerOpenFromPathID(myAPI.crypto().sha1(aParentPath+'-'+aParentPath)));
 		aPath += aInstance.__DS;
 		continue;
 	  }
@@ -1883,7 +1883,7 @@ GardenInstances.prototype = {
 			'name': aPath.split(aInstance.__DS).pop(),
 			'path': aPath,
 			'pathMapped': aPath,
-			'id': garden.s.sha1(aPath+'-'+aPath),
+			'id': myAPI.crypto().sha1(aPath+'-'+aPath),
 			'extension': ((aOriginalPath != aPath ? true : isDirectory) ? '' : (aPath.split('.').pop().toLowerCase()  || '')),
 			'isFile': (aOriginalPath != aPath ? false : !isDirectory),
 			'isDirectory': (aOriginalPath != aPath ? true : isDirectory),
@@ -1900,7 +1900,7 @@ GardenInstances.prototype = {
 		for(var id in aInstance.listings[aParentPath].data)
 		{
 		  if(
-			 garden.s.sortLocale(aInstance.listings[aParentPath].data[id].name.toLowerCase(), newItem.name.toLowerCase())>0
+			 myAPI.string().sortLocale(aInstance.listings[aParentPath].data[id].name.toLowerCase(), newItem.name.toLowerCase())>0
 		  )
 		  {
 			aInstance.listings[aParentPath].data.splice(a, 0, newItem);
@@ -2066,13 +2066,13 @@ GardenInstances.prototype = {
   },
   sessionSave:function()
   {
-	garden.s.serializedSessionSet('server.'+this.serverID+'.listings', this.listings);
-	garden.s.serializedSessionSet('server.'+this.serverID+'.lastModified', this.lastModified);
+	garden.shared.session.set('server.'+this.serverID+'.listings', this.listings);
+	garden.shared.session.set('server.'+this.serverID+'.lastModified', this.lastModified);
   },
   sessionRemove:function()
   {
-	garden.s.serializedSessionRemove('server.'+this.serverID+'.listings');
-	garden.s.serializedSessionRemove('server.'+this.serverID+'.lastModified');
+	garden.shared.session.remove('server.'+this.serverID+'.listings');
+	garden.shared.session.remove('server.'+this.serverID+'.lastModified');
   }
   
 };

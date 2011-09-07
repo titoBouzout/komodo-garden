@@ -27,6 +27,16 @@
 		/>
 		<menuseparator/>
 		<menuitem
+		  id="g-context-rebase"
+		  label="Make This Folder Root"
+		  class1="g-menuitem g-rebase"
+		  class="g-menuitem-single-xbl"
+		  disableif="root multiple parentIsRoot browser"
+		  action="rebase"
+		  tooltiptext="Rebase tree into this folder"
+        />
+		<menuseparator/>
+		<menuitem
 		  id="g-context-new"
 		  class="g-menuitem-double-xbl"
 		  label1="File…"
@@ -139,15 +149,6 @@
 		  disableif2="multiple root file folder"
 		  tooltiptext1="Reveal on system - Ctrl+E or Middle click"
 		  tooltiptext2="Find on sibling tree"
-        />
-		<menuitem
-		  id="g-context-rebase"
-		  label="Make This Folder Root"
-		  class1="g-menuitem g-rebase"
-		  class="g-menuitem-single-xbl"
-		  disableif="root multiple parentIsRoot browser"
-		  action="rebase"
-		  tooltiptext="Rebase tree into this folder"
         />
 		<menuseparator/>
 

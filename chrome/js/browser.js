@@ -201,7 +201,7 @@
 	menu.appendChild(menupopup);
 	
 	//parents menu
-	if(this.s.subStrCount(path, instance.__DS) > 0)
+	if(myAPI.string().subStrCount(path, instance.__DS) > 0)
 	{
 	  var menuParents = this.s.create(document, 'menu');
 		  menuParents.setAttribute('label', 'Parents');
@@ -226,7 +226,7 @@
 		   (path == '' && instance.__DS == '\\') ||
 		   (
 			path.indexOf(instance.__DS+instance.__DS) == 0 &&
-			this.s.subStrCount(path, '\\') < 3
+			myAPI.string().subStrCount(path, '\\') < 3
 		   )
 		)
 		//dont show root Windows networks such "\\" "\\titook"

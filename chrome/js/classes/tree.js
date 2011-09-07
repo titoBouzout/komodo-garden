@@ -404,7 +404,10 @@ gardenTree.prototype = {
 	
 	if(aRow.path.indexOf(this.currentPath) !== 0)
 	{
-	  myAPI.debug().error('insertRow:pathNotInCurrentView:aRow.path:'+aRow.path+':aParentRowPath:'+this.currentPath);
+	  myAPI.debug().dump('insertRow:pathNotInCurrentView:aRow.path:'+aRow.path+':aParentRowPath:'+this.currentPath);
+	  this.iterations--;
+	  this.treeOperationsQueue();
+	  
 	  return;
 	}
 
@@ -440,7 +443,7 @@ gardenTree.prototype = {
 		else if(!aRow.isDirectory && this._rows[t].isDirectory){}//for example: inserting a file and this is a directory
 		else if (
 		  aRow.isDirectory == this._rows[t].isDirectory &&
-		  garden.s.sortLocale(this._rows[t].name.toLowerCase(), aRow.name.toLowerCase()) > 0
+		  myAPI.string().sortLocale(this._rows[t].name.toLowerCase(), aRow.name.toLowerCase()) > 0
 		)//found the position?
 		  break;
 		else if(aRow.isDirectory != this._rows[t].isDirectory)//for example: reach end of folder and the list of file is starting
@@ -1090,18 +1093,18 @@ gardenTree.prototype = {
 
   sessionSave:function()
   {
-	garden.s.serializedSessionSet(
-								  'tree.'+this.treeID,
-								  {
-									_rows:this._rows,
-									_rowsStates:this._rowsStates,
-									currentPath:this.currentPath
-								  }
-								);
+	garden.shared.session.set(
+							'tree.'+this.treeID,
+							{
+							  _rows:this._rows,
+							  _rowsStates:this._rowsStates,
+							  currentPath:this.currentPath
+							}
+						  );
   },
   sessionRemove:function()
   {
-	garden.s.serializedSessionRemove('tree.'+this.treeID);
+	garden.shared.session.remove('tree.'+this.treeID);
   },
 /* navigation */
   
@@ -1183,7 +1186,7 @@ gardenTree.prototype = {
 	   //network \\titook
 	   (
 		this.currentPath.indexOf(this.instance.__DS+this.instance.__DS) == 0 &&
-		garden.s.subStrCount(this.currentPath, this.instance.__DS) == 3
+		myAPI.string().subStrCount(this.currentPath, this.instance.__DS) == 3
 	   )
 	)
 	  return false;
@@ -1297,7 +1300,7 @@ gardenTree.prototype = {
 /* properties */
 
   getImageSrc : function(i, col){
-	if(!this._rows[i].isDirectory && !garden.s.hasCustomIcon(this._rows[i].extension))
+	if(!this._rows[i].isDirectory && !garden.shared.hasCustomIcon(this._rows[i].extension))
 	  return "moz-icon://n." + this._rows[i].extension + "?size=16";
   },
   getColumnProperties : function(col,properties){},
@@ -1309,11 +1312,11 @@ gardenTree.prototype = {
 	
 	//loading
 	  if(rowState.isBusy && this.instance.object.shouldShowLoading)
-		properties.AppendElement(garden.s.mAtomIconBusy);
+		properties.AppendElement(garden.shared.mAtomIconBusy);
 	  
 	//nice extension icon
 	  else if(!rowObject.isDirectory && rowObject.extension != '')
-		properties.AppendElement(garden.s.getAtom('g'+rowObject.extension));
+		properties.AppendElement(myAPI.tree().atom('g'+rowObject.extension));
 		
 	/*icons based on item name*/
 	  if(rowObject.isDirectory){}
@@ -1325,7 +1328,7 @@ gardenTree.prototype = {
 		  case 'todo':
 		  case 'TODO':
 		  {
-			properties.AppendElement(garden.s.getAtom('todo'));
+			properties.AppendElement(myAPI.tree().atom('todo'));
 			break;
 		  }
 		}
@@ -1333,19 +1336,19 @@ gardenTree.prototype = {
 	  
 	/*labels*/
 	  if(rowObject.isHidden)
-		properties.AppendElement(garden.s.mAtomIconHidden);
+		properties.AppendElement(garden.shared.mAtomIconHidden);
 	  if(rowObject.isSymlink)
-		properties.AppendElement(garden.s.mAtomIconSymlink);
+		properties.AppendElement(garden.shared.mAtomIconSymlink);
 	  if(!rowObject.isWritable)
-		properties.AppendElement(garden.s.mAtomIconUnWritable);
+		properties.AppendElement(garden.shared.mAtomIconUnWritable);
 	  if(!rowObject.isReadable || rowState.unreadable)
-		properties.AppendElement(garden.s.mAtomIconUnReadable);
+		properties.AppendElement(garden.shared.mAtomIconUnReadable);
 	
 	/* Extensible getCellProperties */
 	  var aData = {};
 		  aData.originalTarget = rowObject;
 		  aData.properties = properties;
-		  aData.appendAtom = function(aProperty){ this.properties.AppendElement(garden.s.getAtom(aProperty)); };
+		  aData.appendAtom = function(aProperty){ this.properties.AppendElement(myAPI.tree().atom(aProperty)); };
 	  gardenAPI.dispatchEvent('onPropertiesRequired', aData);
   },
   

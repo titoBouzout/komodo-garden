@@ -24,14 +24,14 @@
 		  var aProcess = false;//group the processes into one process object
 		  for(var id in selectedItems)
 		  {
-			var file = this.s.getRemotePathFromLocalPath(
+			var file = this.shared.getRemotePathFromLocalPath(
 														 currentRemotePath,
 														 currentLocalPath,
 														 selectedItems[id])
 			
 			if(this.s.pathIsFolder(selectedItems[id]))
 			{
-			  var aDestination = this.s.getRemotePathFromLocalPath(currentRemotePath, currentLocalPath, file)
+			  var aDestination = this.shared.getRemotePathFromLocalPath(currentRemotePath, currentLocalPath, file)
 			  if(aDestination == '' || aDestination == '/')
 			  {
 				if(!this.s.confirm('Are you sure you want to download all the tree?') ||
@@ -66,7 +66,7 @@
 			var aProcess = false;//group the processes into one process object
 			for(var id in selectedItems)
 			{
-			  var file = this.s.getRemotePathFromLocalPath(
+			  var file = this.shared.getRemotePathFromLocalPath(
 														   currentRemotePath,
 														   currentLocalPath,
 														   selectedItems[id])
@@ -118,14 +118,14 @@
 		  }
 		  for(var id in selectedItems)
 		  {
-			var file = this.s.getRemotePathFromLocalPath(
+			var file = this.shared.getRemotePathFromLocalPath(
 														 currentRemotePath,
 														 currentLocalPath,
 														 selectedItems[id])
 
 			if(this.s.pathIsFolder(selectedItems[id]))
 			{
-			  var aDestination = this.s.getRemotePathFromLocalPath(currentRemotePath, currentLocalPath, file)
+			  var aDestination = this.shared.getRemotePathFromLocalPath(currentRemotePath, currentLocalPath, file)
 			  if(aDestination == '' || aDestination == '/')
 			  {
 				if(!this.s.confirm('Are you sure you want to upload all the tree?') ||
@@ -508,7 +508,7 @@
 				var aSibling;
 				if(aSibling = this.groupTreeGetSiblingLocal(selectedTree.treeElement))
 				{
-				  var aLocalPath = this.s.resolveLocalPath(
+				  var aLocalPath = this.shared.resolveLocalPath(
 														  selectedItems[id].path,
 														  selectedTree.originalPath,
 														  aSibling[0],
@@ -549,7 +549,7 @@
 				var aSibling;
 				if(aSibling = this.groupTreeGetSiblingLocal(selectedTree.treeElement))
 				{
-				  var aLocalPath = this.s.resolveLocalPath(
+				  var aLocalPath = this.shared.resolveLocalPath(
 														  selectedItems[id].path,
 														  selectedTree.originalPath,
 														  aSibling[0],
@@ -591,7 +591,7 @@
 				var aSibling;
 				if(aSibling = this.groupTreeGetSiblingLocal(selectedTree.treeElement))
 				{
-				  var aLocalPath = this.s.resolveLocalPath(
+				  var aLocalPath = this.shared.resolveLocalPath(
 														  selectedItems[id].path,
 														  selectedTree.originalPath,
 														  aSibling[0],
@@ -643,7 +643,7 @@
 				var aSibling;
 				if(aSibling = this.groupTreeGetSiblingLocal(selectedTree.treeElement))
 				{
-				  var aLocalPath = this.s.resolveLocalPath(
+				  var aLocalPath = this.shared.resolveLocalPath(
 														  selectedItems[id].path,
 														  selectedTree.originalPath,
 														  aSibling[0],
@@ -777,7 +777,7 @@
 			  {
 				if(selectedItems[id].isDirectory)
 				{
-				  var aLocalPath = this.s.resolveLocalPath(
+				  var aLocalPath = this.shared.resolveLocalPath(
 														  selectedItems[id].path,
 														  selectedTree.originalPath,
 														  aLocalOriginalPath[0],
@@ -792,7 +792,7 @@
 				}
 				else
 				{
-				  var aLocalPath = this.s.resolveLocalPath(
+				  var aLocalPath = this.shared.resolveLocalPath(
 														  selectedItems[id].path,
 														  selectedTree.originalPath,
 														  aLocalOriginalPath[0],
@@ -828,7 +828,7 @@
 		  {
 			if(selectedItems[id].isDirectory)
 			{
-			  var aDestination = this.s.getRemotePathFromLocalPath(currentRemotePath, currentLocalPath, selectedItems[id].getFilepath)
+			  var aDestination = this.shared.getRemotePathFromLocalPath(currentRemotePath, currentLocalPath, selectedItems[id].getFilepath)
 			  if(aDestination == '' || aDestination == '/')
 			  {
 				if(
@@ -929,7 +929,7 @@
 				var aLocalOriginalPath;
 				if(aLocalOriginalPath = this.groupTreeGetSiblingLocal(selectedTree.treeElement))
 				{
-				  var aLocalPath = this.s.resolveLocalPath(
+				  var aLocalPath = this.shared.resolveLocalPath(
 														  selectedItems[id].path,
 														  selectedTree.originalPath,
 														  aLocalOriginalPath[0],
@@ -971,7 +971,7 @@
 		  {
 			if(selectedItems[id].isDirectory)
 			{
-			  var aDestination = this.s.getRemotePathFromLocalPath(currentRemotePath, currentLocalPath, selectedItems[id].getFilepath)
+			  var aDestination = this.shared.getRemotePathFromLocalPath(currentRemotePath, currentLocalPath, selectedItems[id].getFilepath)
 			  if(aDestination == '' || aDestination == '/')
 			  {
 				if(!this.s.confirm('Are you sure you want to upload all the tree?') ||

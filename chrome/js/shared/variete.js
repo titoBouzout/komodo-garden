@@ -41,4 +41,9 @@
 	else
 	  return false;
   }
- 
+
+  this.mAtomIconBusy = myAPI.tree().atom("busy");
+  this.mAtomIconHidden = myAPI.tree().atom("hidden");
+  this.mAtomIconSymlink = myAPI.tree().atom("symlink");
+  this.mAtomIconUnWritable = myAPI.tree().atom("unwritable");
+  this.mAtomIconUnReadable = myAPI.tree().atom("unreadable");

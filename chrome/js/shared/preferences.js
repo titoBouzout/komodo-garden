@@ -1,5 +1,6 @@
     
-  this.preferences = myAPI.pref(true, 'tito@garden');
+  this.preferences = myAPI.pref(true, this.id);
+  
   this.pref = function(aName, aValue, aCreate)
   {
 	return this.preferences.pref(aName, aValue, aCreate);

@@ -48,7 +48,7 @@
 		  continue;
 		}
 		
-		if(searchString != '' && !this.s.searchEngineSearch(searchString, this.focusedInstance.logs[id].aMsg))
+		if(searchString != '' && !myAPI.string().searchEngineSearch(searchString, this.focusedInstance.logs[id].aMsg))
 		  continue;
 		
 		log += '<div class="'+this.focusedInstance.logs[id].aType+'">';
@@ -94,7 +94,7 @@
 		continue;
 	  }
 	  
-	  if(searchString != '' && !this.s.searchEngineSearch(searchString, entry.aMsg ))
+	  if(searchString != '' && !myAPI.string().searchEngineSearch(searchString, entry.aMsg ))
 		continue;
 	  
 	  var description = document.createElement('description');

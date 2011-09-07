@@ -24,7 +24,7 @@ GardenLocal.prototype = {
   },
   driverGetEntries:function()
   {
-	var drives = garden.s.fileDrivesList();
+	var drives = myAPI.file().drives();
 	var entries = [];
 	var i = 0;
 	for(var id in drives)

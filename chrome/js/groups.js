@@ -2,12 +2,12 @@
   
   this.groupsGet = function()
   {
-	return this.s.serializedSessionGet('groups', []);
+	return garden.shared.session.get('groups', []);
   }
   
   this.groupsSet = function(groups)
   {
-	this.s.serializedSessionSet('groups', groups);
+	garden.shared.session.set('groups', groups);
   }
   
   this.groupGetFromID = function(aID)
@@ -36,7 +36,7 @@
 	var groupsSorting = [];
 	for(var id in groups)
 	  groupsSorting[groupsSorting.length] = groups[id].name+' '+groups[id].id;
-	groupsSorting = groupsSorting.sort(this.s.sortLocale);
+	groupsSorting = groupsSorting.sort(myAPI.string().sortLocale);
 	
 	var globalConnected = false;
 	var globalIterations = false;
@@ -75,7 +75,7 @@
 														group.trees[e].entryID).labelWithoutPath+
 														group.trees[e].path;
 			}
-			treeSorting = treeSorting.sort(this.s.sortLocale);
+			treeSorting = treeSorting.sort(myAPI.string().sortLocale);
 			for(var h in treeSorting)
 			{
 			  //sorting!
@@ -154,7 +154,7 @@
 												  group.trees[e].entryID).labelWithoutPath+
 												  group.trees[e].path;
 	  }
-	  treeSorting = treeSorting.sort(this.s.sortLocale);
+	  treeSorting = treeSorting.sort(myAPI.string().sortLocale);
 	  for(var h in treeSorting)
 	  {
 		//sorting!
@@ -403,7 +403,7 @@
 			
 			var newGroup = {};
 				newGroup.name = aName;
-				newGroup.id = this.s.sha1(new Date());
+				newGroup.id = myAPI.crypto().sha1(new Date());
 				newGroup.trees = [];
 				groups[groups.length] = newGroup;
 				
@@ -436,7 +436,7 @@
 								{
 								  path:path,
 								  aDriverTypeID:aDriverTypeID,
-								  id : this.s.sha1(new Date()),
+								  id : myAPI.crypto().sha1(new Date()),
 								  entryID:entryID,
 								  isSibling:true
 								}

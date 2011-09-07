@@ -105,7 +105,7 @@
 		//append the tree to the container
 		groupContainer.appendChild(treeElement);
 		
-		var session = this.s.serializedSessionGet('tree.'+treeData.id,
+		var session = garden.shared.session.get('tree.'+treeData.id,
 												  {
 													_rows:[],
 													_rowsStates:{},
@@ -160,8 +160,8 @@
 	  {
 		//this should not happen, anyway dont care, just in case
 		treeElement.removeAttribute('not-loaded');
-		var session = this.s.serializedSessionGet('tree.'+treeData.id, {_rows:[],_rowsStates:{},currentPath:''});
-		if(this.s.serializedSessionExists('tree.'+treeData.id))
+		var session = garden.shared.session.get('tree.'+treeData.id, {_rows:[],_rowsStates:{},currentPath:''});
+		if(garden.shared.session.exists('tree.'+treeData.id))
 		{
 		  if(treeElementID == treeDataElementID)
 			path = session.currentPath;

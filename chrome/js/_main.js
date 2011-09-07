@@ -19,14 +19,17 @@ function AsynchRemote()
 	this.s.extensionID = 'tito@garden';
 	this.s.extensionName = 'Garden';
 	this.s.extensionChromeName = 'asynchremote';
-	this.s.include('observer','file','string','thread','serialize','sharedMemory','DOM','prompt','process','search','search','places','window','listener','application','tab','document','urls', 'notification','tree','hash','array','date');
-	this.s.includeShared('prompt', 'variete');
+	this.s.include('observer','file','string','thread','sharedMemory','DOM','prompt','process','places','window','listener','application','tab','document','urls', 'notification');
+	this.s.includeShared('prompt');
 	this.windowID = this.s.getWindowID();
 	//end global singleton object
 	
 	if(!myAPI.shared.garden()) {
 	  this.shared = myAPI.shared.garden();
+	  this.shared.include('chrome://asynchremote/content/js/shared/id.js');
 	  this.shared.include('chrome://asynchremote/content/js/shared/preferences.js');
+	  this.shared.include('chrome://asynchremote/content/js/shared/sessions.js');
+	  this.shared.include('chrome://asynchremote/content/js/shared/variete.js');
 	} else {
 	  this.shared = myAPI.shared.garden();
 	}

@@ -29,7 +29,7 @@ GardenDrivers.prototype = {
 		entries[id].path = object.__DS;
 	}
 	for(var id in entries)
-	  entries[id].id = garden.s.sha1(entries[id].toSource()+'.'+JSON.stringify(entries[id]));
+	  entries[id].id = myAPI.crypto().sha1(entries[id].toSource()+'.'+JSON.stringify(entries[id]));
 
 	delete thread;
 	return entries;
@@ -71,7 +71,7 @@ GardenDrivers.prototype = {
   {
 	//unique indentifier for this instance
 	var instanceID 	= aDriverTypeID+'.'+aEntryID+'.'+aID;
-	var serverID 	= garden.s.sha1(aDriverTypeID+'.'+aEntryID);
+	var serverID 	= myAPI.crypto().sha1(aDriverTypeID+'.'+aEntryID);
 	
 	if(!this.driversInstances[instanceID])
 	  this.driversInstances[instanceID] = new GardenInstances(
