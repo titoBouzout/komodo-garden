@@ -1293,7 +1293,7 @@ gardenTree.prototype = {
 	}
 	else if(selectedItems.length > 1)
 	{
-	  garden.s.notifyStatusBar(window, 'Can\'t rename multiples items at the same time');
+	  //garden.s.notifyStatusBar(window, 'Can\'t rename multiples items at the same time');
 	}
   },
   

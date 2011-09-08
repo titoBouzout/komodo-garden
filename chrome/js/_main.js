@@ -19,8 +19,7 @@ function AsynchRemote()
 	this.s.extensionID = 'tito@garden';
 	this.s.extensionName = 'Garden';
 	this.s.extensionChromeName = 'asynchremote';
-	this.s.include('observer','file','string','thread','sharedMemory','DOM','prompt','process','places','window','listener','application','tab','document','urls', 'notification');
-	this.s.includeShared('prompt');
+	this.s.include('observer','file','thread','sharedMemory','DOM','process','places','window','listener','application','tab','document','urls');
 	this.windowID = this.s.getWindowID();
 	//end global singleton object
 	
@@ -29,6 +28,7 @@ function AsynchRemote()
 	  this.shared.include('chrome://asynchremote/content/js/shared/id.js');
 	  this.shared.include('chrome://asynchremote/content/js/shared/preferences.js');
 	  this.shared.include('chrome://asynchremote/content/js/shared/sessions.js');
+	  this.shared.include('chrome://asynchremote/content/js/shared/forms.js');
 	  this.shared.include('chrome://asynchremote/content/js/shared/variete.js');
 	} else {
 	  this.shared = myAPI.shared.garden();
@@ -133,7 +133,7 @@ function AsynchRemote()
 	  }
 	}
 	
-	if(processesRunning > 0 && !this.s.confirm('There is processes running into "Garden Extension".\n Do you still want to close the application?'))
+	if(processesRunning > 0 && !garden.shared.confirm('There is processes running into "Garden Extension".\n Do you still want to close the application?'))
 	{
 	  aSubject.data = true;
 	}

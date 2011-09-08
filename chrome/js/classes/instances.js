@@ -1677,7 +1677,7 @@ GardenInstances.prototype = {
   {
 	garden.s.runMainAndWait(function(){
 	  asynchRemote.element('g-toolbar-panel').hidePopup();
-	  var overWrite = asynchRemote.s.overWritePrompt(aMsg, window);
+	  var overWrite = asynchRemote.shared.overWritePrompt(aMsg, window);
 		  aProcess.overWrite = {};
 		  aProcess.overWrite.Yes = overWrite.value == 'Yes';
 		  aProcess.overWrite.YesToAll = overWrite.value == 'Yes to all';

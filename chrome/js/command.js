@@ -34,8 +34,8 @@
 			  var aDestination = this.shared.getRemotePathFromLocalPath(currentRemotePath, currentLocalPath, file)
 			  if(aDestination == '' || aDestination == '/')
 			  {
-				if(!this.s.confirm('Are you sure you want to download all the tree?') ||
-				   !this.s.confirm('Are you REALLY sure you want to download all the tree?'))
+				if(!garden.shared.confirm('Are you sure you want to download all the tree?') ||
+				   !garden.shared.confirm('Are you REALLY sure you want to download all the tree?'))
 				  break;
 			  }
 			  aProcess = this.connections[server]
@@ -104,7 +104,7 @@
 			{
 			  var saveBeforeUpload = this.shared.pref('save.before.upload');
 			  var prompt;
-			  if(saveBeforeUpload || (prompt = this.s.confirmWithCheckbox('The document was not saved, do you want to save the document before uploading?', 'Save my preference')).value)
+			  if(saveBeforeUpload || (prompt = garden.shared.confirmWithCheckbox('The document was not saved, do you want to save the document before uploading?', 'Save my preference')).value)
 			  {
 				if(prompt && prompt.check)
 				  this.shared.pref('save.before.upload', true);
@@ -128,8 +128,8 @@
 			  var aDestination = this.shared.getRemotePathFromLocalPath(currentRemotePath, currentLocalPath, file)
 			  if(aDestination == '' || aDestination == '/')
 			  {
-				if(!this.s.confirm('Are you sure you want to upload all the tree?') ||
-				   !this.s.confirm('Are you REALLY sure you want to upload all the tree?'))
+				if(!garden.shared.confirm('Are you sure you want to upload all the tree?') ||
+				   !garden.shared.confirm('Are you REALLY sure you want to upload all the tree?'))
 				  break;
 			  }
 			  aProcess = this.connections[server].uploadDirectory(
@@ -244,7 +244,7 @@
 
 	  case 'delete':
 		{
-		  if(selectedPaths.join('') != '' && this.s.confirm('Are you sure you want to PERMANENTLY delete the following items?\n\n\t'+selectedPaths.join('\n\t')+'\n'))
+		  if(selectedPaths.join('') != '' && garden.shared.confirm('Are you sure you want to PERMANENTLY delete the following items?\n\n\t'+selectedPaths.join('\n\t')+'\n'))
 		  {
 			var aProcess = false;//group the processes into one process object
 			for(var id in selectedItems)
@@ -262,7 +262,7 @@
 		{
 		  if(selectedInstance.type == 'local')
 		  {
-			if(selectedPaths.join('') != '' && this.s.confirm('Are you sure you want to send to the trash the following items?\n\n\t'+selectedPaths.join('\n\t')+'\n'))
+			if(selectedPaths.join('') != '' && garden.shared.confirm('Are you sure you want to send to the trash the following items?\n\n\t'+selectedPaths.join('\n\t')+'\n'))
 			{
 			  var aProcess = false;//group the processes into one process object
 			  for(var id in selectedItems)
@@ -279,7 +279,7 @@
 		}
 	  case 'permissions':
 		{
-		  var newPermissions = this.s.prompt('Enter new permissions…', 755, false, null, null, 'Apply recursive on folders?')
+		  var newPermissions = garden.shared.prompt('Enter new permissions…', 755, false, null, null, 'Apply recursive on folders?')
 		  if(newPermissions.value != '')
 		  {
 			var aProcess = false;//group the processes into one process object
@@ -314,7 +314,7 @@
 		{
 		  var aName = selectedPath.split(selectedInstance.__DS);
 			  aName = aName.pop();
-		  var newName = this.s.prompt('Enter new name…', aName);
+		  var newName = garden.shared.prompt('Enter new name…', aName);
 		  if(newName != '' && newName != aName)
 		  {
 			var aData = {}
@@ -370,7 +370,7 @@
 		{
 		  if(selectedPath != '' && selectedPath != selectedInstance.__DS)//avoid move the root directory
 		  {
-			var newName = this.s.prompt('Move to…', selectedPath);
+			var newName = garden.shared.prompt('Move to…', selectedPath);
 			if(!newName	|| newName == ''){}
 			else
 			{
@@ -391,7 +391,7 @@
 				 newName != selectedInstance.__DS
 			  )
 			  {
-				if(!this.s.confirm('Are you sure you want to move \n\t"'+selectedPath+'" \nto \n\t"'+newName+'"?'))
+				if(!garden.shared.confirm('Are you sure you want to move \n\t"'+selectedPath+'" \nto \n\t"'+newName+'"?'))
 					break;
 				selectedInstance.rename(selectedPath, newName, selectedItem.isDirectory);
 			  }
@@ -401,7 +401,7 @@
 		}
 	  case 'new-folder':
 		{
-		  var newName = this.s.prompt('Enter folder name…', '');
+		  var newName = garden.shared.prompt('Enter folder name…', '');
 		  if(newName != '')
 		  {
 			if(!selectedItem.isDirectory)
@@ -424,7 +424,7 @@
 		{
 		  if(selectedInstance.type == 'local')
 		  {
-			var newName = this.s.prompt('Enter file name…', '');
+			var newName = garden.shared.prompt('Enter file name…', '');
 			if(newName != '')
 			{
 			  if(!selectedItem.isDirectory)
@@ -524,7 +524,7 @@
 				}
 				else
 				{
-				  this.s.alert('There is no local sibling tree for the remote tree "'+selectedInstance.label+'"');
+				  garden.shared.alert('There is no local sibling tree for the remote tree "'+selectedInstance.label+'"');
 				  break;
 				}
 			  }
@@ -565,7 +565,7 @@
 				}
 				else
 				{
-				  this.s.alert('There is no local sibling tree for the remote tree "'+selectedInstance.label+'"');
+				  garden.shared.alert('There is no local sibling tree for the remote tree "'+selectedInstance.label+'"');
 				  break;
 				}
 			  }
@@ -607,7 +607,7 @@
 				}
 				else
 				{
-				  this.s.alert('There is no local sibling tree for the remote tree "'+selectedInstance.label+'"');
+				  garden.shared.alert('There is no local sibling tree for the remote tree "'+selectedInstance.label+'"');
 				  break;
 				}
 			  }
@@ -659,7 +659,7 @@
 				}
 				else
 				{
-				  this.s.alert('There is no local sibling tree for the remote tree "'+selectedInstance.label+'"');
+				  garden.shared.alert('There is no local sibling tree for the remote tree "'+selectedInstance.label+'"');
 				  break;
 				}
 			  }
@@ -809,7 +809,7 @@
 			}
 			else
 			{
-			  this.s.alert('There is no local sibling tree for the remote tree "'+selectedInstance.label+'"');
+			  garden.shared.alert('There is no local sibling tree for the remote tree "'+selectedInstance.label+'"');
 			  break;
 			}
 		  }
@@ -832,8 +832,8 @@
 			  if(aDestination == '' || aDestination == '/')
 			  {
 				if(
-				   !this.s.confirm('Are you sure you want to download all the tree?') || 
-				   !this.s.confirm('Are you REALLY sure you want to download all the tree?')
+				   !garden.shared.confirm('Are you sure you want to download all the tree?') || 
+				   !garden.shared.confirm('Are you REALLY sure you want to download all the tree?')
 				   )
 				  break;
 			  }
@@ -947,7 +947,7 @@
 				}
 				else
 				{
-				  this.s.alert('There is no local sibling tree for the remote tree "'+selectedInstance.label+'"');
+				  garden.shared.alert('There is no local sibling tree for the remote tree "'+selectedInstance.label+'"');
 				  break;
 				}
 			  }
@@ -974,8 +974,8 @@
 			  var aDestination = this.shared.getRemotePathFromLocalPath(currentRemotePath, currentLocalPath, selectedItems[id].getFilepath)
 			  if(aDestination == '' || aDestination == '/')
 			  {
-				if(!this.s.confirm('Are you sure you want to upload all the tree?') ||
-				   !this.s.confirm('Are you REALLY sure you want to upload all the tree?'))
+				if(!garden.shared.confirm('Are you sure you want to upload all the tree?') ||
+				   !garden.shared.confirm('Are you REALLY sure you want to upload all the tree?'))
 				  break;
 			  }
 			  aProcess = this.connections[server].uploadDirectory(

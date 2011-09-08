@@ -303,7 +303,7 @@
 	{
 	  case 'delete-group':
 		{
-		  if(this.s.confirm('Are you sure you want to delete the group?'))
+		  if(garden.shared.confirm('Are you sure you want to delete the group?'))
 		  {
 			if(value.hasAttribute('groupID'))
 			{
@@ -376,7 +376,7 @@
 				break;
 			  }
 			}
-			var aName = this.s.prompt('New tree group name...', aName);
+			var aName = garden.shared.prompt('New tree group name...', aName);
 			if(aName && aName != '')
 			{
 			  var groups = this.groupsGet();
@@ -396,7 +396,7 @@
 		}
 	  case 'add-group':
 		{
-		  var aName = this.s.prompt('Tree group name...');
+		  var aName = garden.shared.prompt('Tree group name...');
 		  if(aName && aName != '')
 		  {
 			var groups = this.groupsGet();
@@ -470,7 +470,7 @@
 		}
 	  case 'delete-tree':
 		{
-		  if(this.s.confirm('Are you sure you want to delete the tree from the group?'))
+		  if(garden.shared.confirm('Are you sure you want to delete the tree from the group?'))
 		  {
 			var groupID = value.getAttribute('groupID');
 			var treeID = value.getAttribute('treeID');
