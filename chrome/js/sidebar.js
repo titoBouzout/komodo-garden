@@ -417,4 +417,18 @@
 	}
   }
   
+  this.sidebarResize = function(event){
+	var box = this.element('g-box');
+	if(box.boxObject.width == 250 && box.previousSibling.getAttribute('collapsed') == false) {
+	  box.previousSibling.setAttribute('state', 'collapsed');
+	  box.setAttribute('collapsed', true);
+	} else {
+	  box.previousSibling.setAttribute('state', 'open');
+	  box.setAttribute('collapsed', false);
+	  box.setAttribute('width', 250);
+	  box.style.width = 250;
+	}
+	myAPI.DOM().stopEvent(event);
+  }
+  
 }).apply(garden);

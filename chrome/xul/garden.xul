@@ -3,9 +3,15 @@
   
   <hbox id="komodo-hbox">
 
-  	<splitter state="open" layer="false" orient="horizontal" ordinal="1" persist="open" collapse="after"><grippy/></splitter>
+  	<splitter
+	  state="open"
+	  ordinal="1"
+	  persist="state"
+	  collapse="after"
+	  ondblclick="garden.sidebarResize(event)"
+	  style="padding:0px;margin:0px;width:5px;"/>
 	<!-- container -->
-	<vbox flex="1" persist="width height">
+	<vbox persist="width height collapsed" width="250" id="g-box">
 	  
 	  <!-- toolbar top -->
 	  <hbox id="g-toolbar-top"/>
