@@ -80,7 +80,7 @@ GardenLocal.prototype = {
   },
   directoryList:function(aDirectory, noHiddenItems)
   {
-	//garden.s.dump('object:directoryList');
+	//garden.dump('object:directoryList');
 	var entries = [], entry, isHidden;
 	var fileSystemEntries = myAPI.file().listEntries(aDirectory);
 	for(var i in fileSystemEntries)
@@ -105,7 +105,7 @@ GardenLocal.prototype = {
 		'size': entry.fileSize
 	  }
 	}
-	//garden.s.dump('object:directoryList:end');
+	//garden.dump('object:directoryList:end');
 	return entries;
   },
  

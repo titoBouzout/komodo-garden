@@ -152,7 +152,7 @@
 		  break;
 		}
 	}
-	//this.s.dump('actionFromLocal:toolbarUpdate');
+	//garden.dump('actionFromLocal:toolbarUpdate');
 	this.toolbarUpdate();
   }
   
@@ -166,7 +166,7 @@
 	var fromBrowser = false;
 	if(document.popupNode && document.popupNode == this.element('g-toolbar-breadcrumb'))//clicked root button..
 	{
-	  //this.s.dump('the command is for the "root" button');
+	  //garden.dump('the command is for the "root" button');
 	  var selectedTree = this.focusedTree;
 	  var selectedInstance = this.focusedInstance;
 	  
@@ -186,7 +186,7 @@
 	{
 	  fromBrowser = true;
 	  
-	  //this.s.dump('the command is for the "browser" element');
+	  //garden.dump('the command is for the "browser" element');
 	  var selectedTree = this.trees[document.popupNode.getAttribute('treeID')];
 	  var selectedInstance = this.instances[document.popupNode.getAttribute('treeID')];
 	  
@@ -204,7 +204,7 @@
 	}
 	else
 	{
-	  //this.s.dump('the command is for the tree');
+	  //garden.dump('the command is for the tree');
 	  var selectedTree = this.focusedTree;
 	  var selectedInstance = this.focusedInstance;
 	  
@@ -466,7 +466,7 @@
 			}
 		  }
 		  pathsToRefresh = myAPI.array().unique(pathsToRefresh);
-		  //this.s.dump('paths to refresh ', pathsToRefresh);
+		  //garden.dump('paths to refresh ', pathsToRefresh);
 			 
 		  for(var id in pathsToRefresh)
 			selectedTree.refreshPath(pathsToRefresh[id]);
@@ -571,7 +571,7 @@
 			  }
 			  else
 			  {
-				this.s.openURL(window, selectedItems[id].path, true);
+				myAPI.tab().open(selectedItems[id].path, true);
 			  }
 			}
 		  }
@@ -665,7 +665,7 @@
 			  }
 			  else
 			  {
-				this.s.openURL(window, selectedItems[id].path, true);
+				myAPI.tab().open(selectedItems[id].path, true);
 			  }
 			}
 		  }
@@ -953,7 +953,7 @@
 			  }
 			  else
 			  {
-				this.s.openURL(window, selectedItems[id].path, true);
+				myAPI.tab().open(selectedItems[id].path, true);
 			  }
 			}
 		  }

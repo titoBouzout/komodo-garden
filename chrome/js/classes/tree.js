@@ -52,7 +52,7 @@ gardenTree.prototype = {
 
   findRowIDFromRow : function(aRow)
   {
-	//garden.s.dump('findRowIDFromRow');
+	//garden.dump('findRowIDFromRow');
 	var rowID = aRow.id;
 	for(var i in this._rows)
 	{
@@ -63,10 +63,10 @@ gardenTree.prototype = {
   },
   findRowIDFromPath : function(aRowPath)
   {
-	//garden.s.dump('findRowIDFromPath');
+	//garden.dump('findRowIDFromPath');
 	for(var i in this._rows)
 	{
-	  //garden.s.dump('findRowIDFromPathFOR');
+	  //garden.dump('findRowIDFromPathFOR');
 	  if(this._rows[i].path  == aRowPath)
 		return parseInt(i);
 	}
@@ -74,7 +74,7 @@ gardenTree.prototype = {
   },
   getRowStateFromID:function(aRowID)
   {
-	//garden.s.dump('getRowStateFromID');
+	//garden.dump('getRowStateFromID');
 	if(!this._rowsStates[aRowID])
 	{
 	  var object = {};
@@ -88,7 +88,7 @@ gardenTree.prototype = {
   },
   getEventRowObject : function(event)
   {
-	//garden.s.dump('getEventRowObject');
+	//garden.dump('getEventRowObject');
 	var i = this.getEventRowID(event);
 	if(i === false)
 	  return false;
@@ -97,14 +97,14 @@ gardenTree.prototype = {
   },
   getEventRowID : function(event)
   {
-	//garden.s.dump('getEventRowID');
+	//garden.dump('getEventRowID');
 	var row = {};
 	this.tree.getCellAt(event.pageX, event.pageY, row, {},{});
 	return row.value;
   },
   getEventRowIsTwistyOrIsImage :function(event)
   {
-	//garden.s.dump('getEventRowIsTwistyOrIsImage');
+	//garden.dump('getEventRowIsTwistyOrIsImage');
 	var part = {};
 	this.tree.getCellAt(event.pageX, event.pageY, {}, {}, part);
 	if(part.value && ( part.value == 'twisty' ||  part.value == 'image' ))
@@ -114,7 +114,7 @@ gardenTree.prototype = {
   },
   getEventColumn : function(event)
   {
-	//garden.s.dump('getEventColumn');
+	//garden.dump('getEventColumn');
 	var column = {};
 	this.tree.getCellAt(event.pageX, event.pageY, {}, column, {});
 	return column;
@@ -125,7 +125,7 @@ gardenTree.prototype = {
 
   onDataReceived : function(aData)
   {
-	//garden.s.dump('onDataReceived');
+	//garden.dump('onDataReceived');
 	if(this.iterations != 0)
 	{
 	  var tree = this;
@@ -140,15 +140,15 @@ gardenTree.prototype = {
 	
 	if(aParentRow != -1)
 	{
-	  //garden.s.dump('aParentRow != -1');
+	  //garden.dump('aParentRow != -1');
 	  var aParentRowI = this.findRowIDFromRow(aParentRow);
 	  //the parentRow was closed/removed
 	  if(aParentRowI == -1)
 	  {
-		//garden.s.dump('aParentRow was removed from the tree');
+		//garden.dump('aParentRow was removed from the tree');
 		this.iterations--;
 		this.treeOperationsQueue();
-		//garden.s.dump('onDataReceivedend');
+		//garden.dump('onDataReceivedend');
 		return;
 	  }
 		
@@ -159,7 +159,7 @@ gardenTree.prototype = {
 	  
 	  if(!aRows || aRows.length <1)
 	  {
-		//garden.s.dump('aParentRow has no childs');
+		//garden.dump('aParentRow has no childs');
 		aParentRowState.isContainerEmpty = true;
 		if(!aRows)
 		  aParentRowState.unreadable = true;
@@ -168,13 +168,13 @@ gardenTree.prototype = {
 		  try{
 			this.tree.invalidateRow(aParentRowI);
 		  }catch(e){
-			garden.s.dump('onDataReceived:1:', e, true);
+			garden.dump('onDataReceived:1:', e, true);
 		  }
 		  
 		this.selectionGoingToChange--;
 		this.iterations--;
 		this.treeOperationsQueue();
-		//garden.s.dump('onDataReceivedend');
+		//garden.dump('onDataReceivedend');
 		return;
 	  }
 	  
@@ -183,7 +183,7 @@ gardenTree.prototype = {
 		try{
 		  this.tree.invalidateRow(aParentRowI);
 		}catch(e){
-		  garden.s.dump('onDataReceived:2:', e, true);
+		  garden.dump('onDataReceived:2:', e, true);
 		}
 		//remove any previous rows at this level
 		this.removeNextLevel(aParentRowI);
@@ -197,13 +197,13 @@ gardenTree.prototype = {
 	  {
 		this.iterations--;
 		this.treeOperationsQueue();
-		//garden.s.dump('onDataReceivedend');
+		//garden.dump('onDataReceivedend');
 		return;
 	  }
 	  var aParentRowI = 0;
 	}
 	
-	//garden.s.dump('aParentRowI is'+aParentRowI);
+	//garden.dump('aParentRowI is'+aParentRowI);
 	
 	this.selectionGoingToChange++;
 	
@@ -214,7 +214,7 @@ gardenTree.prototype = {
 		for(var id in aRows)
 		{
 		  this.getRowStateFromID(aRows[id].id).aLevel = aLevel;
-		  //garden.s.dump('insert of new child '+aRows[id].path+' into position'+(aParentRowI + b));
+		  //garden.dump('insert of new child '+aRows[id].path+' into position'+(aParentRowI + b));
 		  this._rows.splice(aParentRowI + b, 0, aRows[id]);
 		  b++;
 		}
@@ -222,13 +222,13 @@ gardenTree.prototype = {
 		this.scrollSave();
 		
 		  this.tree.rowCountChanged(aLevel, aRows.length);
-		  //garden.s.dump('onDataReceived:thisLevel:'+aLevel+':aRows.length:'+aRows.length);
+		  //garden.dump('onDataReceived:thisLevel:'+aLevel+':aRows.length:'+aRows.length);
 		this.scrollRestore();
 		
 		//restoring folding
 		for (var id in aRows)
 		{
-		  //garden.s.dump('onDataReceivedFOR3');
+		  //garden.dump('onDataReceivedFOR3');
 		  var aRowState = this.getRowStateFromID(aRows[id].id);
 		  if(aRowState.isContainerOpen || aRowState.isLoading)
 		  {
@@ -237,13 +237,13 @@ gardenTree.prototype = {
 		  }
 		}
 		
-	  }catch(e) { garden.s.dump('onDataReceived:3:', e, true); }
+	  }catch(e) { garden.dump('onDataReceived:3:', e, true); }
 	
 	this.selectionGoingToChange--;
 	this.selectionRestore();
 	this.iterations--;
 	this.treeOperationsQueue();
-	//garden.s.dump('onDataReceivedend');
+	//garden.dump('onDataReceivedend');
   },
   openContainerFromPath:function(aPath)
   {
@@ -258,7 +258,7 @@ gardenTree.prototype = {
   },
   toggleOpenState : function(aParentRowI, aParentRow)
   {
-	//garden.s.dump('toggleOpenState');
+	//garden.dump('toggleOpenState');
 	
 	this.event.renameClick = new Date()+1000;//when dblclking two times quicly the childrenOnClick fires, when need to cheat the time in order to prevent that
 	
@@ -280,7 +280,7 @@ gardenTree.prototype = {
 	//the row was closed/removed
 	if(aParentRowI == -1)
 	{
-	  //garden.s.dump('toggleOpenState:element was removed');
+	  //garden.dump('toggleOpenState:element was removed');
 	  this.iterations--;
 	  this.treeOperationsQueue();
 	  return;
@@ -290,7 +290,7 @@ gardenTree.prototype = {
 	
 	if(aParentRowState.isContainerOpen)
 	{
-	  //garden.s.dump('toggleOpenState:container is open');
+	  //garden.dump('toggleOpenState:container is open');
 		aParentRowState.isContainerOpen = false;
 		
 		this.selectionGoingToChange++;
@@ -298,7 +298,7 @@ gardenTree.prototype = {
 		  try{
 			this.removeNextLevel(aParentRowI);
 		  } catch(e) {
-			garden.s.dump('toggleOpenState:1:', e, true);
+			garden.dump('toggleOpenState:1:', e, true);
 		  }
 			
 		this.selectionGoingToChange--;
@@ -309,7 +309,7 @@ gardenTree.prototype = {
 	}
 	else
 	{
-	  //garden.s.dump('toggleOpenState:container is closed');
+	  //garden.dump('toggleOpenState:container is closed');
 		  
 		  aParentRowState.isBusy = true;
 		  aParentRowState.isLoading = true;
@@ -319,7 +319,7 @@ gardenTree.prototype = {
 		try{
 		  this.tree.invalidateRow(aParentRowI);
 		} catch(e) {
-		  garden.s.dump('toggleOpenState:2:', e, true);
+		  garden.dump('toggleOpenState:2:', e, true);
 		}
 		
 	  this.selectionGoingToChange--;
@@ -388,7 +388,7 @@ gardenTree.prototype = {
   },
   insertRow : function(aRow, aParentRowPath)
   {
-	//garden.s.dump('insertRow');
+	//garden.dump('insertRow');
 	if(this.iterations != 0)//queue
 	{
 	  var tree = this;
@@ -398,9 +398,9 @@ gardenTree.prototype = {
 	
 	this.iterations++;
 	var aParentRowID = this.findRowIDFromPath(aParentRowPath)
-	//garden.s.dump('insertRow:insertando:'+aRow.path);
-	//garden.s.dump('insertRow:aParentRowID:'+aParentRowID);
-	//garden.s.dump('insertRow:aParentRowPath:'+aParentRowPath);
+	//garden.dump('insertRow:insertando:'+aRow.path);
+	//garden.dump('insertRow:aParentRowID:'+aParentRowID);
+	//garden.dump('insertRow:aParentRowPath:'+aParentRowPath);
 	
 	if(aRow.path.indexOf(this.currentPath) !== 0)
 	{
@@ -432,8 +432,8 @@ gardenTree.prototype = {
 	  if(thisLevel > 0)
 		aParentRowID++;
 		
-	  //garden.s.dump('este nivel es '+thisLevel);
-	  //garden.s.dump('aParentRowID '+aParentRowID);
+	  //garden.dump('este nivel es '+thisLevel);
+	  //garden.dump('aParentRowID '+aParentRowID);
 	  //then where to insert the row?
 	  for (var t = aParentRowID; t < this._rows.length; t++)
 	  {
@@ -461,7 +461,7 @@ gardenTree.prototype = {
 	  
 	this.scrollRestore();
 	  
-	}catch(e) { garden.s.dump('onDataReceived:3:', e, true); }
+	}catch(e) { garden.dump('onDataReceived:3:', e, true); }
 	
 	this.selectionGoingToChange--;
 	//reselect
@@ -474,17 +474,17 @@ gardenTree.prototype = {
 
   removeNextLevel : function(i)
   {
-	//garden.s.dump('removeNextLevel');
+	//garden.dump('removeNextLevel');
 	try
 	{
-	  //garden.s.dump('removeNextLevel:removing next level on row:'+row);
+	  //garden.dump('removeNextLevel:removing next level on row:'+row);
 	  i = parseInt(i);
 	  
 	  var aLevel = this.getLevel(i);
 	  var deleteCount = 0;
 	  i++;
 	  for (var n = i; n < this.rowCount; n++) {
-		//garden.s.dump('removeNextLevelFOR');
+		//garden.dump('removeNextLevelFOR');
 		  if (this.getLevel(n) > aLevel)
 			deleteCount++;
 		  else
@@ -492,22 +492,22 @@ gardenTree.prototype = {
 	  }
 	  if (deleteCount)
 	  {
-		//garden.s.dump('removeNextLevel:delte count :'+deletecount);
+		//garden.dump('removeNextLevel:delte count :'+deletecount);
 		this.scrollSave();
 		
 		this._rows.splice(i, deleteCount);
 		this.tree.invalidateRow(--i);
 		this.tree.rowCountChanged(aLevel, -deleteCount);
-		//garden.s.dump('removeNextLevel:thisLevel:'+aLevel+'deletecount:'+deleteCount);
+		//garden.dump('removeNextLevel:thisLevel:'+aLevel+'deletecount:'+deleteCount);
 		
 		this.scrollRestore();
 	  }
-	} catch(e) { garden.s.dump('removeNextLevel:', e, true); }
+	} catch(e) { garden.dump('removeNextLevel:', e, true); }
   },
 
   removeChilds : function()
   {
-	//garden.s.dump('removeChilds');
+	//garden.dump('removeChilds');
 	if(this.iterations != 0)
 	{
 	  var tree = this;
@@ -523,8 +523,8 @@ gardenTree.prototype = {
 		this._rows = [];
 		try	{
 		  this.tree.rowCountChanged(0, -length);
-		  //garden.s.dump('removeChilds:level:'+0+':length:'+length);
-		}catch(e) { garden.s.dump('removeChilds:', e, true); }
+		  //garden.dump('removeChilds:level:'+0+':length:'+length);
+		}catch(e) { garden.dump('removeChilds:', e, true); }
 		
 	  this.selectionGoingToChange--;
 	  
@@ -533,7 +533,7 @@ gardenTree.prototype = {
   },
   removeRowByPath : function(aPath, emptyContainers)
   {
-	//garden.s.dump('removeRowByPath');
+	//garden.dump('removeRowByPath');
 	if(this.iterations != 0)//queue
 	{
 	  var tree = this;
@@ -564,14 +564,14 @@ gardenTree.prototype = {
 		  this._rows.splice(aRowID, 1);
 			
 		  this.tree.rowCountChanged(aLevel, -1);
-		 // garden.s.dump('removeRowByPath:aLevel:'+aLevel+':length:-1');
+		 // garden.dump('removeRowByPath:aLevel:'+aLevel+':length:-1');
 		
 		this.scrollRestore();
 		
 	  }
 	  else
 	  {
-		//garden.s.dump('aPath '+aPath+' was not found in the tree');
+		//garden.dump('aPath '+aPath+' was not found in the tree');
 	  }
 	
 	this.selectionGoingToChange--;
@@ -643,52 +643,52 @@ gardenTree.prototype = {
   {
 	if(this.selectionGoingToChange == 0 || forceRefresh)
 	{
-	  //garden.s.dump('selectionSave');
+	  //garden.dump('selectionSave');
 	  this.selectionGoingToChange++;
 		this.selectionSelectedItems = [];
 		try
 		{
 		  this.selectionSelectedItems = this.selectionGetSelectedItems();
 		  
-		} catch(e){ garden.s.dump('selectionSave', e, true); }
+		} catch(e){ garden.dump('selectionSave', e, true); }
 	  this.selectionGoingToChange--;
 	}
   },
   
   selectionGetSelectedItems : function()
   {
-	//garden.s.dump('selectionGetSelectedItems');
+	//garden.dump('selectionGetSelectedItems');
 	this.selectionGoingToChange++;
 	//this.selection.selectEventsSuppressed = true;
 	  var selected = [];
 	  var rangeCount = this.selection.getRangeCount();
 	  for (var i = 0; i < rangeCount; i++)
 	  {
-		//garden.s.dump('selectionGetSelectedItemsFOR1');
+		//garden.dump('selectionGetSelectedItemsFOR1');
 		 var start = {};
 		 var end = {};
 		 this.selection.getRangeAt(i, start, end);
 		 for(var c = start.value; c <= end.value; c++)
 		 {
-		  //garden.s.dump('selectionGetSelectedItemsFOR2');
+		  //garden.dump('selectionGetSelectedItemsFOR2');
 			selected[selected.length] = this._rows[c];
 		 }
 	  }
 
 	//this.selection.currentIndex = currentIndex;
 	this.selectionGoingToChange--;
-	//garden.s.dump('selectionGetSelectedItemsend');
+	//garden.dump('selectionGetSelectedItemsend');
 	return selected;
   },
   selectionGetSelectedItem : function()
   {
-	//garden.s.dump('selectionGetSelectedItem');
+	//garden.dump('selectionGetSelectedItem');
 	this.selectionGoingToChange++;
 	//this.selection.selectEventsSuppressed = true;
 	  var selected = this._rows[this.selection.currentIndex];
 	//this.selection.selectEventsSuppressed = false;
 	this.selectionGoingToChange--;
-	//garden.s.dump('selectionGetSelectedItemend');
+	//garden.dump('selectionGetSelectedItemend');
 	return selected;
   },
   
@@ -697,7 +697,7 @@ gardenTree.prototype = {
 	this.selectionGoingToChange++;
 	if(this.selectionGoingToChange == 1 || forceRefresh)
 	{
-	  //garden.s.dump('selectionRestore');
+	  //garden.dump('selectionRestore');
 	  this.selection.selectEventsSuppressed = true;
 	  if(this.selectionSelectedItems != this.selectionGetSelectedItems())
 	  {
@@ -707,19 +707,19 @@ gardenTree.prototype = {
 			var row;
 			for(var id in this.selectionSelectedItems)
 			{
-			  //garden.s.dump('selectionRestoreFOR');
+			  //garden.dump('selectionRestoreFOR');
 			  row = this.findRowIDFromRow(this.selectionSelectedItems[id]);
 			  if(row != -1)
 				this.selection.rangedSelect(row,row,true);
 			}
-		} catch(e){ garden.s.dump('selectionRestore', e, true); }
+		} catch(e){ garden.dump('selectionRestore', e, true); }
 	  }
 	  else
 	  {
-		//garden.s.dump('Skiping reselect selection is the same');
+		//garden.dump('Skiping reselect selection is the same');
 	  }
 	  this.selection.selectEventsSuppressed = false;
-	 // garden.s.dump('selectionRestoreend');
+	 // garden.dump('selectionRestoreend');
 	}
 	this.selectionGoingToChange--;
 
@@ -727,7 +727,7 @@ gardenTree.prototype = {
   
   selectionClear : function()
   {
-	//garden.s.dump('selectionClear');
+	//garden.dump('selectionClear');
 	this.selection.selectEventsSuppressed = true;
 	this.selectionSelectedItems = [];
 	this.selection.clearSelection();
@@ -736,7 +736,7 @@ gardenTree.prototype = {
   
   selectionClearSoft : function()
   {
-	//garden.s.dump('selectionClearSoft');
+	//garden.dump('selectionClearSoft');
 	this.selection.selectEventsSuppressed = true;
 	this.selection.clearSelection();
 	this.selection.selectEventsSuppressed = false;
@@ -746,7 +746,7 @@ gardenTree.prototype = {
 
   childrenOnClick : function(event)
   {
-	//garden.s.dump('childrenOnClick'+event.button);
+	//garden.dump('childrenOnClick'+event.button);
 	if(event.button == 2){}
 	else if(event.button == 1)
 	{
@@ -777,13 +777,13 @@ gardenTree.prototype = {
   
   childrenOnDblClick : function(event)
   {
-	//garden.s.dump('childrenOnDblClick');
+	//garden.dump('childrenOnDblClick');
 	if(event.button == 2){ myAPI.DOM().stopEvent(event);return false; }
 	else
 	{
 	  if(this.editable)
 	  {
-		//garden.s.dump('childrenOnDblClick');
+		//garden.dump('childrenOnDblClick');
 		this.event.renameClick = new Date()+1000;//when dblclking two times quicly the childrenOnClick fires, when need to cheat the time in order to prevent that 
 		try{this.event.renameTimeout.cancel();/*yeah!*/}catch(e){}
 	  }
@@ -813,8 +813,8 @@ gardenTree.prototype = {
 	if(event.originalTarget.tagName == 'html:input'){}
 	else
 	{
-	  //garden.s.dump('keyCode:'+event.keyCode);
-	  //garden.s.dump('which:'+event.which);
+	  //garden.dump('keyCode:'+event.keyCode);
+	  //garden.dump('which:'+event.which);
 	
 	  switch(event.which)
 	  {
@@ -935,7 +935,7 @@ gardenTree.prototype = {
 		  }
 		default:
 		  {
-			garden.s.dump('which:'+event.which);
+			garden.dump('which:'+event.which);
 		  }
 	  }
 	  switch(event.keyCode)
@@ -1035,42 +1035,42 @@ gardenTree.prototype = {
 		  }
 		default:
 		  {
-			garden.s.dump('keyCode:'+event.keyCode);
+			garden.dump('keyCode:'+event.keyCode);
 		  }
 	  }
 	}
 	return true;
   },
 
-  drop : function(row, orientation, dataTransfer){ garden.s.dump('drop');return false;},
-  canDrop : function(index, orientation, dataTransfer){ garden.s.dump('canDrop');return false;},
+  drop : function(row, orientation, dataTransfer){ garden.dump('drop');return false;},
+  canDrop : function(index, orientation, dataTransfer){ garden.dump('canDrop');return false;},
 
-  treeOnDragStart : function(event){ garden.s.dump('treeOnDragStart'); return false},
-  treeOnDragOver : function(event){ garden.s.dump('treeOnDragOver'); return false},
-  treeOnDragEnter : function(event){ garden.s.dump('treeOnDragEnter'); return false},
-  treeOnDrop : function(event){ garden.s.dump('treeOnDrop'); return false},
-  treeOnDragDrop : function(event){ garden.s.dump('treeOnDragDrop'); return false},
-  treeOnDragExit : function(event){ garden.s.dump('treeOnDragExit'); return false},
+  treeOnDragStart : function(event){ garden.dump('treeOnDragStart'); return false},
+  treeOnDragOver : function(event){ garden.dump('treeOnDragOver'); return false},
+  treeOnDragEnter : function(event){ garden.dump('treeOnDragEnter'); return false},
+  treeOnDrop : function(event){ garden.dump('treeOnDrop'); return false},
+  treeOnDragDrop : function(event){ garden.dump('treeOnDragDrop'); return false},
+  treeOnDragExit : function(event){ garden.dump('treeOnDragExit'); return false},
   
-  childrenOnDragStart : function(event){ garden.s.dump('childrenOnDragStart'); return false},
-  childrenOnDragOver : function(event){  garden.s.dump('childrenOnDragOver'); return false},
-  childrenOnDragEnter : function(event){ garden.s.dump('childrenOnDragEnter');  return false},
-  childrenOnDrop : function(event){garden.s.dump('childrenOnDrop');  return false},
-  childrenOnDragDrop : function(event){garden.s.dump('childrenOnDragDrop');  return false},
-  childrenOnDragExit : function(event){garden.s.dump('childrenOnDragExit');  return false},
+  childrenOnDragStart : function(event){ garden.dump('childrenOnDragStart'); return false},
+  childrenOnDragOver : function(event){  garden.dump('childrenOnDragOver'); return false},
+  childrenOnDragEnter : function(event){ garden.dump('childrenOnDragEnter');  return false},
+  childrenOnDrop : function(event){garden.dump('childrenOnDrop');  return false},
+  childrenOnDragDrop : function(event){garden.dump('childrenOnDragDrop');  return false},
+  childrenOnDragExit : function(event){garden.dump('childrenOnDragExit');  return false},
   
 /* controller */
 
   treeOperationsQueue : function(aFunction)
   {
-	//garden.s.dump('treeOperationsQueue');
+	//garden.dump('treeOperationsQueue');
 	if(!aFunction)
 	{
 	  if(this.operationsQueue.length)
 		this.operationsQueue.pop()();
 	  else
 	  {
-		//garden.s.dump('treeOperationsQueue:serializedSessionSet');
+		//garden.dump('treeOperationsQueue:serializedSessionSet');
 		if(this.serializedSessionSetTimer)
 		  this.serializedSessionSetTimer.cancel();
 		
@@ -1086,7 +1086,7 @@ gardenTree.prototype = {
 	{
 	  this.operationsQueue[this.operationsQueue.length] = aFunction;
 	}
-	//garden.s.dump('treeOperationsQueue:end');
+	//garden.dump('treeOperationsQueue:end');
   },
 
 /* session */
@@ -1222,7 +1222,7 @@ gardenTree.prototype = {
 	var currentPath = this.currentPath;
 	this.currentPath = '';
 	this.baseChange(currentPath);
-	//garden.s.dump('reload:end');
+	//garden.dump('reload:end');
   },
   refreshPath:function(aPath)
   {
@@ -1256,7 +1256,7 @@ gardenTree.prototype = {
   
   setCellText : function(row, col, value)
   {
-	//garden.s.dump('setCellText');
+	//garden.dump('setCellText');
 	if(this.editable && this._rows[row].name != value)
 	{
 	  var aData = {}
@@ -1266,12 +1266,12 @@ gardenTree.prototype = {
 	  document.popupNode = null;
 	  garden.gardenCommand('rename', aData);
 	}
-	//garden.s.dump('setCellTextend');
+	//garden.dump('setCellTextend');
   },
   
   startEditing : function()
   {
-	//garden.s.dump('startEditing');
+	//garden.dump('startEditing');
 	var selectedItems = this.selectionGetSelectedItems();
 	if(selectedItems.length === 1)
 	{
@@ -1403,10 +1403,10 @@ gardenTree.prototype = {
   
   setTree : function(tree){this.tree = tree;},
   
-  setCellValue : function(row, col,value){garden.s.dump('setCellValue');},
+  setCellValue : function(row, col,value){garden.dump('setCellValue');},
   getCellValue : function(row, col){},
   getCellText : function(i, col){return this._rows[i].name;},
-  getProgressMode : function(row, col){garden.s.dump('getProgressMode');return 0;},
+  getProgressMode : function(row, col){garden.dump('getProgressMode');return 0;},
   getLevel : function(i){return this.getRowStateFromID(this._rows[i].id).aLevel;},
   
   isSeparator : function(row){return false;},
@@ -1419,12 +1419,12 @@ gardenTree.prototype = {
   },
   isContainerEmpty : function(i){return this.getRowStateFromID(this._rows[i].id).isContainerEmpty;},
   
-  cycleCell : function(row, col){garden.s.dump('cycleCell');},
-  cycleHeader : function(col){garden.s.dump('cycleHeader');},
+  cycleCell : function(row, col){garden.dump('cycleCell');},
+  cycleHeader : function(col){garden.dump('cycleHeader');},
   
-  performAction : function(action){garden.s.dump('performAction');},
-  performActionOnCell : function(action, row, col){garden.s.dump('performActionOnCell');},
-  performActionOnRow : function(action, row){garden.s.dump('performActionOnRow');},
+  performAction : function(action){garden.dump('performAction');},
+  performActionOnCell : function(action, row, col){garden.dump('performActionOnCell');},
+  performActionOnRow : function(action, row){garden.dump('performActionOnRow');},
   
-  get rowCount(){/*garden.s.dump('rowCount:'+this._rows.length);*/return this._rows.length;}
+  get rowCount(){/*garden.dump('rowCount:'+this._rows.length);*/return this._rows.length;}
 }

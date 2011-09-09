@@ -31,7 +31,7 @@ GardenDrivers.prototype = {
 	for(var id in entries)
 	  entries[id].id = myAPI.crypto().sha1(entries[id].toSource()+'.'+JSON.stringify(entries[id]));
 
-	delete thread;
+	thread = null;
 	return entries;
   },
   getEntry:function(aDriverTypeID, aEntryID)

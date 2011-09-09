@@ -100,12 +100,12 @@ AsynchRemoteConnection.prototype = {
   },
   removeFile:function(aFile)
   {
-	//garden.s.dump('removeFile:'+aFile);
+	//garden.dump('removeFile:'+aFile);
 	this.connect().removeFile(aFile);
   },
   removeDirectory:function(aDirectory)
   {
-	//garden.s.dump('removeDirectory:'+aDirectory);
+	//garden.dump('removeDirectory:'+aDirectory);
 	this.connect().removeDirectory(aDirectory);
   },
   chmod:function(aFile, aPermissions)

@@ -31,8 +31,8 @@
 	  return false;
 	}
 
-	//this.s.dump('el group es'+aElement.getAttribute('groupID'));
-	//this.s.dump('el tree es'+aElement.getAttribute('treeID'));
+	//garden.dump('el group es'+aElement.getAttribute('groupID'));
+	//garden.dump('el tree es'+aElement.getAttribute('treeID'));
 	 
 	var groupID = aElement.getAttribute('groupID');
 	var groupElementID = 'g-group-'+groupID;
@@ -41,7 +41,7 @@
 	var treeElementID = 'g-tree-'+treeID;
 	
 	var path = '';
-	//this.s.dump('Requested tree:'+treeID+' from group:'+groupID);
+	//garden.dump('Requested tree:'+treeID+' from group:'+groupID);
 	
 	//groups container
 	var groupsContainer = this.element('g-groups').childNodes;
@@ -55,7 +55,7 @@
 	  {
 		if(groupsContainer[id].getAttribute('id') == groupElementID)
 		{
-		  //this.s.dump('The group is already created:'+groupID+', switching to group');
+		  //garden.dump('The group is already created:'+groupID+', switching to group');
 		  groupsContainer[id].setAttribute('collapsed', false);
 		  groupContainer = groupsContainer[id];
 		  found = true;
@@ -69,7 +69,7 @@
 	//create the group if no exists
 	if(!found)
 	{
-	  //this.s.dump('The group was not created yet:'+groupID+', creating group..');
+	  //garden.dump('The group was not created yet:'+groupID+', creating group..');
 	  groupContainer = garden.create('hbox');
 	  groupContainer.setAttribute('id', groupElementID);
 	  groupContainer.setAttribute('flex', '1');
@@ -79,7 +79,7 @@
 	
 	//check if all the trees are there
 	var groupData = this.groupGetFromID(groupID);
-	//this.s.dump('groupData', groupData);
+	//garden.dump('groupData', groupData);
 	for(var id in groupData.trees)
 	{
 	  var treeData = groupData.trees[id];
@@ -95,7 +95,7 @@
 	  //the tree is not there create the tree
 	  if(!treeElement)
 	  {
-		//this.s.dump('The tree was not created yet:'+treeData.id+', creating tree..');
+		//garden.dump('The tree was not created yet:'+treeData.id+', creating tree..');
 		var treeElement = this.element('g-tree').cloneNode(true);
 			treeElement.setAttribute('id', treeDataElementID);
 			treeElement.setAttribute('treeID', treeData.id);
@@ -146,10 +146,10 @@
 	  
 	//focusing the tree
 	
-	  //this.s.dump('The tree is already created:'+treeData.id+'');
+	  //garden.dump('The tree is already created:'+treeData.id+'');
 	  if(treeElementID == treeDataElementID)
 	  {
-		//this.s.dump('The tree is the one that we want to focus:'+treeData.id+', switching to tree');
+		//garden.dump('The tree is the one that we want to focus:'+treeData.id+', switching to tree');
 		this.focusedTree = treeElement.garden;
 		this.focusedInstance = this.instances[treeData.id];
 	  }
@@ -194,7 +194,7 @@
 		{
 		  if(treeElementID == treeDataElementID)
 		  {
-			this.s.dump('clicked the first childs of the breadcrumb or the tree from the bottom toolbar menupopup');
+			garden.dump('clicked the first childs of the breadcrumb or the tree from the bottom toolbar menupopup');
 			path = this.focusedTree.currentPath;
 		  }
 		  //treeElement.garden.baseChange(aElement.getAttribute('path'), true);
@@ -203,7 +203,7 @@
 		{
 		  if(treeElementID == treeDataElementID)
 		  {
-			this.s.dump('clicked a sub element of the breadcrumb');
+			garden.dump('clicked a sub element of the breadcrumb');
 			path = aElement.getAttribute('path');
 			treeElement.garden.baseChange(aElement.getAttribute('path'), true);
 		  }
@@ -237,7 +237,7 @@
 	  
 	this.element('g-toolbar-group-menupopup').hidePopup();
 	
-	//this.s.dump('switchToTree:toolbarUpdate');
+	//garden.dump('switchToTree:toolbarUpdate');
 	this.toolbarUpdate();
 	
 	//show the top toolbar if it is collapsed
@@ -271,7 +271,7 @@
 	this.shared.pref('last.focused.treeID', treeElement.getAttribute('treeID'));
 	this.shared.pref('last.focused.groupID', treeElement.getAttribute('groupID'));
 	this.shared.pref('last.focused.path', this.focusedTree.currentPath);
-	//this.s.dump('setTreeFocus:toolbarUpdate');
+	//garden.dump('setTreeFocus:toolbarUpdate');
 	this.toolbarUpdate();
   }
   this.setTreeBlur = function(treeElement)
@@ -409,7 +409,7 @@
 	  }
 	  if(aNotifierTreeID == this.focusedTree.treeID)
 	  {
-		//this.s.dump('notifyProgress:toolbarUpdate'+this.focusedTree.treeID);
+		//garden.dump('notifyProgress:toolbarUpdate'+this.focusedTree.treeID);
 		this.toolbarUpdate();
 		//if the log is opened update the value
 		this.logUpdateIfOpened();

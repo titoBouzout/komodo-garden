@@ -291,7 +291,7 @@
 	)
 	  return false;
 	
-	//this.s.dump('groupContextAction:aElement.label:'+aElement.getAttribute('label'));
+	//garden.dump('groupContextAction:aElement.label:'+aElement.getAttribute('label'));
 	
 	if(!aElement.hasAttribute('action'))
 	  return;
@@ -440,7 +440,7 @@
 								  entryID:entryID,
 								  isSibling:true
 								}
-				//this.s.dump('newTree:', newTree);
+				//garden.dump('newTree:', newTree);
 				var found = false;
 				for(var i in groups[id].trees)
 				{
@@ -476,20 +476,20 @@
 			var treeID = value.getAttribute('treeID');
 			var groups = this.groupsGet();
 		   
-			//this.s.dump('going to delete treeID '+treeID+' from groupID'+groupID);
+			//garden.dump('going to delete treeID '+treeID+' from groupID'+groupID);
 			for(var id in groups)
 			{
-			  //this.s.dump('looking for groupID '+groupID+' on '+groups[id].id );
+			  //garden.dump('looking for groupID '+groupID+' on '+groups[id].id );
 			  if(groups[id].id == groupID)
 			  {
-				//this.s.dump('found groupID ');
+				//garden.dump('found groupID ');
 				var a=0;
 				for(var i in groups[id].trees)
 				{
-				 // this.s.dump('looking for treeID '+treeID+' on '+groups[id].trees[i].id);
+				 // garden.dump('looking for treeID '+treeID+' on '+groups[id].trees[i].id);
 				  if(treeID == groups[id].trees[i].id)
 				  {
-					//this.s.dump('found treeID ');
+					//garden.dump('found treeID ');
 					groups[id].trees.splice(a, 1);
 					this.groupsSet(groups);
 					
@@ -549,17 +549,17 @@
 		  var treeID = value.getAttribute('treeID');
 		  var groups = this.groupsGet();
 		 
-		  //this.s.dump('going to delete treeID '+treeID+' from groupID'+groupID);
+		  //garden.dump('going to delete treeID '+treeID+' from groupID'+groupID);
 		  for(var id in groups)
 		  {
-			//this.s.dump('looking for groupID '+groupID+' on '+groups[id].id );
+			//garden.dump('looking for groupID '+groupID+' on '+groups[id].id );
 			if(groups[id].id == groupID)
 			{
-			  //this.s.dump('found groupID ');
+			  //garden.dump('found groupID ');
 			  var a=0;
 			  for(var i in groups[id].trees)
 			  {
-			   // this.s.dump('looking for treeID '+treeID+' on '+groups[id].trees[i].id);
+			   // garden.dump('looking for treeID '+treeID+' on '+groups[id].trees[i].id);
 				if(treeID == groups[id].trees[i].id)
 				{
 				  groups[id].trees[i].isSibling = !groups[id].trees[i].isSibling;

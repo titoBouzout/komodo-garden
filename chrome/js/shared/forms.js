@@ -31,9 +31,6 @@
 	
 	win = null;
 	r = null;
-	
-	delete win;
-	delete r;
 
 	return value;
   }

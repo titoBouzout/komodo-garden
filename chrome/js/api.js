@@ -4,16 +4,16 @@ function GardenAPI()
 
   this.addEventListener = function(aEvent, aFunction)
   {
-	//garden.s.dump('addEventListener:aEvent:'+aEvent);
-	//garden.s.dump('addEventListener:aFunction:', aFunction);
+	//garden.dump('addEventListener:aEvent:'+aEvent);
+	//garden.dump('addEventListener:aFunction:', aFunction);
 	if(!this._listeners[aEvent])
 	  this._listeners[aEvent] = [];
 	this._listeners[aEvent][this._listeners[aEvent].length] = aFunction;
   }
   this.removeEventListener = function(aEvent, aFunction)
   {
-	//garden.s.dump('removeEventListener:aEvent:'+aEvent);
-	//garden.s.dump('removeEventListener:aFunction:', aFunction);
+	//garden.dump('removeEventListener:aEvent:'+aEvent);
+	//garden.dump('removeEventListener:aFunction:', aFunction);
 	aFunction = aFunction.toSource();
 	if(this._listeners[aEvent])
 	{
@@ -21,7 +21,7 @@ function GardenAPI()
 	  {
 		if(this._listeners[aEvent][id].toSource() == aFunction.toSource())
 		{
-		  delete this._listeners[aEvent][id];
+		  this._listeners[aEvent][id] = null;
 		  break;
 		}
 	  }
@@ -29,8 +29,8 @@ function GardenAPI()
   }
   this.dispatchEvent = function(aEvent, aData)
   {
-	//garden.s.dump('dispatchEvent:aEvent:'+aEvent);
-	//garden.s.dump('dispatchEvent:aData:', aData);
+	//garden.dump('dispatchEvent:aEvent:'+aEvent);
+	//garden.dump('dispatchEvent:aData:', aData);
 	if(this._listeners[aEvent])
 	{
 	  for(var id in this._listeners[aEvent])
@@ -73,17 +73,17 @@ function GardenAPI()
 	{
 	  if(document.popupNode && document.popupNode == garden.element('g-toolbar-breadcrumb'))//clicked root button..
 	  {
-		//this.s.dump('the command is for the "root" button');
+		//garden.dump('the command is for the "root" button');
 		aPaths[aPaths.length] = garden.focusedTree.currentPath;
 	  }
 	  else if(document.popupNode && document.popupNode.hasAttribute('path'))
 	  {
-		//this.s.dump('the command is for the "browser" element')
+		//garden.dump('the command is for the "browser" element')
 		aPaths[aPaths.length] = document.popupNode.getAttribute('path');
 	  }
 	  else
 	  {
-		//this.s.dump('the command is for the tree');
+		//garden.dump('the command is for the tree');
 		var selectedTree = garden.focusedTree;
 		var selectedInstance = garden.focusedInstance;
 		

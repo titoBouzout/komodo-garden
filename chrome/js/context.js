@@ -18,7 +18,7 @@
 		)
 	)
 	{
-	  //this.s.dump('the mouse is over!');
+	  //garden.dump('the mouse is over!');
 	  myAPI.timer().setTimeout(function(){ garden.treeContextAllowMouseOut = true;}, 50);
 	}
 
@@ -48,14 +48,14 @@
 		 aTagName != 'menuseparator'
 	  )
 	  {
-		//this.s.dump(aTagName);
+		//garden.dump(aTagName);
 		myAPI.DOM().hideChildrensPopupsOpened(this.element('g-tree-context'));
 	  }
 	  /*else if(aTagName == 'menu' || aTagName == 'xul:menu')
 	  {
 		if(!aEvent.originalTarget.hasAttribute('disabled'))
 		{
-		  //this.s.dump(aTagName);
+		  //garden.dump(aTagName);
 		  //aEvent.originalTarget.firstChild.openPopup(aEvent.originalTarget, 'end_before');
 		}
 	  }*/
@@ -81,7 +81,7 @@
 	   aEvent.relatedTarget.parentNode.parentNode.parentNode != this.element('g-tree-context')
 	)
 	{
-	  //this.s.dump('the mouse is out!');
+	  //garden.dump('the mouse is out!');
 	  this.treeContextAllowMouseOver = false;
 	  myAPI.timer().setTimeout(function(){ garden.treeContextAllowMouseOver = true;}, 50);
 	  this.treeContextAllowMouseOut = false;
@@ -100,7 +100,7 @@
 	if(aEvent.originalTarget.parentNode)
 	  myAPI.DOM().hideSiblingsPopupsOpened(aEvent.originalTarget.parentNode);
 	  
-	//this.s.dump(aEvent.relatedTarget.tagName);
+	//garden.dump(aEvent.relatedTarget.tagName);
 	//init selection properties
 	var multiple = false,
 		file = false,
@@ -114,7 +114,7 @@
 		
 	if(document.popupNode && document.popupNode == this.element('g-toolbar-breadcrumb'))//clicked root button..
 	{
-	  //this.s.dump('the context menu is shown from the root button');
+	  //garden.dump('the context menu is shown from the root button');
 	  
 	  var selectedTree = this.focusedTree;
 	  var selectedInstance = this.focusedInstance;
@@ -126,7 +126,7 @@
 	}
 	else if(document.popupNode && document.popupNode.hasAttribute('path'))
 	{
-	  //this.s.dump('the context menu is shown from the "browser" element');
+	  //garden.dump('the context menu is shown from the "browser" element');
 		  
 	  var selectedTree = this.trees[document.popupNode.getAttribute('treeID')];
 	  var selectedInstance = this.instances[document.popupNode.getAttribute('treeID')] ||  this										.gardenDrivers.getInstance(
@@ -147,7 +147,7 @@
 	}
 	else
 	{
-	  //this.s.dump('the context menu is shown from the tree');
+	  //garden.dump('the context menu is shown from the tree');
 	  
 	  var selectedTree = this.focusedTree;
 	  var selectedInstance = this.focusedInstance;
@@ -200,7 +200,7 @@
 		anonItems = anonItems.childNodes;
 		for(var i =0;i<anonItems.length;i++)
 		{
-		  //this.s.dump('looking into '+anonItems[i].getAttribute('label'));
+		  //garden.dump('looking into '+anonItems[i].getAttribute('label'));
 		  if(anonItems[i].hasAttribute('disableif'))
 		  {
 			andSubItems[andSubItems.length] = anonItems[i];

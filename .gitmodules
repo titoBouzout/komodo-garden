@@ -1,3 +1,0 @@
-[submodule "chrome/content/js/API"]
-	path = chrome/content/js/API
-	url = git@github.com:titoBouzout/extensions-lib.git

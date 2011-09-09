@@ -373,7 +373,7 @@ GardenInstances.prototype = {
 		  
 		  this.listings[aDirectory].data = rowsSorted;
 		  
-		  delete rowsSorted;
+		  rowsSorted = null;
 		  
 		  this.log('sucess', 'Directory "'+aDirectory+'" list completed', 0);
 		  
@@ -1231,7 +1231,7 @@ GardenInstances.prototype = {
 		  {
 			myAPI.thread().runThread(function(){
 								  if(myAPI.file().exists(aLocalPath))
-									myAPI.thread().runMain(function(){garden.s.openURL(window, aLocalPath, true);});
+									myAPI.thread().runMain(function(){myAPI.tab().open(aLocalPath, true);});
 								  }, this.thread);
 			this.cacheDirectoryItemAdd(aLocalPath, false, aParentInstance);
 			this.log('sucess', 'opened file "'+aLocalPath+'" ', aProcess.id);
@@ -1455,7 +1455,7 @@ GardenInstances.prototype = {
 			//run in a thread and then back to main thread because we need to wait for the file to download
 			myAPI.thread().runThread(function(){
 								  if(myAPI.file().exists(aFile))
-									myAPI.thread().runMain(function(){garden.s.openURL(window, aFile, true);});
+									myAPI.thread().runMain(function(){myAPI.tab().open(aFile, true);});
 								  }, this.thread);
 			this.cacheDirectoryItemAdd(aFile, false);
 			this.log('sucess', 'created file "'+aFile+'" ', aProcess.id);
@@ -1759,7 +1759,7 @@ GardenInstances.prototype = {
 		  }
 		  catch(e) 
 		  {
-			//remote directory no existasynchRemote.s.dump(e);
+			//remote directory no exist garden.dump(e);
 		  }
 		  if(fileExistsRemote)
 		  {
@@ -1977,7 +1977,7 @@ GardenInstances.prototype = {
 	  for(var id in this.listings)
 	  {
 		if(id == aPath || id.indexOf(aPath+this.__DS) === 0)
-		  delete this.listings[id];
+		  this.listings[id] = null;
 	  }
 	}
 	//remove the item from the tree
@@ -2024,7 +2024,7 @@ GardenInstances.prototype = {
 	  instance.iterations = 0;
 	  instance.connected = false;
 	  
-	  delete instance.connection;
+	  instance.connection = null;
 	  
 	  instance.log('status', 'Connection closed', 0);
 	  

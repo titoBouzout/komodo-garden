@@ -14,15 +14,6 @@ function AsynchRemote()
   }
   this.initExtension = function()
   {
-	//global singleton object
-	Components.utils.import('resource://up.tito.asynchremote/_init.js', this);
-	this.s.extensionID = 'tito@garden';
-	this.s.extensionName = 'Garden';
-	this.s.extensionChromeName = 'asynchremote';
-	this.s.include('window','application','urls');
-	this.windowID = this.s.getWindowID();
-	//end global singleton object
-	
 	if(!(this.shared = myAPI.shared.garden())) {
 	  this.shared = myAPI.shared.garden();
 	  this.shared.include('chrome://asynchremote/content/js/shared/id.js');
@@ -39,7 +30,7 @@ function AsynchRemote()
 	for(var id in this.drivers)
 	  new this.drivers[id]().driverRegister();
 	  
-	delete this.drivers;
+	this.drivers = null;
 	
 	//when the location change some buttons are disabled/enabled
 	myAPI.listener().add(
@@ -60,7 +51,7 @@ function AsynchRemote()
 	   this.shared.pref('last.focused.path') != ''   
 	)
 	{
-	  //this.s.dump('initExtension:switchToTree');
+	  //garden.dump('initExtension:switchToTree');
 	  if(this.groupTreeExists(
 							  this.shared.pref('last.focused.groupID'),
 							  this.shared.pref('last.focused.treeID')

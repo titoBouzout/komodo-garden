@@ -18,7 +18,7 @@
 					
 	this.focusedInstance.errorCount = 0;
 	
-   // this.s.dump('logOpen:toolbarUpdate');
+   // garden.dump('logOpen:toolbarUpdate');
 	this.toolbarUpdate();
   }
   
