@@ -19,7 +19,7 @@ gardenTree.prototype = {
 	
 	/* navigation */
 	
-	  this.history = new myAPI.historyNavigator(true);
+	  this.history = myAPI.historyNavigator(true);
 	  
 	/* selection */
 	

@@ -1,37 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <overlay xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+  
+  <hbox id="komodo-hbox">
 
-  <!-- container -->
-  <tabbox id="rightTabBox">
-	<tabs id="right_toolbox_tabs">
-	  <tab
-		id="g-tab"
-		label="Garden"
-		linkedpanel="g-box"
-		persist="selected"
-	  />
-	</tabs>
-	<tabpanels id="right_toolbox_tabpanels">
-	  <tabpanel flex="1" id="g-box">
-		
-		  <!-- container -->
-		  <vbox flex="1" persist="width height">
-			
-			<!-- toolbar top -->
-			<hbox id="g-toolbar-top"/>
-			
-			<!-- tree groups -->
-			<hbox id="g-groups" flex="1"/>
-			
-			<!-- toolbar bottom -->
-			<hbox id="g-toolbar-bottom"/>
-			
-		  </vbox>
-		  
-		  <vbox id="g-tree-template" collapsed="true"/>
-		  
-	  </tabpanel>
-	</tabpanels>
-  </tabbox>
+  	<splitter state="open" layer="false" orient="horizontal" ordinal="1" persist="open" collapse="after"><grippy/></splitter>
+	<!-- container -->
+	<vbox flex="1" persist="width height">
+	  
+	  <!-- toolbar top -->
+	  <hbox id="g-toolbar-top"/>
+	  
+	  <!-- tree groups -->
+	  <hbox id="g-groups" flex="1"/>
+	  
+	  <!-- toolbar bottom -->
+	  <hbox id="g-toolbar-bottom"/>
+	  
+	</vbox>
+
+	<vbox id="g-tree-template" collapsed="true"/>
+
+  </hbox>
 
 </overlay>

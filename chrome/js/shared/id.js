@@ -1,3 +1,3 @@
 
   this.id = 'tito@garden';
-  this.name = 'Garden';
+  this.aName = 'Garden';

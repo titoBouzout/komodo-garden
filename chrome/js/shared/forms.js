@@ -1,15 +1,15 @@
   
   this.alert = function(aString){
-	myAPI.form().alert(this.name, aString);
+	myAPI.form().alert(this.aName, aString);
   }
   this.confirm = function(aString){
-	return myAPI.form().confirm(this.name, aString);
+	return myAPI.form().confirm(this.aName, aString);
   }
   this.confirmWithCheckbox = function(aString, aCheckboxPrompt){
-	return myAPI.form().confirmWithCheckbox(this.name, aString, aCheckboxPrompt);
+	return myAPI.form().confirmWithCheckbox(this.aName, aString, aCheckboxPrompt);
   }
   this.prompt = function(aString, aDefault, multiline, aFunction, aParams, aCheckboxPrompt){
-	return myAPI.form().prompt(this.name, aString, aDefault, multiline, aFunction, aParams, aCheckboxPrompt);
+	return myAPI.form().prompt(this.aName, aString, aDefault, multiline, aFunction, aParams, aCheckboxPrompt);
   }
   
   this.overWritePrompt = function(aString, window)
