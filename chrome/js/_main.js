@@ -19,7 +19,7 @@ function AsynchRemote()
 	this.s.extensionID = 'tito@garden';
 	this.s.extensionName = 'Garden';
 	this.s.extensionChromeName = 'asynchremote';
-	this.s.include('observer','file','thread','sharedMemory','DOM','process','places','window','listener','application','tab','document','urls');
+	this.s.include('file','thread','sharedMemory','DOM','process','places','window','listener','application','tab','document','urls');
 	this.windowID = this.s.getWindowID();
 	//end global singleton object
 	
@@ -51,7 +51,7 @@ function AsynchRemote()
 						);
 	
 	//if there is some connection working on something let the user know about that before quiting the application
-	this.s.addObserver('quit-application-requested',
+	myAPI.observer().add('quit-application-requested',
 						function(aSubject)
 						{
 						  garden.onApplicationClose(aSubject);
