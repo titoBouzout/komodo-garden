@@ -30,7 +30,7 @@
 	this.groupsPopupshowingBuilding = true;
 	
 	var menupopup = this.element('g-groups-menupopup');
-	this.s.removeChilds(menupopup);
+	myAPI.DOM().removeChilds(menupopup);
 
 	var groups = this.groupsGet();
 	var groupsSorting = [];
@@ -138,7 +138,7 @@
   {
 	var menupopup = this.element('g-toolbar-group-menupopup');
 	
-	this.s.removeChilds(menupopup);
+	myAPI.DOM().removeChilds(menupopup);
 
 	var group = this.groupGetFromID(this.focusedTree.treeElement.getAttribute('groupID'));
 	
@@ -193,11 +193,11 @@
   {
 	if(!aElement.hasAttribute('groupID'))
 	{
-	  this.s.stopEvent(event);
+	  myAPI.DOM().stopEvent(event);
 	  return false;
 	}
 	var context = this.element('g-group-context');
-	this.s.removeChilds(context);
+	myAPI.DOM().removeChilds(context);
 	
 	for(var id in this.gardenDrivers.driversTypes)
 	{
@@ -285,7 +285,7 @@
 	//then we will receive an oncommand.
 	//mouseup is here to receive clicks from menus or menupoups
 	if(aEvent.type == 'mouseup' && (
-								aEvent.originalTarget.tagName == 'menuitem' || 
+								aEvent.originalTarget.localName == 'menuitem' || 
 								aEvent.button == 2
 							  )
 	)

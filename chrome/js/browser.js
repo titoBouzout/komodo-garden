@@ -8,17 +8,16 @@
 	  return;
 	var item = aEvent.originalTarget;//the hovered element
 	
-	var tagName = this.s.tagName(item);
+	var tagName = item.localName;
 	
 	if(
-	   (tagName == 'xul:menu' || tagName == 'menu' || tagName == 'menuitem')
-	   &&  item.hasAttribute('path')
+	   (tagName == 'menu' || tagName == 'menuitem') &&  item.hasAttribute('path')
 	)
 	{
 	  if(aEvent.type == 'mouseover')
 	  {
 		item.setAttribute('isFocused', true);
-		if(tagName == 'xul:menu' || tagName == 'menu')
+		if(tagName == 'menu')
 		  item.firstChild.timer = myAPI.timer().setTimeout(function(){garden.browserOpenpopupFix(item.firstChild);}, 220);
 	  }
 	  else if(aEvent.type == 'mouseout')

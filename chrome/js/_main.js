@@ -19,7 +19,7 @@ function AsynchRemote()
 	this.s.extensionID = 'tito@garden';
 	this.s.extensionName = 'Garden';
 	this.s.extensionChromeName = 'asynchremote';
-	this.s.include('file','thread','sharedMemory','DOM','process','places','window','listener','application','tab','document','urls');
+	this.s.include('file','thread','sharedMemory','DOM','places','window','listener','application','tab','document','urls');
 	this.windowID = this.s.getWindowID();
 	//end global singleton object
 	

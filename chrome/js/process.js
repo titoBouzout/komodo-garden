@@ -3,7 +3,7 @@
   this.processListPopupShowing = function()
   {
 	var menupopup = this.element('g-process-list-popup');
-	this.s.removeChilds(menupopup);
+	myAPI.DOM().removeChilds(menupopup);
 	
 	if(this.focusedInstance.connected && !this.focusedInstance.closing)
 	  menupopup.firstChild.removeAttribute('disabled');

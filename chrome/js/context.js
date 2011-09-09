@@ -40,17 +40,13 @@
 	  )
 	)
 	{
-	  var aTagName = this.s.tagName(aEvent.originalTarget)
+	  var aTagName = aEvent.originalTarget.localName;
 	  if(
 		 aTagName != 'menu' &&
 		 aTagName != 'menupopup' &&
 		 aTagName != 'menuitem' &&
-		 aTagName != 'menuseparator' &&
-		 aTagName != 'xul:menu' &&
-		 aTagName != 'xul:menupopup' &&
-		 aTagName != 'xul:menuitem' &&
-		 aTagName != 'xul:menuseparator' 
-		 )
+		 aTagName != 'menuseparator'
+	  )
 	  {
 		//this.s.dump(aTagName);
 		this.s.hideChildrensPopupsOpened(this.element('g-tree-context'));

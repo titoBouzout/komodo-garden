@@ -40,7 +40,7 @@
 					  this.parentNode.parentNode.parentNode.hidePopup();
 					} else {
 					  this.value='';
-					  garden.s.stopEvent(event);
+					  myAPI.DOM().stopEvent(event);
 					}
 				  }
 				  else if(event.keyCode == 13)

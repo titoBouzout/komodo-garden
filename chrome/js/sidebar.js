@@ -7,7 +7,7 @@
 	//then we will receive an oncommand.
 	//mouseup is here to receive clicks from menus or menupoups
 	if(aEvent.type == 'mouseup' && (
-								aEvent.originalTarget.tagName == 'menuitem' || 
+								aEvent.originalTarget.localName == 'menuitem' || 
 								aEvent.button == 2
 							  )
 	)
@@ -19,7 +19,7 @@
 	   aElement.hasAttribute('unreadable')
 	)
 	{
-	  this.s.stopEvent(aEvent);
+	  myAPI.DOM().stopEvent(aEvent);
 	  return false;
 	}
 	
@@ -27,7 +27,7 @@
 	if(aElement.getAttribute('isDirectory') == 'false')
 	{
 	  this.gardenCommand('open');
-	  this.s.stopEvent(aEvent);
+	  myAPI.DOM().stopEvent(aEvent);
 	  return false;
 	}
 

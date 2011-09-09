@@ -752,7 +752,7 @@ gardenTree.prototype = {
 	{
 	  document.popupNode = null;
 	  garden.gardenCommand('show-in-folder');
-	  garden.s.stopEvent(event);
+	  myAPI.DOM().stopEvent(event);
 	}
 	else
 	{
@@ -778,7 +778,7 @@ gardenTree.prototype = {
   childrenOnDblClick : function(event)
   {
 	//garden.s.dump('childrenOnDblClick');
-	if(event.button == 2){ garden.s.stopEvent(event);return false; }
+	if(event.button == 2){ myAPI.DOM().stopEvent(event);return false; }
 	else
 	{
 	  if(this.editable)
@@ -806,7 +806,7 @@ gardenTree.prototype = {
   },
   treeOnDblClick :function(event)
   {
-	if(event.button == 2){ garden.s.stopEvent(event);return false; }
+	if(event.button == 2){ myAPI.DOM().stopEvent(event);return false; }
   },
   treeOnKeyPress : function(event)
   {
@@ -821,7 +821,7 @@ gardenTree.prototype = {
 		case 32://space bar ( focus parent next sibling or next sibling )
 		  {
 			this.scrollFocusParentNextSibling();
-			garden.s.stopEvent(event);
+			myAPI.DOM().stopEvent(event);
 			break;
 		  }
 		case 102://CTRL F find and replace
@@ -830,7 +830,7 @@ gardenTree.prototype = {
 			{
 			  document.popupNode = null;
 			  garden.gardenCommand('find-replace');
-			  garden.s.stopEvent(event);
+			  myAPI.DOM().stopEvent(event);
 			}
 			break;
 		  }
@@ -840,7 +840,7 @@ gardenTree.prototype = {
 			{
 			  document.popupNode = null;
 			  garden.gardenCommand('show-in-folder');
-			  garden.s.stopEvent(event);
+			  myAPI.DOM().stopEvent(event);
 			}
 			break;
 		  }
@@ -849,7 +849,7 @@ gardenTree.prototype = {
 			if(event.ctrlKey)
 			{
 			   this.selection.selectAll()
-			   garden.s.stopEvent(event);
+			   myAPI.DOM().stopEvent(event);
 			}
 			break;
 		  }
@@ -858,7 +858,7 @@ gardenTree.prototype = {
 			if(event.ctrlKey)
 			{
 			   this.selection.invertSelection()
-			   garden.s.stopEvent(event);
+			   myAPI.DOM().stopEvent(event);
 			}
 			break;
 		  }
@@ -869,7 +869,7 @@ gardenTree.prototype = {
 			{
 			  document.popupNode = null;
 			  garden.gardenCommand('new-file');
-			  garden.s.stopEvent(event);
+			  myAPI.DOM().stopEvent(event);
 			}
 			break;
 		  }
@@ -879,7 +879,7 @@ gardenTree.prototype = {
 			{
 			  document.popupNode = null;
 			  garden.gardenCommand('refresh');
-			  garden.s.stopEvent(event);
+			  myAPI.DOM().stopEvent(event);
 			}
 			break;
 		  }
@@ -889,7 +889,7 @@ gardenTree.prototype = {
 			{
 			  document.popupNode = null;
 			  garden.gardenCommand('duplicate');
-			  garden.s.stopEvent(event);
+			  myAPI.DOM().stopEvent(event);
 			}
 			break;
 		  }
@@ -899,7 +899,7 @@ gardenTree.prototype = {
 			{
 			  document.popupNode = null;
 			  garden.gardenCommand('paste');
-			  garden.s.stopEvent(event);
+			  myAPI.DOM().stopEvent(event);
 			}
 			break;
 		  }
@@ -909,7 +909,7 @@ gardenTree.prototype = {
 			{
 			  document.popupNode = null;
 			  garden.gardenCommand('copy');
-			  garden.s.stopEvent(event);
+			  myAPI.DOM().stopEvent(event);
 			}
 			break;
 		  }
@@ -919,7 +919,7 @@ gardenTree.prototype = {
 			{
 			  document.popupNode = null;
 			  garden.gardenCommand('cut');
-			  garden.s.stopEvent(event);
+			  myAPI.DOM().stopEvent(event);
 			}
 			break;
 		  }
@@ -929,7 +929,7 @@ gardenTree.prototype = {
 			{
 			  document.popupNode = null;
 			  garden.gardenCommand('open-from-tree');
-			  garden.s.stopEvent(event);
+			  myAPI.DOM().stopEvent(event);
 			}
 			break;
 		  }
@@ -944,42 +944,42 @@ gardenTree.prototype = {
 		  {
 			if(!this.historyGoBack())
 			  this.baseGoUp();
-			garden.s.stopEvent(event);
+			myAPI.DOM().stopEvent(event);
 			break;
 		  }
 		case 37://alt + left arrow
 		  {
 			if(event.altKey)
 			  this.historyGoBack();
-			garden.s.stopEvent(event);
+			myAPI.DOM().stopEvent(event);
 			break;
 		  }
 		case 38://alt + up arrow
 		  {
 			if(event.altKey)
 			  this.baseGoUp();
-			garden.s.stopEvent(event);
+			myAPI.DOM().stopEvent(event);
 			break;
 		  }
 		case 40://alt + down arrow
 		  {
 			if(event.altKey)
 			  this.historyGoBack();
-			garden.s.stopEvent(event);
+			myAPI.DOM().stopEvent(event);
 			break;
 		  }
 		case 39://alt + rigth arrow
 		  {
 			if(event.altKey)
 			  this.historyGoForward();
-			garden.s.stopEvent(event);
+			myAPI.DOM().stopEvent(event);
 			break;
 		  }
 		case 113://F2 rename
 		  {
 			if(this.editable)
 			  this.startEditing();
-			garden.s.stopEvent(event);
+			myAPI.DOM().stopEvent(event);
 			break;
 		  }
 		case 116://F5 reload
@@ -1005,7 +1005,7 @@ gardenTree.prototype = {
 		case 27://escape ( focus Parent folder or previous sibling )
 		  {
 			this.scrollFocusParent();
-			garden.s.stopEvent(event);
+			myAPI.DOM().stopEvent(event);
 			break;
 		  }
 		case 13://enter
@@ -1014,14 +1014,14 @@ gardenTree.prototype = {
 			{
 			  document.popupNode = null;
 			  myAPI.timer().setTimeout(function(){ garden.gardenCommand('open-from-tree');}, 30);
-			  garden.s.stopEvent(event);
+			  myAPI.DOM().stopEvent(event);
 			  return false;
 			}
 			else
 			{
 			  document.popupNode = null;
 			  myAPI.timer().setTimeout(function(){ garden.gardenCommand('edit-from-tree');}, 30);
-			  garden.s.stopEvent(event);
+			  myAPI.DOM().stopEvent(event);
 			  return false;
 			}
 			break;
@@ -1030,7 +1030,7 @@ gardenTree.prototype = {
 		  {
 			document.popupNode = null;
 			garden.gardenCommand('find-replace');
-			garden.s.stopEvent(event);
+			myAPI.DOM().stopEvent(event);
 			break;
 		  }
 		default:

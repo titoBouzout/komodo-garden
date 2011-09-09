@@ -64,7 +64,7 @@
 	  }
 	  log += '</body></html>';
 	  
-	  this.s.fileWrite(f, log);
+	  myAPI.file().write(f, log);
 	}
   }
   
@@ -115,7 +115,7 @@
 		childrens[childrens.length] = richlistitem;
 	}
 	
-	this.s.removeChilds(log);
+	myAPI.DOM().removeChilds(log);
 	for(var id in childrens)
 	  log.appendChild(childrens[id]);
   }

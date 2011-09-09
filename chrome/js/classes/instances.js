@@ -419,7 +419,7 @@ GardenInstances.prototype = {
   {
 	if(!aProcess)
 	{
-	  aProcess = new garden.s.process('remove file "'+aFile+'"', ++this.numProcesses);
+	  aProcess = myAPI.process(true, 'remove file "'+aFile+'"', ++this.numProcesses);
 	  this.processes[this.processes.length] = aProcess;
 	}
 
@@ -468,7 +468,7 @@ GardenInstances.prototype = {
   {
 	if(!aProcess)
 	{
-	  aProcess = new garden.s.process('remove directory "'+aDirectory+'"', ++this.numProcesses);
+	  aProcess = myAPI.process(true, 'remove directory "'+aDirectory+'"', ++this.numProcesses);
 	  this.processes[this.processes.length] = aProcess;
 	}
 
@@ -555,7 +555,7 @@ GardenInstances.prototype = {
   {
 	if(!aProcess)
 	{
-	  aProcess = new garden.s.process('trash file "'+aFile+'"', ++this.numProcesses);
+	  aProcess = myAPI.process(true, 'trash file "'+aFile+'"', ++this.numProcesses);
 	  this.processes[this.processes.length] = aProcess;
 	}
 
@@ -603,7 +603,7 @@ GardenInstances.prototype = {
   {
 	if(!aProcess)
 	{
-	  aProcess = new garden.s.process('trash directory "'+aDirectory+'"', ++this.numProcesses);
+	  aProcess = myAPI.process(true, 'trash directory "'+aDirectory+'"', ++this.numProcesses);
 	  this.processes[this.processes.length] = aProcess;
 	}
 
@@ -690,7 +690,7 @@ GardenInstances.prototype = {
   {
 	if(!aProcess)
 	{
-	  aProcess = new garden.s.process('copy file "'+aSource+'" to "'+aDestination+'" ', ++this.numProcesses);
+	  aProcess = myAPI.process(true, 'copy file "'+aSource+'" to "'+aDestination+'" ', ++this.numProcesses);
 	  this.processes[this.processes.length] = aProcess;
 	}
 
@@ -723,7 +723,7 @@ GardenInstances.prototype = {
   {
 	if(!aProcess)
 	{
-	  aProcess = new garden.s.process('copy directory "'+aSource+'" to "'+aDestination+'" ', ++this.numProcesses);
+	  aProcess = myAPI.process(true, 'copy directory "'+aSource+'" to "'+aDestination+'" ', ++this.numProcesses);
 	  this.processes[this.processes.length] = aProcess;
 	}
 
@@ -759,7 +759,7 @@ GardenInstances.prototype = {
   {
 	if(!aProcess)
 	{
-	  aProcess = new garden.s.process('duplicate file "'+aFile+'"', ++this.numProcesses);
+	  aProcess = myAPI.process(true, 'duplicate file "'+aFile+'"', ++this.numProcesses);
 	  this.processes[this.processes.length] = aProcess;
 	}
 
@@ -841,7 +841,7 @@ GardenInstances.prototype = {
   {
 	if(!aProcess)
 	{
-	  aProcess = new garden.s.process('duplicate directory "'+aDirectory+'"', ++this.numProcesses);
+	  aProcess = myAPI.process(true, 'duplicate directory "'+aDirectory+'"', ++this.numProcesses);
 	  this.processes[this.processes.length] = aProcess;
 	}
 
@@ -877,7 +877,7 @@ GardenInstances.prototype = {
   {
 	if(!aProcess)
 	{
-	  aProcess = new garden.s.process('change permissions to file "'+aFile+'"', ++this.numProcesses);
+	  aProcess = myAPI.process(true, 'change permissions to file "'+aFile+'"', ++this.numProcesses);
 	  this.processes[this.processes.length] = aProcess;
 	}
 	var instance = this;
@@ -908,7 +908,7 @@ GardenInstances.prototype = {
   {
 	if(!aProcess)
 	{
-	  aProcess = new garden.s.process('change permissions to directory "'+aDirectory+'"', ++this.numProcesses);
+	  aProcess = myAPI.process(true, 'change permissions to directory "'+aDirectory+'"', ++this.numProcesses);
 	  this.processes[this.processes.length] = aProcess;
 	}
 	var instance = this;
@@ -987,7 +987,7 @@ GardenInstances.prototype = {
   {
 	if(!aProcess)
 	{
-	  aProcess = new garden.s.process('rename "'+oldName+'" to "'+newName+'"', ++this.numProcesses);
+	  aProcess = myAPI.process(true, 'rename "'+oldName+'" to "'+newName+'"', ++this.numProcesses);
   	  this.processes[this.processes.length] = aProcess;
 	}
 	var instance = this;
@@ -1043,7 +1043,7 @@ GardenInstances.prototype = {
   {
 	if(!aProcess)
 	{
-	  aProcess = new garden.s.process('create directory "'+aDirectory+'" in "'+aParentDirectory+'"', ++this.numProcesses);
+	  aProcess = myAPI.process(true, 'create directory "'+aDirectory+'" in "'+aParentDirectory+'"', ++this.numProcesses);
 	  this.processes[this.processes.length] = aProcess;
 	}
 	var instance = this;
@@ -1152,7 +1152,7 @@ GardenInstances.prototype = {
   {
 	if(!aProcess)
 	{
-	  aProcess = new garden.s.process('open file "'+aFile+'" ', ++this.numProcesses);
+	  aProcess = myAPI.process(true, 'open file "'+aFile+'" ', ++this.numProcesses);
 	  this.processes[this.processes.length] = aProcess;
 	}
 	var instance = this;
@@ -1202,7 +1202,7 @@ GardenInstances.prototype = {
   {
 	if(!aProcess)
 	{
-	  aProcess = new garden.s.process('edit "'+aFile+'" ', ++this.numProcesses);
+	  aProcess = myAPI.process(true, 'edit "'+aFile+'" ', ++this.numProcesses);
 	  this.processes[this.processes.length] = aProcess;
 	}
 	var instance = this;
@@ -1252,7 +1252,7 @@ GardenInstances.prototype = {
   {
 	if(!aProcess)
 	{
-	  aProcess = new garden.s.process('download file "'+aFile+'" to "'+aLocalPath+'"  ', ++this.numProcesses);
+	  aProcess = myAPI.process(true, 'download file "'+aFile+'" to "'+aLocalPath+'"  ', ++this.numProcesses);
 	  this.processes[this.processes.length] = aProcess;
 	}
 	var instance = this;
@@ -1276,7 +1276,7 @@ GardenInstances.prototype = {
 		if(aProcess.overWriteLocal)
 		{
 		  //creating file or needed directories
-		  garden.s.fileCreate(aLocalPath+'.kup');
+		  myAPI.file().create(aLocalPath+'.kup');
 		  //saving file
 		  this.object.saveFile(aFile, aLocalPath+'.kup');
 		  garden.s.fileRename(aLocalPath+'.kup', aLocalPath);
@@ -1298,7 +1298,7 @@ GardenInstances.prototype = {
 	var aDestination = asynchRemote.s.getLocalPathFromRemotePath(aRemotePlacesPath, aLocalPlacesPath, aDirectory);
 	if(!aProcess)
 	{
-	  aProcess = new garden.s.process('download directory "'+aDirectory+'" to "'+aDestination+'"  ', ++this.numProcesses);
+	  aProcess = myAPI.process(true, 'download directory "'+aDirectory+'" to "'+aDestination+'"  ', ++this.numProcesses);
 	  this.processes[this.processes.length] = aProcess;
 	}
 	var instance = this;
@@ -1323,7 +1323,7 @@ GardenInstances.prototype = {
 		
 		if(aProcess.overWriteLocal)
 		{
-		  asynchRemote.s.folderCreate(aDestination);
+		  myAPI.file().createDirectory(aDestination);
 		  
 		  var entries = this.connect().list(('/'+aDirectory).replace(/^\/+/, '/'), 1).getChildren({});
 		  for(var i=0;i<entries.length;i++)
@@ -1359,7 +1359,7 @@ GardenInstances.prototype = {
   {
 	if(!aProcess)
 	{
-	  aProcess = new garden.s.process('compare file "'+aFile+'" with local version', ++this.numProcesses);
+	  aProcess = myAPI.process(true, 'compare file "'+aFile+'" with local version', ++this.numProcesses);
 	  this.processes[this.processes.length] = aProcess;
 	}
 	var instance = this;
@@ -1392,8 +1392,8 @@ GardenInstances.prototype = {
 								  if(asynchRemote.s.fileExists(aTemporalDestination))
 									garden.s.runMain(function(){
 									  if(
-										 asynchRemote.s.fileRead(aLocalFileToCompare) ==
-										 asynchRemote.s.fileRead(aTemporalDestination)
+										 myAPI.file().read(aLocalFileToCompare) ==
+										 myAPI.file().read(aTemporalDestination)
 										)
 										 AsynchRemoteConnection.log('sucess', 'The local and remote file "'+aFile+'" are identical', aProcess.id);
 										 else
@@ -1419,7 +1419,7 @@ GardenInstances.prototype = {
   {
 	if(!aProcess)
 	{
-	  aProcess = new garden.s.process('create file "'+aFile+'" ', ++this.numProcesses);
+	  aProcess = myAPI.process(true, 'create file "'+aFile+'" ', ++this.numProcesses);
 	  this.processes[this.processes.length] = aProcess;
 	}
 	var instance = this;
@@ -1443,9 +1443,9 @@ GardenInstances.prototype = {
 		if(aProcess.overWriteLocal)
 		{
 		  //creating file or needed directories
-		  garden.s.fileCreate(aFile);
+		  myAPI.file().create(aFile);
 		  //writing local file
-		  garden.s.fileWrite(aFile, '');
+		  myAPI.file().write(aFile, '');
 		  
 		  //writing remote file
 		  //this._uploadFile(aFile, aRemotePlacesPath, aLocalPlacesPath, aProcess, aProcess.overWriteRemote, true);
@@ -1482,7 +1482,7 @@ GardenInstances.prototype = {
 	var aSource = asynchRemote.s.getLocalPathFromRemotePath(aRemotePlacesPath, aLocalPlacesPath, aFile);
 	if(!aProcess)
 	{
-	  aProcess = new garden.s.process('upload file "'+aSource+'" to "'+aFile+'"  ', ++this.numProcesses);
+	  aProcess = myAPI.process(true, 'upload file "'+aSource+'" to "'+aFile+'"  ', ++this.numProcesses);
 	  this.processes[this.processes.length] = aProcess;
 	}
 	var instance = this;
@@ -1598,7 +1598,7 @@ GardenInstances.prototype = {
 	var aSource = asynchRemote.s.getLocalPathFromRemotePath(aRemotePlacesPath, aLocalPlacesPath, aDirectory);
 	if(!aProcess)
 	{
-	  aProcess = new garden.s.process('upload directory "'+aSource+'" to "'+aDirectory+'"  ', ++this.numProcesses);
+	  aProcess = myAPI.process(true, 'upload directory "'+aSource+'" to "'+aDirectory+'"  ', ++this.numProcesses);
 	  this.processes[this.processes.length] = aProcess;
 	}
 	var instance = this;

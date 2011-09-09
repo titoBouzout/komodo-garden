@@ -15,7 +15,7 @@
 	  <content
 		onmouseover="return garden.browserNavigate(event);" 
 		onmouseout="return garden.browserNavigate(event);" 
-		ondblclick="garden.s.stopEvent(event)"
+		ondblclick="myAPI.DOM().stopEvent(event)"
 		crop="end"
 	  >
 		<xul:arrowscrollbox class="popup-internal-box" flex="1" orient="vertical" smoothscroll="false">

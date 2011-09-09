@@ -111,27 +111,27 @@ GardenLocal.prototype = {
  
   removeFile:function(aFile)
   {
-	garden.s.fileRemove(aFile);
+	myAPI.file().remove(aFile);
   },
   removeDirectory:function(aFile)
   {
-	garden.s.fileRemove(aFile);
+	myAPI.file().remove(aFile);
   },
   removeDirectoryRecursive:function(aFile)
   {
-	garden.s.fileRemove(aFile);
+	myAPI.file().remove(aFile);
   },
   trashFile:function(aFile)
   {
-	garden.s.fileTrash(aFile);
+	myAPI.file().trash(aFile);
   },
   trashDirectory:function(aFile)
   {
-	garden.s.fileTrash(aFile);
+	myAPI.file().trash(aFile);
   },
   trashDirectoryRecursive:function(aFile)
   {
-	garden.s.fileTrash(aFile);
+	myAPI.file().trash(aFile);
   },
   rename:function(oldName, newName)
   {
@@ -139,15 +139,15 @@ GardenLocal.prototype = {
   },
   createDirectory:function(aDirectory, aPermissions)
   {
-	garden.s.folderCreate(aDirectory, aPermissions);
+	myAPI.file().createDirectory(aDirectory, aPermissions);
   },
   copyFile:function(aFile, aDestination)
   {
-	garden.s.fileCopy(aFile, aDestination);
+	myAPI.file().copy(aFile, aDestination);
   },
   copyDirectory:function(aFile, aDestination)
   {
-	garden.s.fileCopy(aFile, aDestination);
+	myAPI.file().copy(aFile, aDestination);
   }
 };
 
