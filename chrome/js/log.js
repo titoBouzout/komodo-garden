@@ -97,7 +97,7 @@
 	  if(searchString != '' && !myAPI.string().searchEngineSearch(searchString, entry.aMsg ))
 		continue;
 	  
-	  var description = document.createElement('description');
+	  var description = garden.create('description');
 		  description.setAttribute('flex', '1');
 		  description.setAttribute('wrap', 'true');
 		  description.appendChild(document.createTextNode(
@@ -109,7 +109,7 @@
 			+ ' : '
 			+ entry.aMsg
 		  ));
-	  var richlistitem = document.createElement('richlistitem');
+	  var richlistitem = garden.create('richlistitem');
 		  richlistitem.setAttribute('class', 'g-log-row g-log-row-item-'+entry.aType);
 		  richlistitem.appendChild(description);
 		childrens[childrens.length] = richlistitem;
@@ -128,7 +128,7 @@
 	for(var id in selected)
 	{
 	  text += selected[id].firstChild.firstChild.nodeValue;
-	  text += this.s.__NL;
+	  text += myAPI.os().nl();
 	}
 	myAPI.clipboard().copy(text);
   }
@@ -141,7 +141,7 @@
 	for(var i=0;i<count;i++)
 	{
 	  text += log.getItemAtIndex(i).firstChild.firstChild.nodeValue;
-	  text += this.s.__NL;
+	  text += myAPI.os().nl();
 	}
 	myAPI.clipboard().copy(text);
   }

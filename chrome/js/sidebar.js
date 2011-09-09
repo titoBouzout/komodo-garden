@@ -70,7 +70,7 @@
 	if(!found)
 	{
 	  //this.s.dump('The group was not created yet:'+groupID+', creating group..');
-	  groupContainer = this.s.create(document, 'hbox');
+	  groupContainer = garden.create('hbox');
 	  groupContainer.setAttribute('id', groupElementID);
 	  groupContainer.setAttribute('flex', '1');
 	  groupContainer.setAttribute('groupID', groupID);
@@ -247,14 +247,14 @@
 	this.shared.pref('last.focused.groupID', groupID);
 	this.shared.pref('last.focused.path', path);
 	
-	if(window && this.s.tabGetFocused(window))
-	  this.onLocationChange(this.s.tabGetFocused(window));
+	if(window && myAPI.tab().getFocused())
+	  this.onLocationChange(myAPI.tab().getFocused());
   }
   //simulates a switchToTreeData
   this.switchToTreeData = function(groupID, treeID, path)
   {
 	//simulating click
-	var aElement = this.s.create(document, 'menuitem');
+	var aElement = garden.create('menuitem');
 		aElement.setAttribute('groupID', groupID);
 		aElement.setAttribute('treeID', treeID);
 		aElement.setAttribute('path', path);

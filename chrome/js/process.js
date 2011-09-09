@@ -19,7 +19,7 @@
 	  {
 		var process = this.focusedInstance.processes[id];
   
-		var menuitem = document.createElement('menuitem');
+		var menuitem = garden.create('menuitem');
 			menuitem.setAttribute('label', '['+process.id+'] '+process.name);
 			menuitem.setAttribute('class', 'menuitem-iconic g-processes');
 			menuitem.setAttribute('running', process.running());
@@ -60,7 +60,7 @@
 
 	  aProcess.restart();
 	  var focusedInstance = this.focusedInstance;
-		  garden.s.runThread(function(){
+		  myAPI.thread().runThread(function(){
 											  focusedInstance.processController(aProcess);
 											}, focusedInstance.thread);
 	}
@@ -72,7 +72,7 @@
 	  this.focusedInstance.log('status', 'Process '+aProcess.name+' will continue', aProcess.id);
 	  aProcess.continue();
 	  var focusedInstance = this.focusedInstance;
-		  garden.s.runThread(function(){
+		  myAPI.thread().runThread(function(){
 											  focusedInstance.processController(aProcess);
 											}, focusedInstance.thread);
 	}

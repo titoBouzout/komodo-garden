@@ -20,8 +20,8 @@ GardenDrivers.prototype = {
   {
 	var entries = {};
 	var object = this.getObject(aDriverTypeID);
-	var thread = garden.s.newThread();
-	garden.s.runThreadAndWait(function(){ entries = object.driverGetEntries();}, thread);
+	var thread = myAPI.thread().newThread();
+	myAPI.thread().runThreadAndWait(function(){ entries = object.driverGetEntries();}, thread);
 	for(var id in entries)
 	{
 	  entries[id].path = entries[id].path.replace(/\/+$/, '').replace(/\\+$/, '');

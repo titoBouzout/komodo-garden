@@ -29,7 +29,7 @@
 														 currentLocalPath,
 														 selectedItems[id])
 			
-			if(this.s.pathIsFolder(selectedItems[id]))
+			if(myAPI.file().isDirectory(selectedItems[id]))
 			{
 			  var aDestination = this.shared.getRemotePathFromLocalPath(currentRemotePath, currentLocalPath, file)
 			  if(aDestination == '' || aDestination == '/')
@@ -71,7 +71,7 @@
 														   currentLocalPath,
 														   selectedItems[id])
 
-			  if(this.s.pathIsFolder(selectedItems[id]))
+			  if(myAPI.file().isDirectory(selectedItems[id]))
 			  {
 				aProcess = this.connections[server]
 					  .downloadDirectory(
@@ -100,7 +100,7 @@
 		   
 		  if(aboutFocusedTab)
 		  {
-			if(this.s.documentGetFocused(window).isDirty)
+			if(myAPI.doc().getFocused().isDirty)
 			{
 			  var saveBeforeUpload = this.shared.pref('save.before.upload');
 			  var prompt;
@@ -123,7 +123,7 @@
 														 currentLocalPath,
 														 selectedItems[id])
 
-			if(this.s.pathIsFolder(selectedItems[id]))
+			if(myAPI.file().isDirectory(selectedItems[id]))
 			{
 			  var aDestination = this.shared.getRemotePathFromLocalPath(currentRemotePath, currentLocalPath, file)
 			  if(aDestination == '' || aDestination == '/')
@@ -484,7 +484,7 @@
 		  if(selectedInstance.type == 'local')
 		  {
 			for(var id in selectedPaths)
-			  this.s.reveal(selectedPaths[id]);
+			  myAPI.file().reveal(selectedPaths[id]);
 		  }
 		  break;
 		}
@@ -497,7 +497,7 @@
 			if(selectedItems[id].isDirectory)
 			{
 			  if(fromBrowser)
-				this.s.launch(selectedItems[id].path);
+				myAPI.file().launch(selectedItems[id].path);
 			  else
 				selectedTree.openContainerFromPath(selectedItems[id].path);
 			}
@@ -530,7 +530,7 @@
 			  }
 			  else
 			  {
-				this.s.launch(selectedItems[id].path);
+				myAPI.file().launch(selectedItems[id].path);
 			  }
 			}
 		  }
@@ -613,14 +613,14 @@
 			  }
 			  else
 			  {
-				this.s.launch(selectedItems[id].path);
+				myAPI.file().launch(selectedItems[id].path);
 			  }
 			}
 			else
 			{
 			  if(selectedInstance.type == 'remote'){}
 			  else
-				this.s.launch(selectedItems[id].path);
+				myAPI.file().launch(selectedItems[id].path);
 			}
 		  }
 		  break;
@@ -634,7 +634,7 @@
 			{
 			  //middle click on tree is edit on komodo but if middle click on a folder open the folder.
 			  if(selectedInstance.type == 'local')
-				this.s.launch(selectedItems[id].path);
+				myAPI.file().launch(selectedItems[id].path);
 			}
 			else
 			{
@@ -700,8 +700,8 @@
 			//alert(pathsToCopy.toSource());
 			for(var i in pathsToCopy)
 			{
-			  var isDirectory = this.s.pathIsFolder(pathsToCopy[i]);
-			  var aName = this.s.file(pathsToCopy[i]).leafName;
+			  var isDirectory = myAPI.file().isDirectory(pathsToCopy[i]);
+			  var aName = myAPI.file().basename(pathsToCopy[i]);
 			  for(var id in selectedItems)
 			  {
 				if(selectedItems[id].isDirectory)
@@ -942,7 +942,7 @@
 								aProcess
 							);
 				  
-				  var aTemporalLocalPath = this.s.folderCreateTemporal('diff');
+				  var aTemporalLocalPath = myAPI.file().tempDirectory('diff');
 				  
 				}
 				else

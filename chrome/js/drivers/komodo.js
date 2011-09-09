@@ -123,7 +123,7 @@ AsynchRemoteConnection.prototype = {
   saveFile:function(aFile, aLocalPath)//this is download and save
   {	
 	//writing file
-	garden.s.fileWriteBinaryContentIsByteArray(aLocalPath, this.connect().readFile(aFile, {}));
+	myAPI.file().writeBinaryContentIsByteArray(aLocalPath, this.connect().readFile(aFile, {}));
   }
 };
 

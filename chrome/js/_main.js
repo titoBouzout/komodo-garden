@@ -19,19 +19,17 @@ function AsynchRemote()
 	this.s.extensionID = 'tito@garden';
 	this.s.extensionName = 'Garden';
 	this.s.extensionChromeName = 'asynchremote';
-	this.s.include('file','thread','sharedMemory','DOM','places','window','listener','application','tab','document','urls');
+	this.s.include('window','application','urls');
 	this.windowID = this.s.getWindowID();
 	//end global singleton object
 	
-	if(!myAPI.shared.garden()) {
+	if(!(this.shared = myAPI.shared.garden())) {
 	  this.shared = myAPI.shared.garden();
 	  this.shared.include('chrome://asynchremote/content/js/shared/id.js');
 	  this.shared.include('chrome://asynchremote/content/js/shared/preferences.js');
 	  this.shared.include('chrome://asynchremote/content/js/shared/sessions.js');
 	  this.shared.include('chrome://asynchremote/content/js/shared/forms.js');
 	  this.shared.include('chrome://asynchremote/content/js/shared/variete.js');
-	} else {
-	  this.shared = myAPI.shared.garden();
 	}
 	
 	this.gardenDrivers = gardenDrivers;
@@ -44,8 +42,8 @@ function AsynchRemote()
 	delete this.drivers;
 	
 	//when the location change some buttons are disabled/enabled
-	this.s.addListener(
-						{'id':this.windowID,'window':window},
+	myAPI.listener().add(
+						window,
 						'onLocationChange',
 						function(aTab){ garden.onLocationChange(aTab);}
 						);
@@ -139,18 +137,21 @@ function AsynchRemote()
 	}
 	else
 	{
-	  this.s.folderDeleteTemporal();
+	  myAPI.file().tempRemove();
 	}
   }
 
-  this.uninitExtension = function(){}
+  this.uninitExtension = function(){
+  
+  }
 
-  this.element = function(aElement)
-  {
+  this.element = function(aElement)  {
 	return document.getElementById(aElement);
   }
-  this.dump = function(aName, aString)
-  {
+  this.create = function(aElement)  {
+	return document.createElement(aElement);
+  }
+  this.dump = function(aName, aString)  {
 	myAPI.debug().dump(aName, aString);
   }
   return this;

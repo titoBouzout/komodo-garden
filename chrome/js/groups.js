@@ -52,7 +52,7 @@
 		  break;
 		}
 	  }
-		var groupMenuitem = document.createElement('menuitem');
+		var groupMenuitem = garden.create('menuitem');
 			groupMenuitem.setAttribute('label', group.name);
 			groupMenuitem.setAttribute('groupID', group.id);
 			groupMenuitem.setAttribute('class', 'menuitem-iconic g-group');
@@ -88,7 +88,7 @@
 				}
 			  }
 
-			  var menuitem = document.createElement('menuitem');
+			  var menuitem = garden.create('menuitem');
 				  menuitem.setAttribute('label', tree.label);
 				  menuitem.setAttribute('tooltiptext', tree.label);
 				  menuitem.setAttribute('groupID', group.id);
@@ -167,7 +167,7 @@
 		  }
 		}
 
-		var menuitem = document.createElement('menuitem');
+		var menuitem = garden.create('menuitem');
 			menuitem.setAttribute('label', tree.label);
 			menuitem.setAttribute('tooltiptext', tree.label);
 			menuitem.setAttribute('class', 'menuitem-iconic g-browser-container');
@@ -202,19 +202,19 @@
 	for(var id in this.gardenDrivers.driversTypes)
 	{
 	  //the menupopup of the connnection type (example: ftp) with all the available servers
-	  var connectionMenu = document.createElement('menu');
+	  var connectionMenu = garden.create('menu');
 		  connectionMenu.setAttribute('label', 'Add tree to group from '+this.gardenDrivers.driversTypes[id].description);
 		  connectionMenu.setAttribute('class', 'menu-iconic');
 		  connectionMenu.setAttribute('image', 'chrome://asynchremote/content/js/drivers/'+id+'.png');
 		  //connectionMenu.setAttribute('action','add-tree');
 		  
 	  //the entries of that connection type
-	  var menupopup = document.createElement('menupopup');
+	  var menupopup = garden.create('menupopup');
 		  menupopup.setAttribute('class', 'g-browser-menupopup-xbl');
 	  var entries = this.gardenDrivers.getEntries(id);
 	  for(var i in entries)
 	  {
-		var menuitem  = document.createElement('menuitem');
+		var menuitem  = garden.create('menuitem');
 			menuitem.setAttribute('label', entries[i].labelWithPath);
 			menuitem.setAttribute('tooltiptext', entries[i].labelWithPath);
 			menuitem.setAttribute('class', 'menuitem-iconic g-browser-container');
@@ -233,11 +233,11 @@
 	  //if connections entries are editbale add a "edit connections" menuitem
 	  if(this.gardenDrivers.isEditable(id))
 	  {
-		var menuitem  = document.createElement('menuitem');
+		var menuitem  = garden.create('menuitem');
 		menuitem.setAttribute('label', 'Edit '+this.gardenDrivers.driversTypes[id].description+' connections');
 		menuitem.setAttribute('oncommand', 'garden.gardenDrivers.edit("'+id+'")');
 		menuitem.setAttribute('class', 'menuitem-iconic g-group-connection-edit');
-		menupopup.appendChild(document.createElement('menuseparator'));
+		menupopup.appendChild(garden.create('menuseparator'));
 		menupopup.appendChild(menuitem);
 	  }
 	  connectionMenu.appendChild(menupopup);

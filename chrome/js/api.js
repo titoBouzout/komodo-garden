@@ -67,7 +67,7 @@ function GardenAPI()
 	var aPaths = [];
 	if(aboutFocusedTab)
 	{
-	  aPaths[aPaths.length] = garden.s.filePathFromFileURI(garden.s.documentFocusedGetLocation(window));
+	  aPaths[aPaths.length] = myAPI.file().pathFromURI(myAPI.doc().getFocusedLocation());
 	}
 	else
 	{

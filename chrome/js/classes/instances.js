@@ -15,7 +15,7 @@ function GardenInstances(aName, instanceID, serverID, object, entry, aEntryID, a
 	this.object.aData = entry.aData;
 	
 	this.type = aType; //should be local or remote
-	this.thread = garden.s.newThread();//holds a thread for this connection
+	this.thread = myAPI.thread().newThread();//holds a thread for this connection
 	
 	this.__DS = this.object.__DS;
 	
@@ -29,13 +29,13 @@ function GardenInstances(aName, instanceID, serverID, object, entry, aEntryID, a
   /* CACHE */
   
 	//cache of directory listings
-	this.listings = garden.s.sharedObjectGet(
+	this.listings = garden.shared.obj.get(
 						'server.'+serverID+'.listings',
 						garden.shared.session.get('server.'+serverID+'.listings', {})
 					);
 	this.listingsCounter = 0;
 	//holds the sizes and modified times of files to not upload the same file again
-	this.lastModified = garden.s.sharedObjectGet(
+	this.lastModified = garden.shared.obj.get(
 						'server.'+serverID+'.lastModified',
 						garden.shared.session.get('server.'+serverID+'.lastModified', {})
 					);
@@ -138,7 +138,7 @@ GardenInstances.prototype = {
 			if(!instance.keepAliveSent)
 			{
 			  instance.keepAliveSent = true;
-			  garden.s.runThread(function(){
+			  myAPI.thread().runThread(function(){
 				instance.keepAliveOrCloseConnection();
 			  }, instance.thread);
 			}
@@ -261,7 +261,7 @@ GardenInstances.prototype = {
 	{
 	  this.log('progress', 'Getting listing "'+aData.path+'" from cache', 0);
 	  aData.aEntries = this.listings[aData.path].data;
-	  //garden.s.runMain(function(){
+	  //myAPI.thread().runMain(function(){
 		aData.aFunction(aData);
 		//});
 	}
@@ -275,7 +275,7 @@ GardenInstances.prototype = {
 		// this.dump('llamdno a la instancia propia para '+aData.path, true, true);
 		//run threaded only if no cached
 		var instance = this;
-		garden.s.runThread(function(){
+		myAPI.thread().runThread(function(){
 		  instance._directoryList(aData, noHiddenItems);
 		}, this.thread);
 	  }
@@ -323,7 +323,7 @@ GardenInstances.prototype = {
 		{
 		  this.log('progress', 'Getting listing "'+aDirectory+'" from cache', 0);
 		  aData.aEntries = this.listings[aDirectory].data;
-		  garden.s.runMain(function(){aData.aFunction(aData);});
+		  myAPI.thread().runMain(function(){aData.aFunction(aData);});
 		}
 		else
 		{
@@ -379,7 +379,7 @@ GardenInstances.prototype = {
 		  
 		  //this.dump('instance:_directoryList:endParsing');
 		  aData.aEntries = this.listings[aDirectory].data;
-		  garden.s.runMain(function(){aData.aFunction(aData);});
+		  myAPI.thread().runMain(function(){aData.aFunction(aData);});
 		}
 	  }
 	  catch(e)
@@ -405,7 +405,7 @@ GardenInstances.prototype = {
 		else
 		{
 		  aData.aEntries = null;
-		  garden.s.runMain(function(){aData.aFunction(aData);});
+		  myAPI.thread().runMain(function(){aData.aFunction(aData);});
 		  //this.listings[aDirectory].data = [];
 		  this.log('error', 'Unable to get directory listing of "'+aDirectory+'". '+error, 0);
 		}
@@ -425,7 +425,7 @@ GardenInstances.prototype = {
 
 	var instance = this;
 	aProcess.queue(function(){instance._removeFile(aFile, aProcess, aInternalCall);}, aInternalCall);
-	garden.s.runThread(function(){
+	myAPI.thread().runThread(function(){
 									instance.processController(aProcess);
 								  }, this.thread);
 	return aProcess;
@@ -474,7 +474,7 @@ GardenInstances.prototype = {
 
 	var instance = this;
 	aProcess.queue(function(){instance._removeDirectory(aDirectory, aProcess, aInternalCall);}, aInternalCall);
-	garden.s.runThread(function(){
+	myAPI.thread().runThread(function(){
 									instance.processController(aProcess);
 								  }, this.thread);
 	return aProcess;
@@ -561,7 +561,7 @@ GardenInstances.prototype = {
 
 	var instance = this;
 	aProcess.queue(function(){instance._trashFile(aFile, aProcess, aInternalCall);}, aInternalCall);
-	garden.s.runThread(function(){
+	myAPI.thread().runThread(function(){
 									instance.processController(aProcess);
 								  }, this.thread);
 	return aProcess;
@@ -609,7 +609,7 @@ GardenInstances.prototype = {
 
 	var instance = this;
 	aProcess.queue(function(){instance._trashDirectory(aDirectory, aProcess, aInternalCall);}, aInternalCall);
-	garden.s.runThread(function(){
+	myAPI.thread().runThread(function(){
 									instance.processController(aProcess);
 								  }, this.thread);
 	return aProcess;
@@ -696,7 +696,7 @@ GardenInstances.prototype = {
 
 	var instance = this;
 	aProcess.queue(function(){instance._copyFile(aSource, aDestination, aProcess, aInternalCall);}, aInternalCall);
-	garden.s.runThread(function(){
+	myAPI.thread().runThread(function(){
 									instance.processController(aProcess);
 								  }, this.thread);
 	return aProcess;
@@ -729,7 +729,7 @@ GardenInstances.prototype = {
 
 	var instance = this;
 	aProcess.queue(function(){instance._copyDirectory(aSource, aDestination, aProcess, aInternalCall);}, aInternalCall);
-	garden.s.runThread(function(){
+	myAPI.thread().runThread(function(){
 									instance.processController(aProcess);
 								  }, this.thread);
 	return aProcess;
@@ -765,7 +765,7 @@ GardenInstances.prototype = {
 
 	var instance = this;
 	aProcess.queue(function(){instance._duplicateFile(aFile, aProcess, aInternalCall);}, aInternalCall);
-	garden.s.runThread(function(){
+	myAPI.thread().runThread(function(){
 									instance.processController(aProcess);
 								  }, this.thread);
 	return aProcess;
@@ -847,7 +847,7 @@ GardenInstances.prototype = {
 
 	var instance = this;
 	aProcess.queue(function(){instance._duplicateDirectory(aDirectory, aProcess, aInternalCall);}, aInternalCall);
-	garden.s.runThread(function(){
+	myAPI.thread().runThread(function(){
 									instance.processController(aProcess);
 								  }, this.thread);
 	return aProcess;
@@ -882,7 +882,7 @@ GardenInstances.prototype = {
 	}
 	var instance = this;
 	aProcess.queue(function(){instance._chmodFile(aFile, aPermissions, aProcess, aInternalCall);}, aInternalCall);
-	garden.s.runThread(function(){
+	myAPI.thread().runThread(function(){
 									instance.processController(aProcess);
 								  }, this.thread);
 	return aProcess;
@@ -913,7 +913,7 @@ GardenInstances.prototype = {
 	}
 	var instance = this;
 	aProcess.queue(function(){instance._chmodDirectory(aDirectory, aPermissions, aRecursive, aProcess, aInternalCall);}, aInternalCall);
-	garden.s.runThread(function(){
+	myAPI.thread().runThread(function(){
 									instance.processController(aProcess);
 								  }, this.thread);
 	return aProcess;
@@ -992,7 +992,7 @@ GardenInstances.prototype = {
 	}
 	var instance = this;
 	aProcess.queue(function(){instance._rename(oldName, newName, isDirectory, aProcess, aInternalCall);}, aInternalCall);
-	garden.s.runThread(function(){
+	myAPI.thread().runThread(function(){
 									instance.processController(aProcess);
 								  }, this.thread);
 	return aProcess;
@@ -1048,7 +1048,7 @@ GardenInstances.prototype = {
 	}
 	var instance = this;
 	aProcess.queue(function(){instance._createDirectory(aParentDirectory, aDirectory, aPermissions, aProcess, aInternalCall);}, aInternalCall);
-	garden.s.runThread(function(){
+	myAPI.thread().runThread(function(){
 									instance.processController(aProcess);
 								  }, this.thread);
 	return aProcess;
@@ -1157,7 +1157,7 @@ GardenInstances.prototype = {
 	}
 	var instance = this;
 	aProcess.queue(function(){instance._downloadAndOpenFile(aFile, aLocalPath, aParentInstance, aProcess, aInternalCall);}, aInternalCall);
-	garden.s.runThread(function(){
+	myAPI.thread().runThread(function(){
 									instance.processController(aProcess);
 								  }, this.thread);
 	return aProcess;
@@ -1179,9 +1179,9 @@ GardenInstances.prototype = {
 		{
 		  if(aProcess.overWriteLocal)
 		  {
-			garden.s.runThread(function(){
-								  if(garden.s.fileExists(aLocalPath))
-									garden.s.runMain(function(){garden.s.launch(aLocalPath);});
+			myAPI.thread().runThread(function(){
+								  if(myAPI.file().exists(aLocalPath))
+									myAPI.thread().runMain(function(){myAPI.file().launch(aLocalPath);});
 								  }, this.thread);
 			this.cacheDirectoryItemAdd(aLocalPath, false, aParentInstance);
 			this.log('sucess', 'opened file "'+aLocalPath+'" ', aProcess.id);
@@ -1207,7 +1207,7 @@ GardenInstances.prototype = {
 	}
 	var instance = this;
 	aProcess.queue(function(){instance._downloadAndEditFile(aFile, aLocalPath, aParentInstance, aProcess, aInternalCall);}, aInternalCall);
-	garden.s.runThread(function(){
+	myAPI.thread().runThread(function(){
 									instance.processController(aProcess);
 								  }, this.thread);
 	return aProcess;
@@ -1229,9 +1229,9 @@ GardenInstances.prototype = {
 		{
 		  if(aProcess.overWriteLocal)
 		  {
-			garden.s.runThread(function(){
-								  if(garden.s.fileExists(aLocalPath))
-									garden.s.runMain(function(){garden.s.openURL(window, aLocalPath, true);});
+			myAPI.thread().runThread(function(){
+								  if(myAPI.file().exists(aLocalPath))
+									myAPI.thread().runMain(function(){garden.s.openURL(window, aLocalPath, true);});
 								  }, this.thread);
 			this.cacheDirectoryItemAdd(aLocalPath, false, aParentInstance);
 			this.log('sucess', 'opened file "'+aLocalPath+'" ', aProcess.id);
@@ -1257,7 +1257,7 @@ GardenInstances.prototype = {
 	}
 	var instance = this;
 	aProcess.queue(function(){instance._downloadFile(aFile, aLocalPath, aProcess, aInternalCall, overWrite);}, aInternalCall);
-	garden.s.runThread(function(){
+	myAPI.thread().runThread(function(){
 									instance.processController(aProcess);
 								  }, this.thread);
 	return aProcess;
@@ -1279,7 +1279,7 @@ GardenInstances.prototype = {
 		  myAPI.file().create(aLocalPath+'.kup');
 		  //saving file
 		  this.object.saveFile(aFile, aLocalPath+'.kup');
-		  garden.s.fileRename(aLocalPath+'.kup', aLocalPath);
+		  myAPI.file().rename(aLocalPath+'.kup', aLocalPath);
 		  this.log('sucess', 'downloaded file "'+aFile+'" to "'+aLocalPath+'" ', aProcess.id);
 		}
 		else
@@ -1303,7 +1303,7 @@ GardenInstances.prototype = {
 	}
 	var instance = this;
 	aProcess.queue(function(){instance._downloadDirectory(aDirectory, aRemotePlacesPath, aLocalPlacesPath, aProcess, overWrite, aInternalCall);}, aInternalCall);
-	garden.s.runThread(function(){
+	myAPI.thread().runThread(function(){
 									instance.processController(aProcess);
 								  }, this.thread);
 	return aProcess;
@@ -1364,7 +1364,7 @@ GardenInstances.prototype = {
 	}
 	var instance = this;
 	aProcess.queue(function(){instance._compareWithLocal(aFile, aLocalPath, aTemporalLocalPath, aProcess, aInternalCall);}, aInternalCall);
-	garden.s.runThread(function(){
+	myAPI.thread().runThread(function(){
 									instance.processController(aProcess);
 								  }, this.thread);
 	return aProcess;
@@ -1373,7 +1373,7 @@ GardenInstances.prototype = {
   {
 	if(!aProcess.stopped())
 	{
-	  if(!asynchRemote.s.fileExists(aLocalFileToCompare))
+	  if(!myAPI.file().exists(aLocalFileToCompare))
 	  {
 		this.log('error', 'Can\'t compare the remote file "'+aFile+'" with the local version because the local version no exists.', aProcess.id);
 	  }
@@ -1388,9 +1388,9 @@ GardenInstances.prototype = {
 		  if(!aProcess.stopped())
 		  {
 			var AsynchRemoteConnection = this;
-			garden.s.runThread(function(){
-								  if(asynchRemote.s.fileExists(aTemporalDestination))
-									garden.s.runMain(function(){
+			myAPI.thread().runThread(function(){
+								  if(myAPI.file().exists(aTemporalDestination))
+									myAPI.thread().runMain(function(){
 									  if(
 										 myAPI.file().read(aLocalFileToCompare) ==
 										 myAPI.file().read(aTemporalDestination)
@@ -1424,7 +1424,7 @@ GardenInstances.prototype = {
 	}
 	var instance = this;
 	aProcess.queue(function(){instance._createFile(aFile, aProcess, aInternalCall);}, aInternalCall);
-	garden.s.runThread(function(){
+	myAPI.thread().runThread(function(){
 									instance.processController(aProcess);
 								  }, this.thread);
 	return aProcess;
@@ -1453,9 +1453,9 @@ GardenInstances.prototype = {
 		  {
 			//opening the file
 			//run in a thread and then back to main thread because we need to wait for the file to download
-			garden.s.runThread(function(){
-								  if(garden.s.fileExists(aFile))
-									garden.s.runMain(function(){garden.s.openURL(window, aFile, true);});
+			myAPI.thread().runThread(function(){
+								  if(myAPI.file().exists(aFile))
+									myAPI.thread().runMain(function(){garden.s.openURL(window, aFile, true);});
 								  }, this.thread);
 			this.cacheDirectoryItemAdd(aFile, false);
 			this.log('sucess', 'created file "'+aFile+'" ', aProcess.id);
@@ -1487,7 +1487,7 @@ GardenInstances.prototype = {
 	}
 	var instance = this;
 	aProcess.queue(function(){instance._uploadFile(aFile, aRemotePlacesPath, aLocalPlacesPath, aProcess, overWrite, aInternalCall);}, aInternalCall);
-	garden.s.runThread(function(){
+	myAPI.thread().runThread(function(){
 									instance.processController(aProcess);
 								  }, this.thread);
 	return aProcess;
@@ -1503,14 +1503,14 @@ GardenInstances.prototype = {
 	  if(connection)
 	  {
 		//if local file no exists
-		if(!asynchRemote.s.fileExists(aSource))
+		if(!myAPI.file().exists(aSource))
 		{
 		  this.log('error', 'The local file to upload "'+aSource+'" no exists.', aProcess.id);
 		}
 		else
 		{
 		  //skiping file if it was not changed
-		  var checkModified = asynchRemote.s.file(aSource);
+		  var checkModified = myAPI.file().get(aSource);
 		  if(checkModified.fileSize == 0)
 		  {
 			this.log('sucess', 'skiping upload of file "'+aSource+'" to "'+aFile+'" because file size is 0', aProcess.id);
@@ -1529,7 +1529,7 @@ GardenInstances.prototype = {
 			  else
 				var extension = '';
 			  
-			  var aData = asynchRemote.s.fileReadBinaryReturnByteArray(aSource);
+			  var aData = myAPI.file().readBinaryReturnByteArray(aSource);
 			  try//needs to clean the upload timestamp if this process failed
 			  {
 				  try{
@@ -1603,7 +1603,7 @@ GardenInstances.prototype = {
 	}
 	var instance = this;
 	aProcess.queue(function(){instance._uploadDirectory(aDirectory, aRemotePlacesPath, aLocalPlacesPath, aProcess, overWrite, aInternalCall);}, aInternalCall);
-	garden.s.runThread(function(){
+	myAPI.thread().runThread(function(){
 									instance.processController(aProcess);
 								  }, this.thread);
 	return aProcess;
@@ -1619,7 +1619,7 @@ GardenInstances.prototype = {
 	  if(connection)
 	  {
 		//if local file no exists
-		if(!asynchRemote.s.fileExists(aSource))
+		if(!myAPI.file().exists(aSource))
 		{
 		  this.log('error', 'The local path "'+aSource+'" to upload no exists.', aProcess.id);
 		}
@@ -1675,7 +1675,7 @@ GardenInstances.prototype = {
   //ask for overwrite or skip
   overWrite:function(aProcess, aMsg, aFile)
   {
-	garden.s.runMainAndWait(function(){
+	myAPI.thread().runMainAndWait(function(){
 	  asynchRemote.element('g-toolbar-panel').hidePopup();
 	  var overWrite = asynchRemote.shared.overWritePrompt(aMsg, window);
 		  aProcess.overWrite = {};
@@ -1697,12 +1697,12 @@ GardenInstances.prototype = {
 		aProcess.overWriteLocal = aParentOverWrite;
 	  }
 	  else*/
-	  if(asynchRemote.s.sharedObjectExists('overWrite.'+this.server+'.'+aLocal))
-		aProcess.overWriteLocal = asynchRemote.s.sharedObjectGet('overWrite.'+this.server+'.'+aLocal);
+	  if(garden.shared.obj.exists('overWrite.'+this.server+'.'+aLocal))
+		aProcess.overWriteLocal = garden.shared.obj.get('overWrite.'+this.server+'.'+aLocal);
 	  else
 	  {
 		aProcess.overWriteLocal = false;
-		if(!asynchRemote.shared.pref('overwrite.no.ask') && (!aProcess.p.l.overWrite || !aProcess.p.l.overWrite.YesToAll) && asynchRemote.s.fileExists(aLocal))
+		if(!asynchRemote.shared.pref('overwrite.no.ask') && (!aProcess.p.l.overWrite || !aProcess.p.l.overWrite.YesToAll) && myAPI.file().exists(aLocal))
 		{
 		  if(aIsDirectory)
 			this.overWrite(aProcess.p.l, 'Directory "'+aLocal+'" exists.\n\nDo you want to overwrite the local directory?\n');
@@ -1714,7 +1714,7 @@ GardenInstances.prototype = {
 		  }
 		  if(aProcess.p.l.overWrite.DontAskAgain && !aProcess.p.l.overWrite.Cancel)
 		  {
-			asynchRemote.s.sharedObjectSet('overWrite.'+this.server+'.'+aLocal, aProcess.overWriteLocal);
+			garden.shared.obj.set('overWrite.'+this.server+'.'+aLocal, aProcess.overWriteLocal);
 		  }
 		}
 		else
@@ -1728,9 +1728,9 @@ GardenInstances.prototype = {
 	  /*if(typeof(aParentOverWrite) != 'undefined')
 		aProcess.overWriteRemote = aParentOverWrite;
 	  else */
-	  if(asynchRemote.s.sharedObjectExists('overWrite.'+this.server+'.'+aRemote))
+	  if(garden.shared.obj.exists('overWrite.'+this.server+'.'+aRemote))
 	  {
-		aProcess.overWriteRemote = asynchRemote.s.sharedObjectGet('overWrite.'+this.server+'.'+aRemote);
+		aProcess.overWriteRemote = garden.shared.obj.get('overWrite.'+this.server+'.'+aRemote);
 	  }
 	  else
 	  {
@@ -1773,7 +1773,7 @@ GardenInstances.prototype = {
 			}
 			if(aProcess.p.r.overWrite.DontAskAgain && !aProcess.p.r.overWrite.Cancel)
 			{
-			  asynchRemote.s.sharedObjectSet('overWrite.'+this.server+'.'+aRemote, aProcess.overWriteRemote);
+			  garden.shared.obj.set('overWrite.'+this.server+'.'+aRemote, aProcess.overWriteRemote);
 			}
 		  }
 		  else
@@ -1795,15 +1795,15 @@ GardenInstances.prototype = {
   cleanCacheOverWrite:function()
   {
 	var AsynchRemoteConnection = this;
-	garden.s.runThread(function(){
-										asynchRemote.s.sharedObjectDestroyWithPrefix('overWrite.'+AsynchRemoteConnection.server+'.');
+	myAPI.thread().runThread(function(){
+										garden.shared.obj.removeWithPrefix('overWrite.'+AsynchRemoteConnection.server+'.');
 									  }, this.thread);
   	this.log('status', 'Cleaned overwrite settings', 0);
   },
   cleanCacheListings:function()
   {
 	var instance = this;
-	garden.s.runThreadAndWait(function(){
+	myAPI.thread().runThreadAndWait(function(){
 										  instance.listings = {};
 										}, this.thread);
 	this.log('status', 'Cleaned listings cache', 0);
@@ -1811,7 +1811,7 @@ GardenInstances.prototype = {
   cleanCacheModified:function()
   {
 	var instance = this;
-	garden.s.runThread(function(){
+	myAPI.thread().runThread(function(){
 									instance.lastModified = [];
 								  }, this.thread);
 	this.log('status', 'Cleaned last modified cache', 0);
@@ -1920,7 +1920,7 @@ GardenInstances.prototype = {
 		//this.dump('insertaddo newItem', newItem);
 		//this.dump('en parent path', aParentPath);
 		this.cacheDirectoryItemAddToTree(aInstance.tree, newItem, aParentPath);
-		//garden.s.runMain(function(){tree.insertRow(newItem, aParentPath)});
+		//myAPI.thread().runMain(function(){tree.insertRow(newItem, aParentPath)});
 	  }
 	  
 	  aPath += aInstance.__DS;
@@ -1928,7 +1928,7 @@ GardenInstances.prototype = {
   },
   cacheDirectoryItemAddToTree:function(tree, newItem, aParentPath)
   {
-	garden.s.runMain(function(){tree.insertRow(newItem, aParentPath)});
+	myAPI.thread().runMain(function(){tree.insertRow(newItem, aParentPath)});
   },
   cacheDirectoryItemRemove:function(aPath, isDirectory)
   {
@@ -1982,7 +1982,7 @@ GardenInstances.prototype = {
 	}
 	//remove the item from the tree
 	var tree = this.tree;
-	garden.s.runMain(function(){tree.removeRowByPath(aPath, emptyContainers);});
+	myAPI.thread().runMain(function(){tree.removeRowByPath(aPath, emptyContainers);});
   },
   //holds logs of actions
   log:function(aType, aMsg, aProcessID)
@@ -2016,7 +2016,7 @@ GardenInstances.prototype = {
 	
 	//queue the disconnect operation
 	var instance = this;
-	garden.s.runThread(function(){
+	myAPI.thread().runThread(function(){
 	  
 	  if(instance.connected && instance.connection && instance.object.close)
 		instance.object.close();
@@ -2045,7 +2045,7 @@ GardenInstances.prototype = {
 	if(new Date() - this.notifyProgressShotTime > 200)
 	{
 	  this.notifyProgressShotTime = new Date();
-	  garden.s.runMain(function(){garden.notifyProgress(treeID);});
+	  myAPI.thread().runMain(function(){garden.notifyProgress(treeID);});
 	}
 	else
 	{
@@ -2053,7 +2053,7 @@ GardenInstances.prototype = {
 	  if(this.notifyProgressTimer)
 		this.notifyProgressTimer.cancel();
 	  this.notifyProgressTimer = myAPI.timer().setTimeout(function(){
-		garden.s.runMain(function(){
+		myAPI.thread().runMain(function(){
 		  garden.notifyProgress(treeID);
 		});
 	  }, 200);
@@ -2062,7 +2062,7 @@ GardenInstances.prototype = {
   //dumps a message into the main thread
   dump: function(aName, aMsg)
   {
-	garden.s.runMain(function(){ garden.s.dump(aName, aMsg)});
+	myAPI.thread().runMain(function(){ myAPI.debug().dump(aName, aMsg)});
   },
   sessionSave:function()
   {

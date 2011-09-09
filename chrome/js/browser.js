@@ -130,7 +130,7 @@
 	var path = item.getAttribute('path');
 
 	//normal menu
-	var menu = this.s.create(document, 'menu');
+	var menu = garden.create('menu');
 		menu.setAttribute('label', item.getAttribute('label'));
 		menu.setAttribute('path', path);
 		menu.setAttribute('tooltiptext', path);
@@ -155,14 +155,14 @@
 		menu.setAttribute('groupID', item.getAttribute('groupID'));
 		menu.setAttribute('treeID', item.getAttribute('treeID'));
 		
-	var menupopup = this.s.create(document, 'menupopup');
+	var menupopup = garden.create('menupopup');
 		menupopup.setAttribute('class', 'menupopup-iconic');
 	//adding the items
 	for(var id in aEntries)
 	{
 	  if(item.hasAttribute('type') && item.getAttribute('type') == 'folders' && !aEntries[id].isDirectory)
 		continue;
-	  var add = this.s.create(document, "menuitem");
+	  var add = garden.create("menuitem");
 		  add.setAttribute("label", aEntries[id].name);
 		  add.setAttribute("path", aEntries[id].path);
 		  add.setAttribute("tooltiptext", aEntries[id].path);
@@ -202,13 +202,13 @@
 	//parents menu
 	if(myAPI.string().subStrCount(path, instance.__DS) > 0)
 	{
-	  var menuParents = this.s.create(document, 'menu');
+	  var menuParents = garden.create('menu');
 		  menuParents.setAttribute('label', 'Parents');
 		  menuParents.setAttribute('tooltiptext', path);
 		  menuParents.setAttribute('done', 'true');
 		  menuParents.setAttribute('class', 'menu-iconic g-browser-parents');
 	
-	  var menupopupParents = this.s.create(document, 'menupopup');
+	  var menupopupParents = garden.create('menupopup');
 		  menupopupParents.setAttribute('class', 'menupopup-iconic');
 	
 	  var aNodes = path.split(instance.__DS);
@@ -239,7 +239,7 @@
 		  }
 			
 		  somethingAdded = true;
-		  var add = this.s.create(document, 'menuitem');
+		  var add = garden.create('menuitem');
 			  add.setAttribute('path', path);
 			  add.setAttribute('tooltiptext', path);
 			  add.setAttribute('label', path);
@@ -269,7 +269,7 @@
 	  if(somethingAdded)
 	  {
 		menuParents.appendChild(menupopupParents);
-		menupopup.appendChild(this.s.create(document, 'menuseparator'));
+		menupopup.appendChild(garden.create('menuseparator'));
 		menupopup.appendChild(menuParents);
 	  }
 	}

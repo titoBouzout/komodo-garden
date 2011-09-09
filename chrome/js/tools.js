@@ -12,7 +12,7 @@
   
   this.toolsContribute = function()
   {
-	this.s.openURI('https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=H738SJGDU3NJ8');
+	myAPI.file().load('https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=H738SJGDU3NJ8');
   }
   
   this.toolsPopupShowing = function()

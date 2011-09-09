@@ -22,7 +22,7 @@
 	  myAPI.timer().setTimeout(function(){ garden.treeContextAllowMouseOut = true;}, 50);
 	}
 
-	this.s.hideSiblingsPopupsOpened(aEvent.originalTarget);
+	myAPI.DOM().hideSiblingsPopupsOpened(aEvent.originalTarget);
 	
 	if(
 	  aEvent.originalTarget &&
@@ -49,7 +49,7 @@
 	  )
 	  {
 		//this.s.dump(aTagName);
-		this.s.hideChildrensPopupsOpened(this.element('g-tree-context'));
+		myAPI.DOM().hideChildrensPopupsOpened(this.element('g-tree-context'));
 	  }
 	  /*else if(aTagName == 'menu' || aTagName == 'xul:menu')
 	  {
@@ -98,7 +98,7 @@
   this.treeContextPopupShowing = function(aEvent)
   {
 	if(aEvent.originalTarget.parentNode)
-	  this.s.hideSiblingsPopupsOpened(aEvent.originalTarget.parentNode);
+	  myAPI.DOM().hideSiblingsPopupsOpened(aEvent.originalTarget.parentNode);
 	  
 	//this.s.dump(aEvent.relatedTarget.tagName);
 	//init selection properties

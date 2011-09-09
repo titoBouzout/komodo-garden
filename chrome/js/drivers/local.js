@@ -4,7 +4,7 @@ GardenLocal.prototype = {
 
   driverInit:function()
   {
-	if(garden.s.isWindows())
+	if(myAPI.os().isWindows())
 	  this.__DS = '\\';
 	else
 	  this.__DS = '/';
@@ -82,7 +82,7 @@ GardenLocal.prototype = {
   {
 	//garden.s.dump('object:directoryList');
 	var entries = [], entry, isHidden;
-	var fileSystemEntries = garden.s.folderListContentData(aDirectory);
+	var fileSystemEntries = myAPI.file().listEntries(aDirectory);
 	for(var i in fileSystemEntries)
 	{
 	  entry = fileSystemEntries[i];
@@ -135,7 +135,7 @@ GardenLocal.prototype = {
   },
   rename:function(oldName, newName)
   {
-	garden.s.fileRename(oldName, newName);
+	myAPI.file().rename(oldName, newName);
   },
   createDirectory:function(aDirectory, aPermissions)
   {
