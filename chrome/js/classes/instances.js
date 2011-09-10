@@ -1387,7 +1387,7 @@ GardenInstances.prototype = {
 		  //run in a thread and then back to main thread because we need to wait for the file to download
 		  if(!aProcess.stopped())
 		  {
-			var AsynchRemoteConnection = this;
+			var koRemote = this;
 			myAPI.thread().runThread(function(){
 								  if(myAPI.file().exists(aTemporalDestination))
 									myAPI.thread().runMain(function(){
@@ -1395,7 +1395,7 @@ GardenInstances.prototype = {
 										 myAPI.file().read(aLocalFileToCompare) ==
 										 myAPI.file().read(aTemporalDestination)
 										)
-										 AsynchRemoteConnection.log('sucess', 'The local and remote file "'+aFile+'" are identical', aProcess.id);
+										 koRemote.log('sucess', 'The local and remote file "'+aFile+'" are identical', aProcess.id);
 										 else
 										  ko.fileutils.showDiffs(aLocalFileToCompare, aTemporalDestination);
 									  });
@@ -1794,9 +1794,9 @@ GardenInstances.prototype = {
   },
   cleanCacheOverWrite:function()
   {
-	var AsynchRemoteConnection = this;
+	var koRemote = this;
 	myAPI.thread().runThread(function(){
-										garden.shared.obj.removeWithPrefix('overWrite.'+AsynchRemoteConnection.server+'.');
+										garden.shared.obj.removeWithPrefix('overWrite.'+koRemote.server+'.');
 									  }, this.thread);
   	this.log('status', 'Cleaned overwrite settings', 0);
   },

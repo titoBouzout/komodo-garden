@@ -1,15 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <overlay xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
   
-  <hbox id="komodo-hbox">
-
   	<splitter
 	  state="open"
 	  ordinal="1"
 	  persist="state"
 	  collapse="after"
 	  ondblclick="garden.sidebarResize(event)"
-	  style="padding:0px;margin:0px;width:5px;"/>
+	  style="padding:0px;margin:0px;width:5px;"
+	  orient="horizontal"
+	  id="g-box-splitter"
+	/>
 	<!-- container -->
 	<vbox persist="width height collapsed" width="210" id="g-box">
 	  
@@ -25,7 +26,5 @@
 	</vbox>
 
 	<vbox id="g-tree-template" collapsed="true"/>
-
-  </hbox>
 
 </overlay>

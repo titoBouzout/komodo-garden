@@ -1,23 +1,29 @@
-const mRCService = Components
+
+					  
+function koRemote()
+{
+  this.RCService = Components
 					  .classes["@activestate.com/koRemoteConnectionService;1"]
 					  .getService(
 								  Components
 									.interfaces
 									.koIRemoteConnectionService
 								  );
-					  
-function AsynchRemoteConnection(){}
+}
 
-AsynchRemoteConnection.prototype = {
+koRemote.prototype = {
 
   driverRegister: function()
   {
-	gardenDrivers.register(
-							'komodo',
-							'Komodo (ftp, ftps, sftp, scp)',
-							AsynchRemoteConnection,
-							'remote'
-						  );
+	if(myAPI.app().isKomodo())
+	{
+	  gardenDrivers.register(
+							  'komodo',
+							  'Komodo (ftp, ftps, sftp, scp)',
+							  koRemote,
+							  'remote'
+							);
+	}
   },
   driverInit:function()
   {
@@ -32,7 +38,7 @@ AsynchRemoteConnection.prototype = {
   },
   driverGetEntries:function()
   {
-	var servers = mRCService.getServerInfoList({});
+	var servers = this.RCService.getServerInfoList({});
 	var entries = [];
 	var i = 0;
 	var prefix = '';
@@ -56,7 +62,7 @@ AsynchRemoteConnection.prototype = {
   connect: function(aNumTry, aKeepAliveRequest)
   {
 	if(!this.connection)
-	  this.connection = mRCService.getConnectionUsingServerAlias(this.aData.alias);
+	  this.connection = this.RCService.getConnectionUsingServerAlias(this.aData.alias);
 	return this.connection;
   },
   keepAlive:function()
@@ -127,4 +133,4 @@ AsynchRemoteConnection.prototype = {
   }
 };
 
-garden.registerDriverClass(AsynchRemoteConnection);
+garden.registerDriverClass(koRemote);

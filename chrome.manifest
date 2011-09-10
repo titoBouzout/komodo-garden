@@ -2,23 +2,27 @@ content asynchremote chrome/
 
 resource up.tito.asynchremote chrome/js/API/
 
-overlay chrome://komodo/content/komodo.xul chrome://asynchremote/content/xul/_includes.xul
+overlay chrome://komodo/content/komodo.xul 		chrome://asynchremote/content/xul/_includes.xul
+overlay chrome://browser/content/browser.xul 	chrome://asynchremote/content/xul/_includes.xul
 
-overlay chrome://komodo/content/komodo.xul chrome://asynchremote/content/xul/ko.toolbar.xul
+overlay chrome://asynchremote/content/xul/_includes.xul chrome://asynchremote/content/xul/gardenKomodo.xul
+overlay chrome://asynchremote/content/xul/_includes.xul chrome://asynchremote/content/xul/gardenFirefox.xul
 
-overlay chrome://komodo/content/komodo.xul chrome://asynchremote/content/xul/garden.xul
-overlay chrome://komodo/content/komodo.xul chrome://asynchremote/content/xul/tree.toolbar.top.xul
-overlay chrome://komodo/content/komodo.xul chrome://asynchremote/content/xul/tree.toolbar.bottom.xul
-overlay chrome://komodo/content/komodo.xul chrome://asynchremote/content/xul/tree.xul
-overlay chrome://komodo/content/komodo.xul chrome://asynchremote/content/xul/context.xul
-overlay chrome://komodo/content/komodo.xul chrome://asynchremote/content/xul/log.xul
+overlay chrome://asynchremote/content/xul/_includes.xul chrome://asynchremote/content/xul/garden.xul
+overlay chrome://asynchremote/content/xul/_includes.xul chrome://asynchremote/content/xul/tree.toolbar.top.xul
+overlay chrome://asynchremote/content/xul/_includes.xul chrome://asynchremote/content/xul/tree.toolbar.bottom.xul
+overlay chrome://asynchremote/content/xul/_includes.xul chrome://asynchremote/content/xul/tree.xul
+overlay chrome://asynchremote/content/xul/_includes.xul chrome://asynchremote/content/xul/context.xul
+overlay chrome://asynchremote/content/xul/_includes.xul chrome://asynchremote/content/xul/log.xul
 
-style chrome://komodo/content/komodo.xul chrome://asynchremote/content/css/context.css
-style chrome://komodo/content/komodo.xul chrome://asynchremote/content/css/files.css
-style chrome://komodo/content/komodo.xul chrome://asynchremote/content/css/groups.css
-style chrome://komodo/content/komodo.xul chrome://asynchremote/content/css/log.css
-style chrome://komodo/content/komodo.xul chrome://asynchremote/content/css/toolbar.css
-style chrome://komodo/content/komodo.xul chrome://asynchremote/content/css/tree.css
+overlay chrome://asynchremote/content/xul/_includes.xul chrome://asynchremote/content/xul/ko.toolbar.xul
+
+style chrome://asynchremote/content/xul/_includes.xul chrome://asynchremote/content/css/context.css
+style chrome://asynchremote/content/xul/_includes.xul chrome://asynchremote/content/css/files.css
+style chrome://asynchremote/content/xul/_includes.xul chrome://asynchremote/content/css/groups.css
+style chrome://asynchremote/content/xul/_includes.xul chrome://asynchremote/content/css/log.css
+style chrome://asynchremote/content/xul/_includes.xul chrome://asynchremote/content/css/toolbar.css
+style chrome://asynchremote/content/xul/_includes.xul chrome://asynchremote/content/css/tree.css
 
 #Windows Styles https://developer.mozilla.org/en/OS_TARGET
-style chrome://komodo/content/komodo.xul chrome://asynchremote/content/css/toolbar-winnt.css os=winnt
+style chrome://asynchremote/content/xul/_includes.xul chrome://asynchremote/content/css/toolbar-winnt.css os=winnt

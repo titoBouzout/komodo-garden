@@ -16,7 +16,7 @@
 		seltype="multiple"
 		
 		hidecolumnpicker="true"
-		
+		editable="true"
 		class="g-tree"
 		context="g-tree-context"
 		
