@@ -11,7 +11,7 @@
 	  ondblclick="garden.sidebarResize(event)"
 	  style="padding:0px;margin:0px;width:5px;"/>
 	<!-- container -->
-	<vbox persist="width height collapsed" width="250" id="g-box">
+	<vbox persist="width height collapsed" width="210" id="g-box">
 	  
 	  <!-- toolbar top -->
 	  <hbox id="g-toolbar-top"/>

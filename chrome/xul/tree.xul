@@ -16,14 +16,9 @@
 		seltype="multiple"
 		
 		hidecolumnpicker="true"
-		hidehscroll="true"
 		
 		class="g-tree"
 		context="g-tree-context"
-		
-		persist="width height"
-		height="350"
-		width="200"
 		
 		treelines="true"
 		
