@@ -18,7 +18,11 @@
 	  {
 		item.setAttribute('isFocused', true);
 		if(tagName == 'menu')
-		  item.firstChild.timer = myAPI.timer().setTimeout(function(){garden.browserOpenpopupFix(item.firstChild);}, 220);
+		{
+		  item.firstChild.timer = myAPI.timer().setTimeout(function(){
+				garden.browserOpenpopupFix(item.firstChild);
+		  }, 220);
+		}
 	  }
 	  else if(aEvent.type == 'mouseout')
 	  {
@@ -49,8 +53,9 @@
 		item.openPopup(item.parentNode, 'end_before', null, null, true, false, true);
 	  else
 		item.openPopup(item.parentNode, 'end_before', null, null, false, false, true);
-	  //item.parentNode.focus();
-	  item.focus();
+	  //firefox 4+
+	  if(item.state == 'closed')
+		  item.openPopup(item.parentNode, 'end_before');
 	}
 	else
 	{
@@ -205,6 +210,7 @@
 	  var menuParents = garden.create('menu');
 		  menuParents.setAttribute('label', 'Parents');
 		  menuParents.setAttribute('tooltiptext', path);
+		  menuParents.setAttribute('path', path);
 		  menuParents.setAttribute('done', 'true');
 		  menuParents.setAttribute('class', 'menu-iconic g-browser-parents');
 	
@@ -303,8 +309,9 @@
 			menupopup.openPopup(menu, 'end_before', null, null, true, false, true);
 		  else
 			menupopup.openPopup(menu, 'end_before', null, null, false, false, true);
-		  //menupopup.parentNode.focus();
-		  menupopup.focus();
+		  //firefox 4+
+		  if(menupopup.state == 'closed')
+			menupopup.openPopup(menu, 'end_before');
 		}
 	  }
 	}
