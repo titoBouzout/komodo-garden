@@ -12,7 +12,7 @@
 	  id="g-box-splitter"
 	/>
 	<!-- container -->
-	<vbox persist="width height collapsed" width="210" id="g-box">
+	<vbox persist="width height collapsed" width="220" id="g-box">
 	  
 	  <!-- toolbar top -->
 	  <hbox id="g-toolbar-top"/>

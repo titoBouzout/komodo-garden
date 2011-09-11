@@ -247,8 +247,8 @@
 	this.shared.pref('last.focused.groupID', groupID);
 	this.shared.pref('last.focused.path', path);
 	
-	if(window && myAPI.tab().getFocused())
-	  this.onLocationChange(myAPI.tab().getFocused());
+	//if(window && myAPI.tab().getFocused())
+	  //this.onLocationChange(myAPI.tab().getFocused());
   }
   //simulates a switchToTreeData
   this.switchToTreeData = function(groupID, treeID, path)
@@ -419,14 +419,14 @@
   
   this.sidebarResize = function(event){
 	var box = this.element('g-box');
-	if(box.boxObject.width == 210 && box.previousSibling.getAttribute('collapsed') == false) {
+	if(box.width == 220 && box.previousSibling.getAttribute('state') == 'open') {
 	  box.previousSibling.setAttribute('state', 'collapsed');
 	  box.setAttribute('collapsed', true);
 	} else {
 	  box.previousSibling.setAttribute('state', 'open');
 	  box.setAttribute('collapsed', false);
-	  box.setAttribute('width', 210);
-	  box.style.width = 210;
+	  box.setAttribute('width', 220);
+	  box.width = 220;
 	}
 	myAPI.DOM().stopEvent(event);
   }
