@@ -31,7 +31,7 @@
 			<menupopup
 			  id="g-toolbar-base-up-context"
 			  onpopupshowing="if(!garden.focusedTree.baseCanGoUp()) return false; else garden.toolbarGoUpPopupshowing(this);"
-			  oncommand="garden.focusedTree.baseChange(event.originalTarget.getAttribute('path'), true);"
+			  onclick="garden.focusedTree.baseChange(event.originalTarget.getAttribute('path'), true);"
 			/>
 		  </toolbarbutton>
 		  
