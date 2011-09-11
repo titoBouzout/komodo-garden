@@ -25,8 +25,15 @@
 			buttonstyle="pictures" type="button" persist="buttonstyle" orient="horizontal"
 			class="g-toolbar-base-up"
 			tooltiptext="Go up one directory"
-			oncommand="garden.focusedTree.baseGoUp();garden.toolbarUpdate();"
-		  />
+			oncommand="if(event.originalTarget == event.currentTarget){garden.focusedTree.baseGoUp();garden.toolbarUpdate();}"
+			onmouseup="if(event.button == 2)this.firstChild.openPopup(this, 'after_start')"
+		  >
+			<menupopup
+			  id="g-toolbar-base-up-context"
+			  onpopupshowing="if(!garden.focusedTree.baseCanGoUp()) return false; else garden.toolbarGoUpPopupshowing(this);"
+			  oncommand="garden.focusedTree.baseChange(event.originalTarget.getAttribute('path'), true);"
+			/>
+		  </toolbarbutton>
 		  
 		  <!--toolbarbutton
 			buttonstyle="pictures" type="button" persist="buttonstyle" orient="horizontal"

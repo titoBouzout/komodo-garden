@@ -14,6 +14,7 @@
 <script src="chrome://asynchremote/content/js/process.js" type="application/x-javascript"></script>
 <script src="chrome://asynchremote/content/js/sidebar.js" type="application/x-javascript"></script>
 <script src="chrome://asynchremote/content/js/tools.js" type="application/x-javascript"></script>
+<script src="chrome://asynchremote/content/js/toolbar.js" type="application/x-javascript"></script>
 
 <script src="chrome://asynchremote/content/js/drivers/komodo.js" type="application/x-javascript"></script>
 <script src="chrome://asynchremote/content/js/drivers/local.js" type="application/x-javascript"></script>

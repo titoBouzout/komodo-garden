@@ -21,7 +21,6 @@ TODO (in no special order)
 	from everywhere to everywhere
   
   tree toolbar
-	"go up button" should be a menu-button listing all parent directories
 	a textbox to filter the tree content and when pressing enter real scan all the base directory
 
   tree
